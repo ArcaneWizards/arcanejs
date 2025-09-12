@@ -43,6 +43,10 @@ export type DataFileUpdater<T> = (update: (current: T) => T) => void;
 export type DataFileContext<T> = {
   data: T;
   /**
+   * False until the initial load from disk has completed.
+   */
+  status: 'loading' | 'error' | 'ready';
+  /**
    * Last timestamp where {@link DataFileContext.data data} was updated
    * in-memory.
    *
@@ -365,6 +369,7 @@ export function createDataFileDefinition<T extends ZodType>({
 }: CreateDataFileDefinitionProps<T>): DataFileDefinition<z.infer<T>> {
   const context = createContext<DataFileContext<T>>({
     data: defaultValue,
+    status: 'loading',
     lastUpdatedMillis: Date.now(),
     updateData: () => {
       throw new Error('Data file provider not used');
@@ -403,6 +408,7 @@ export function createDataFileDefinition<T extends ZodType>({
           data.status !== 'loading' && data.data !== undefined
             ? data.data
             : defaultValue,
+        status: data.status,
         lastUpdatedMillis: data.lastUpdatedMillis,
         updateData,
         saveData,
