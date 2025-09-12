@@ -1,5 +1,11 @@
 # @arcanejs/protocol
 
+## 0.6.0
+
+### Minor Changes
+
+- 22074e4: Allow Error objects to be logged in logger context
+
 ## 0.5.0
 
 ### Minor Changes
