@@ -1,5 +1,11 @@
 # @arcanejs/react-toolkit
 
+## 0.11.2
+
+### Patch Changes
+
+- d29dfc7: Expose data file loading/error state
+
 ## 0.11.1
 
 ### Patch Changes
