@@ -6,4 +6,4 @@ Currently security reports are supported for all major versions that have been r
 
 ## Reporting a Vulnerability
 
-Please select "Report a Vulnerability" on the [Security Tab](https://github.com/arcanejs/arcanejs/security). We will investigate all legitimate reports and do our best to quickly fix the problem.
+Please select "Report a Vulnerability" on the [Security Tab](https://github.com/ArcaneWizards/arcanejs/security). We will investigate all legitimate reports and do our best to quickly fix the problem.

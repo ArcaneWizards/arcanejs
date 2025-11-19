@@ -16,4 +16,4 @@ library, that allows you to compose your control panels using server-side react.
 
 For more details,
 please see the main documentation on our GitHub repository:
-[github.com/arcanejs/arcanejs](https://github.com/arcanejs/arcanejs#arcanejs)
+[github.com/ArcaneWizards/arcanejs](https://github.com/ArcaneWizards/arcanejs#arcanejs)
