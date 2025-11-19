@@ -10,9 +10,9 @@ import {
 export const CUSTOM_NAMESPACE = 'custom';
 
 export type StopwatchComponentProto = BaseComponentProto<
-  typeof CUSTOM_NAMESPACE
+  typeof CUSTOM_NAMESPACE,
+  'stopwatch'
 > & {
-  component: 'stopwatch';
   state:
     | { type: 'stopped'; timeMillis: number }
     | { type: 'started'; startedAt: number };

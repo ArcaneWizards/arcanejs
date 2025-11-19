@@ -17,7 +17,11 @@ import {
   Listenable,
   Parent,
 } from './components/base';
-import { ClientMessage, AnyComponentProto } from '@arcanejs/protocol';
+import {
+  ClientMessage,
+  AnyComponentProto,
+  AnyClientComponentCall,
+} from '@arcanejs/protocol';
 
 export type ToolkitConnection = {
   uuid: string;
@@ -174,6 +178,41 @@ export class Toolkit implements Parent, Listenable<Events> {
     }
   };
 
+  private handleCall = async (
+    connection: Connection,
+    publicConnection: ToolkitConnection,
+    call: AnyClientComponentCall,
+  ) => {
+    try {
+      const rg = this.rootGroup;
+      if (rg) {
+        const returnValue = await new Promise((resolve, reject) =>
+          rg.routeCall(this.componentIDMap, call, publicConnection, {
+            resolve,
+            reject,
+          }),
+        );
+        connection.sendMessage({
+          type: 'call-response',
+          namespace: call.namespace,
+          requestId: call.requestId,
+          success: true,
+          returnValue,
+        });
+      } else {
+        throw new Error('No root group set');
+      }
+    } catch (err) {
+      connection.sendMessage({
+        type: 'call-response',
+        namespace: call.namespace,
+        requestId: call.requestId,
+        success: false,
+        errorMessage: `${err}`,
+      });
+    }
+  };
+
   private onMessage = (connection: Connection, message: ClientMessage) => {
     const con = this.connections.get(connection);
     if (!con) {
@@ -194,6 +233,9 @@ export class Toolkit implements Parent, Listenable<Events> {
             message,
             publicConnection,
           );
+        break;
+      case 'component-call':
+        this.handleCall(connection, publicConnection, message);
         break;
     }
   };

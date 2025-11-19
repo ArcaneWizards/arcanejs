@@ -15,6 +15,7 @@ import { Icon } from './core';
 import { StageContext } from './context';
 
 const TOUCH_INDICATOR_CLASS = 'touch-indicator';
+const LOADING_CLASS = 'loading';
 const TOUCHING_CLASS = 'touching';
 const ERROR_CLASS = 'error';
 
@@ -38,23 +39,43 @@ const ButtonLabel = styled.span`
   padding: 0 4px;
 `;
 
+type LocalState =
+  | {
+      state: 'loading';
+    }
+  | {
+      state: 'error';
+      error: string;
+    }
+  | null;
+
 const Button: FC<Props> = (props) => {
-  const { sendMessage } = React.useContext(StageContext);
-  const { touching, handlers } = usePressable(() =>
-    sendMessage<proto.CoreComponentMessage>?.({
-      type: 'component-message',
-      namespace: 'core',
-      componentKey: props.info.key,
-      component: 'button',
-    }),
-  );
-  const { state } = props.info;
+  const { call } = React.useContext(StageContext);
+  const [localState, setLocalState] = React.useState<LocalState>(null);
+  const state = localState ?? props.info.state;
+
+  const { touching, handlers } = usePressable(async () => {
+    try {
+      if (!call) return;
+      setLocalState({ state: 'loading' });
+      await call<'core', proto.CoreComponentCalls, 'press'>?.({
+        type: 'component-call',
+        namespace: 'core',
+        componentKey: props.info.key,
+        action: 'press',
+      });
+      setLocalState(null);
+    } catch (e) {
+      setLocalState({ state: 'error', error: `${e}` });
+    }
+  });
 
   return (
     <div
       className={calculateClass(
         props.className,
-        touching || state.state === 'pressed' ? TOUCHING_CLASS : null,
+        (touching || state.state === 'pressed') && TOUCHING_CLASS,
+        state.state === 'loading' && LOADING_CLASS,
         state.state === 'error' && ERROR_CLASS,
       )}
       {...handlers}
@@ -85,7 +106,7 @@ const StyledButton: FC<Props> = styled(Button)`
     border-color: ${(p) => p.theme.colorRed};
   }
 
-  &.${TOUCHING_CLASS} {
+  &.${TOUCHING_CLASS}, &.${LOADING_CLASS} {
     ${buttonStateNormalActive}
 
     .${TOUCH_INDICATOR_CLASS} {

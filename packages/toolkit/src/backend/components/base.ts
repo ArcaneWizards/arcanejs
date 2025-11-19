@@ -1,6 +1,8 @@
 import {
   BaseComponentProto,
   AnyClientComponentMessage,
+  AnyClientComponentCall,
+  ReturnForPair,
 } from '@arcanejs/protocol';
 import { IDMap } from '../util/id-map';
 import { Logger } from '@arcanejs/protocol/logging';
@@ -8,8 +10,12 @@ import { ToolkitConnection } from '../toolkit';
 
 export abstract class Base<
   Namespace extends string,
-  Proto extends BaseComponentProto<Namespace>,
+  Proto extends BaseComponentProto<Namespace, string>,
   Props,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  CallPairs = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  CallActions extends string & keyof CallPairs = any,
 > {
   /** @hidden */
   private parent: Parent | null = null;
@@ -116,6 +122,14 @@ export abstract class Base<
     _connection: ToolkitConnection,
   ): void {}
 
+  /** @hidden */
+  public handleCall(
+    _call: AnyClientComponentCall,
+    _connection: ToolkitConnection,
+  ): Promise<ReturnForPair<CallPairs, CallActions>> {
+    return Promise.reject(new Error(`Component does not handle calls`));
+  }
+
   public routeMessage(
     _idMap: IDMap,
     _message: AnyClientComponentMessage,
@@ -123,10 +137,26 @@ export abstract class Base<
   ): void {
     // Do nothing by default, only useful for Parent components
   }
+
+  public routeCall(
+    _idMap: IDMap,
+    _call: AnyClientComponentCall,
+    _connection: ToolkitConnection,
+    _callbacks: {
+      resolve: (result: unknown) => void;
+      reject: (error: unknown) => void;
+    },
+  ): void {
+    // Do nothing by default, only useful for Parent components
+  }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyComponent = Base<string, BaseComponentProto<string>, any>;
+export type AnyComponent = Base<
+  string,
+  BaseComponentProto<string, string>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any
+>;
 
 /** @hidden */
 export interface Parent {
@@ -137,10 +167,14 @@ export interface Parent {
 
 export abstract class BaseParent<
     Namespace extends string,
-    Proto extends BaseComponentProto<Namespace>,
+    Proto extends BaseComponentProto<Namespace, string>,
     T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    CallPairs = any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    CallActions extends string & keyof CallPairs = any,
   >
-  extends Base<Namespace, Proto, T>
+  extends Base<Namespace, Proto, T, CallPairs, CallActions>
   implements Parent
 {
   /** @hidden */
@@ -209,6 +243,33 @@ export abstract class BaseParent<
           c.handleMessage(message, connection);
         } else {
           c.routeMessage(idMap, message, connection);
+        }
+      }
+    }
+  }
+
+  public async routeCall(
+    idMap: IDMap,
+    call: AnyClientComponentCall,
+    connection: ToolkitConnection,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callbacks: {
+      resolve: (result: unknown) => void;
+      reject: (error: unknown) => void;
+    },
+  ) {
+    if (idMap.getId(this) === call.componentKey) {
+      this.handleCall(call, connection)
+        .then(callbacks.resolve)
+        .catch(callbacks.reject);
+    } else {
+      for (const c of this.children) {
+        if (idMap.getId(c) === call.componentKey) {
+          c.handleCall(call, connection)
+            .then(callbacks.resolve)
+            .catch(callbacks.reject);
+        } else {
+          c.routeCall(idMap, call, connection, callbacks);
         }
       }
     }
