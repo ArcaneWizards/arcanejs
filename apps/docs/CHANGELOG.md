@@ -1,5 +1,12 @@
 # docs
 
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies [32da064]
+  - @arcanejs/toolkit@4.1.0
+
 ## 0.2.3
 
 ### Patch Changes
