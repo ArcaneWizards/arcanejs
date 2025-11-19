@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/protocol",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": false,
   "description": "The JSON protocol types for the @arcanejs Toolkit",
   "license": "MIT",
