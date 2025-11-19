@@ -15,7 +15,7 @@ The UI has also been designed primarily with touch devices in mind,
 but also works well with a cursor and keyboard.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/arcanejs/arcanejs/main/packages/react-toolkit/docs/architecture.svg" alt="Architecture Diagram">
+  <img src="https://raw.githubusercontent.com/ArcaneWizards/arcanejs/main/packages/react-toolkit/docs/architecture.svg" alt="Architecture Diagram">
 </p>
 
 ## What
@@ -114,7 +114,7 @@ ToolkitRenderer.render(<ControlPanel />, toolkit);
 You would then be able to access the following control panel
 from [localhost:3000](http://localhost:3000):
 
-![Control Panel Screenshot](https://raw.githubusercontent.com/arcanejs/arcanejs/main/packages/react-toolkit/docs/example-controller.png)
+![Control Panel Screenshot](https://raw.githubusercontent.com/ArcaneWizards/arcanejs/main/packages/react-toolkit/docs/example-controller.png)
 
 Please note:
 
@@ -124,7 +124,7 @@ Please note:
 - You are welcome to abstract / componentize your application as you like,
   in the same manner that you would any `react-dom` or `react-native` project.
 
-  _See the [counter example](https://github.com/arcanejs/arcanejs/blob/main/examples/react/src/counter.tsx)._
+  _See the [counter example](https://github.com/ArcaneWizards/arcanejs/blob/main/examples/react/src/counter.tsx)._
 
 - This react / component-tree / state is managed server-side,
   and does not accurately represent the HTML used on the frontend.
@@ -138,13 +138,13 @@ Please note:
   however this functionality is not documented.
 
   You can see code examples of this functionality here in the
-  [custom components example app](https://github.com/arcanejs/arcanejs/tree/main/examples/custom-components).
+  [custom components example app](https://github.com/ArcaneWizards/arcanejs/tree/main/examples/custom-components).
 
 ## Components
 
 For full example usage all of our components in applications that are
 ready-to-run, we recommend that you check-out the
-[examples directory](https://github.com/arcanejs/arcanejs/tree/main/examples/react).
+[examples directory](https://github.com/ArcaneWizards/arcanejs/tree/main/examples/react).
 
 ### `Button`
 
@@ -282,11 +282,11 @@ TODO
 
 TODO
 
-## [Examples](https://github.com/arcanejs/arcanejs/tree/main/examples/react)
+## [Examples](https://github.com/ArcaneWizards/arcanejs/tree/main/examples/react)
 
 For a comprehensive list of examples,
 please see the example directory in the arcane monorepo:
-<https://github.com/arcanejs/arcanejs/tree/main/examples/react>
+<https://github.com/ArcaneWizards/arcanejs/tree/main/examples/react>
 
 ### [Example Philips Hue App](https://github.com/arcanejs/hue-example)
 

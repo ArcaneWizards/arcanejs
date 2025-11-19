@@ -13,7 +13,7 @@ and can only be applied to objects that match the type
 of the objects being compared.
 
 This package is part of the
-[`arcanejs` project](https://github.com/arcanejs/arcanejs#arcanejs),
+[`arcanejs` project](https://github.com/ArcaneWizards/arcanejs#arcanejs),
 and is used to maintain a copy of a JSON tree in downstream clients in real-time
 via websockets.
 
