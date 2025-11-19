@@ -311,7 +311,7 @@ export class EventEmitter<Map extends Record<string, (...args: any[]) => void>>
   private readonly listeners = new Map<
     keyof Map,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Set<(...args: any[]) => void>
+    Set<(...args: any[]) => unknown>
   >();
 
   addListener = <T extends keyof Map>(type: T, listener: Map[T]) => {
@@ -330,19 +330,37 @@ export class EventEmitter<Map extends Record<string, (...args: any[]) => void>>
   emit = <T extends keyof Map>(
     type: T,
     ...args: Parameters<Map[T]>
-  ): Promise<unknown> => {
+  ): Promise<ReturnType<Map[T]>[]> => {
     return Promise.all(
       [...(this.listeners.get(type) || [])].map(
         (l) =>
-          new Promise((resolve, reject) => {
+          new Promise<ReturnType<Map[T]>>((resolve, reject) => {
             try {
-              resolve(l(...args));
+              resolve(l(...args) as ReturnType<Map[T]>);
             } catch (e) {
               reject(e);
             }
           }),
       ),
     );
+  };
+
+  /**
+   * Like {@link emit},
+   * but ensures only a single listener exists and returns its result.
+   */
+  call = async <T extends keyof Map>(
+    type: T,
+    ...args: Parameters<Map[T]>
+  ): Promise<ReturnType<Map[T]>> => {
+    const result = await this.emit(type, ...args);
+    if (result.length > 1) {
+      throw new Error(`Multiple listeners for call: ${String(type)}`);
+    } else if (result[0]) {
+      return result[0];
+    } else {
+      throw new Error(`No listeners for call: ${String(type)}`);
+    }
   };
 
   /**

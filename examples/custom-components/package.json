@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/examples-custom-components",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "private": true,
   "description": "Example app using toolkit & custom components",
   "scripts": {

@@ -1,5 +1,13 @@
 # @arcanejs/examples-custom-components
 
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies [32da064]
+  - @arcanejs/toolkit@4.1.0
+  - @arcanejs/react-toolkit@0.12.1
+
 ## 0.0.14
 
 ### Patch Changes
