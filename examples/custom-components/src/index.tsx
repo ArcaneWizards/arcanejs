@@ -14,10 +14,15 @@ import {
 import { AnyComponent, BaseParent } from '@arcanejs/toolkit/components/base';
 import { IDMap } from '@arcanejs/toolkit/util';
 import {
+  CustomComponentCalls,
+  isCustomComponentCall,
   isCustomComponentMessage,
   StopwatchComponentProto,
 } from './custom-proto';
-import { AnyClientComponentMessage } from '@arcanejs/protocol';
+import {
+  AnyClientComponentCall,
+  AnyClientComponentMessage,
+} from '@arcanejs/protocol';
 
 const toolkit = new Toolkit({
   log: pino({
@@ -41,7 +46,9 @@ type StopwatchProps = {
 class Stopwatch extends BaseParent<
   'custom',
   StopwatchComponentProto,
-  StopwatchProps
+  StopwatchProps,
+  CustomComponentCalls,
+  'request-time'
 > {
   private state: StopwatchComponentProto['state'] = {
     type: 'stopped',
@@ -90,6 +97,18 @@ class Stopwatch extends BaseParent<
         this.updateTree();
       }
     }
+  };
+
+  /** @hidden */
+  public handleCall = async (call: AnyClientComponentCall) => {
+    if (isCustomComponentCall(call, 'request-time')) {
+      const timeString =
+        this.state.type === 'stopped'
+          ? `${this.state.timeMillis / 1000}`
+          : `${(Date.now() - this.state.startedAt) / 1000}`;
+      return `The time is now: ${timeString}`;
+    }
+    throw new Error(`Unhandled call action: ${call.action}`);
   };
 
   public validateChildren = (children: AnyComponent[]) => {

@@ -42,7 +42,7 @@ type LightDeskHostConfig = Reconciler.HostConfig<
 
 const canSetProps = (
   instance: ld.AnyComponent,
-): instance is Base<string, BaseComponentProto<string>, unknown> =>
+): instance is Base<string, BaseComponentProto<string, string>, unknown> =>
   instance instanceof Base;
 
 type ReactToolkitConfig = {

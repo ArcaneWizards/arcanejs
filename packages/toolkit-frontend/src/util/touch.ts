@@ -20,7 +20,7 @@ export function initialiseListeners() {
 }
 
 export const usePressable = (
-  click: () => void,
+  click: () => unknown,
 ): {
   touching: boolean;
   handlers: {

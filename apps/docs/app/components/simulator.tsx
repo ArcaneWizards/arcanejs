@@ -106,6 +106,9 @@ export const ToolkitSimulatorProvider: React.FC<
           rootGroup?.current?.routeMessage(componentIDMap.current, msg, {
             uuid: '',
           }),
+        call: () => {
+          throw new Error('Not implemented in simulator');
+        },
         renderComponent,
         connectionUuid: 'simulator',
       }}

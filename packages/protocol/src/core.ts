@@ -5,6 +5,7 @@ import {
   BaseClientComponentMessage,
   BaseComponentProto,
   AnyComponentProto,
+  BaseClientComponentCall,
 } from '.';
 import { GroupComponentStyle } from './styles';
 
@@ -21,8 +22,7 @@ export type Gradient = Array<{
   position: number;
 }>;
 
-export type ButtonComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'button';
+export type ButtonComponent = BaseComponentProto<CoreNamespace, 'button'> & {
   text: string;
   icon?: string;
   state:
@@ -39,14 +39,15 @@ export type GroupCollapsedState = 'open' | 'closed';
 
 export type DefaultGroupCollapsedState = GroupCollapsedState | 'auto';
 
-export type GroupHeaderComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'group-header';
+export type GroupHeaderComponent = BaseComponentProto<
+  CoreNamespace,
+  'group-header'
+> & {
   children: AnyComponentProto[];
 };
 
-export type GroupComponent = BaseComponentProto<CoreNamespace> &
+export type GroupComponent = BaseComponentProto<CoreNamespace, 'group'> &
   GroupComponentStyle & {
-    component: 'group';
     title?: string;
     children: AnyComponentProto[];
     headers?: GroupHeaderComponent[];
@@ -61,14 +62,12 @@ export type GroupComponent = BaseComponentProto<CoreNamespace> &
     defaultCollapsibleState?: DefaultGroupCollapsedState;
   };
 
-export type LabelComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'label';
+export type LabelComponent = BaseComponentProto<CoreNamespace, 'label'> & {
   bold?: boolean;
   text: string;
 };
 
-export type RectComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'rect';
+export type RectComponent = BaseComponentProto<CoreNamespace, 'rect'> & {
   color: string;
   /**
    * Set to true if the component should increase its size to fill the available space.
@@ -76,8 +75,10 @@ export type RectComponent = BaseComponentProto<CoreNamespace> & {
   grow?: boolean;
 };
 
-export type SliderButtonComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'slider_button';
+export type SliderButtonComponent = BaseComponentProto<
+  CoreNamespace,
+  'slider_button'
+> & {
   min: number;
   max: number;
   step: number;
@@ -89,24 +90,23 @@ export type SliderButtonComponent = BaseComponentProto<CoreNamespace> & {
   grow?: boolean;
 };
 
-export type SwitchComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'switch';
+export type SwitchComponent = BaseComponentProto<CoreNamespace, 'switch'> & {
   state: 'on' | 'off';
 };
 
-export type TabComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'tab';
+export type TabComponent = BaseComponentProto<CoreNamespace, 'tab'> & {
   name: string;
   child?: AnyComponentProto;
 };
 
-export type TabsComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'tabs';
+export type TabsComponent = BaseComponentProto<CoreNamespace, 'tabs'> & {
   tabs: TabComponent[];
 };
 
-export type TextInputComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'text-input';
+export type TextInputComponent = BaseComponentProto<
+  CoreNamespace,
+  'text-input'
+> & {
   value: string;
 };
 
@@ -123,8 +123,10 @@ export type TimelineState =
       currentTimeMillis: number;
     };
 
-export type TimelineComponent = BaseComponentProto<CoreNamespace> & {
-  component: 'timeline';
+export type TimelineComponent = BaseComponentProto<
+  CoreNamespace,
+  'timeline'
+> & {
   state: TimelineState;
   title?: string;
   subtitles?: string[];
@@ -150,9 +152,10 @@ export const isCoreComponent = (
   component: AnyComponentProto,
 ): component is CoreComponent => component.namespace === 'core';
 
-export type ButtonPressMessage = BaseClientComponentMessage<CoreNamespace> & {
-  component: 'button';
-};
+export type ButtonPressMessage = BaseClientComponentCall<
+  CoreNamespace,
+  'press'
+>;
 
 export type GroupTitleChangeMessage =
   BaseClientComponentMessage<CoreNamespace> & {
@@ -177,11 +180,17 @@ export type TextInputUpdateMessage =
   };
 
 export type CoreComponentMessage =
-  | ButtonPressMessage
   | GroupTitleChangeMessage
   | SliderButtonUpdateMessage
   | SwitchToggleMessage
   | TextInputUpdateMessage;
+
+export interface CoreComponentCalls {
+  press: {
+    call: ButtonPressMessage;
+    return: true;
+  };
+}
 
 export const isCoreComponentMessage = <
   C extends CoreComponentMessage['component'],
@@ -191,3 +200,9 @@ export const isCoreComponentMessage = <
 ): message is CoreComponentMessage & { component: C } =>
   message.namespace === 'core' &&
   (message as CoreComponentMessage).component === component;
+
+export const isCoreComponentCall = <A extends keyof CoreComponentCalls>(
+  call: BaseClientComponentCall<string, string>,
+  action: A,
+): call is CoreComponentCalls[A]['call'] =>
+  call.namespace === 'core' && call.action === action;

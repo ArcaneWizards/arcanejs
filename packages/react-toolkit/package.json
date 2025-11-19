@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/react-toolkit",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "private": false,
   "description": "Build web-accessible control interfaces for your long-running Node.js processes",
   "keywords": [

@@ -34,12 +34,28 @@ export type Props = {
   };
 };
 
+type InFlightCall = {
+  resolve: (value: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  reject: (reason?: any) => void;
+};
+
+type InFlightCalls = {
+  nextId: number;
+  calls: Map<number, InFlightCall>;
+};
+
 const Stage: React.FC<Props> = ({ className, renderers }) => {
   const [root, setRoot] = useState<proto.AnyComponentProto | undefined>(
     undefined,
   );
   const socket = useRef<Promise<WebSocket> | null>(null);
   const uuid = useRef<string | null>(null);
+
+  const calls = useRef<InFlightCalls>({
+    nextId: 1,
+    calls: new Map(),
+  });
 
   const preparedRenderers = useMemo(() => {
     const prepared: Record<string, FrontendComponentRenderer> = {};
@@ -62,11 +78,38 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     [preparedRenderers],
   );
 
-  useEffect(() => {
-    initializeWebsocket();
+  const handleMessage = useCallback((msg: proto.ServerMessage) => {
+    switch (msg.type) {
+      case 'metadata':
+        // This should always be the first message
+        uuid.current = msg.connectionUuid;
+        return;
+      case 'tree-full':
+        setRoot(msg.root);
+        return;
+      case 'tree-diff':
+        setRoot((prevRoot) => patchJson(prevRoot, msg.diff));
+        return;
+      case 'call-response': {
+        const call = calls.current.calls.get(msg.requestId);
+        if (call) {
+          calls.current.calls.delete(msg.requestId);
+          if (msg.success) {
+            call.resolve(msg.returnValue);
+          } else {
+            call.reject(msg.errorMessage);
+          }
+        } else {
+          console.warn(
+            `Received response for unknown call request ID ${msg.requestId}`,
+          );
+        }
+        return;
+      }
+    }
   }, []);
 
-  const initializeWebsocket = async () => {
+  const initializeWebsocket = useCallback(async () => {
     console.log('initializing websocket');
     const wsUrl = new URL(window.location.href);
     wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -90,32 +133,47 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
       };
     });
     return ws;
-  };
+  }, []);
 
-  const sendMessage = async (msg: proto.ClientMessage) => {
+  const sendMessage = useCallback(async (msg: proto.ClientMessage) => {
     (await (socket.current || initializeWebsocket())).send(JSON.stringify(msg));
-  };
+  }, []);
 
-  const handleMessage = (msg: proto.ServerMessage) => {
-    switch (msg.type) {
-      case 'metadata':
-        // This should always be the first message
-        uuid.current = msg.connectionUuid;
-        return;
-      case 'tree-full':
-        setRoot(msg.root);
-        return;
-      case 'tree-diff':
-        setRoot((prevRoot) => patchJson(prevRoot, msg.diff));
-        return;
-    }
-  };
+  const call = useCallback(
+    async <Namespace extends string, P, Action extends string & keyof P>(
+      msg: proto.CallForPair<Namespace, P, Action>,
+    ): Promise<proto.ReturnForPair<P, Action>> => {
+      const requestId = calls.current.nextId++;
+      const sendMsg = {
+        ...msg,
+        requestId,
+      };
+      const promise: Promise<proto.ReturnForPair<P, Action>> = new Promise(
+        (resolve, reject) => {
+          calls.current.calls.set(requestId, {
+            resolve: resolve as (v: unknown) => void,
+            reject,
+          });
+          (socket.current || initializeWebsocket()).then((s) =>
+            s.send(JSON.stringify(sendMsg)),
+          );
+        },
+      );
+      return promise;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    initializeWebsocket();
+  }, [initializeWebsocket]);
 
   return (
     <StageContext.Provider
       value={{
         sendMessage,
         renderComponent,
+        call,
         get connectionUuid() {
           if (!uuid.current) {
             throw new Error('Unexpected missing UUID')!;

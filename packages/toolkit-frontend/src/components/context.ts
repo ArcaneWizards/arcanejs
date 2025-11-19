@@ -3,7 +3,14 @@ import { createContext } from 'react';
 import * as proto from '@arcanejs/protocol';
 
 type StageContextData = {
-  sendMessage: (<M extends proto.ClientMessage>(msg: M) => void) | null;
+  sendMessage:
+    | (<M extends proto.AnyClientComponentMessage>(msg: M) => void)
+    | null;
+  call:
+    | (<Namespace extends string, P, Action extends string & keyof P>(
+        msg: proto.CallForPair<Namespace, P, Action>,
+      ) => Promise<proto.ReturnForPair<P, Action>>)
+    | null;
   renderComponent: (info: proto.AnyComponentProto) => JSX.Element;
   connectionUuid: string;
 };

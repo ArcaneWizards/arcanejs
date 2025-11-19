@@ -79,7 +79,15 @@ const groupB = groupGroup.appendChild(
 
 let s = 0;
 
-const update = () => {
+const update = async () => {
+  if (Math.random() < 0.5) {
+    // Add delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  if (Math.random() < 0.5) {
+    // Add error
+    throw new Error('Random error occurred!');
+  }
   switch (s) {
     case 0:
     case 2:

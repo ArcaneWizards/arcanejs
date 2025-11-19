@@ -5,6 +5,7 @@ import {
 import { FrontendComponentRenderer } from '@arcanejs/toolkit-frontend/types';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import {
+  CustomComponentCalls,
   isCustomComponent,
   StopwatchComponentProto,
   StopwatchPressMessage,
@@ -36,6 +37,10 @@ const Time = styled.div`
   }
 `;
 
+const Button = styled.button`
+  margin-bottom: 10px;
+`;
+
 const ChildrenContainer = styled.div`
   border: 1px solid blue;
   padding: 10px;
@@ -50,7 +55,7 @@ const display = (time: StopwatchComponentProto['state']) => {
 };
 
 const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
-  const { sendMessage, renderComponent, connectionUuid } =
+  const { sendMessage, call, renderComponent, connectionUuid } =
     useContext(StageContext);
   const { handlers } = usePressable(() =>
     sendMessage<StopwatchPressMessage>?.({
@@ -59,6 +64,16 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
       componentKey: info.key,
       component: 'stopwatch',
       button: 'start-stop',
+    }),
+  );
+  const { handlers: callHandler } = usePressable(() =>
+    call<'custom', CustomComponentCalls, 'request-time'>?.({
+      type: 'component-call',
+      namespace: 'custom',
+      componentKey: info.key,
+      action: 'request-time',
+    }).then((time) => {
+      alert(`Response: ${time}`);
     }),
   );
 
@@ -81,6 +96,7 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
     <StyledDiv>
       <Connection>{`Connection UUID: ${connectionUuid}`}</Connection>
       <Time {...handlers}>{timeDisplay}</Time>
+      <Button {...callHandler}>Request time from server</Button>
       {info.state.type === 'stopped' && info.child && (
         <ChildrenContainer>{renderComponent(info.child)}</ChildrenContainer>
       )}

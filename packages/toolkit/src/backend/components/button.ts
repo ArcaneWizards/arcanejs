@@ -2,7 +2,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { IDMap } from '../util/id-map';
 
 import { Base, EventEmitter, Listenable } from './base';
-import { AnyClientComponentMessage } from '@arcanejs/protocol';
+import { AnyClientComponentCall } from '@arcanejs/protocol';
 import { ToolkitConnection } from '../toolkit';
 
 export type Events = {
@@ -30,7 +30,13 @@ const DEFAULT_PROPS: InternalProps = {
 };
 
 export class Button
-  extends Base<proto.CoreNamespace, proto.CoreComponent, InternalProps>
+  extends Base<
+    proto.CoreNamespace,
+    proto.ButtonComponent,
+    InternalProps,
+    proto.CoreComponentCalls,
+    'press'
+  >
   implements Listenable<Events>
 {
   /** @hidden */
@@ -86,25 +92,13 @@ export class Button
   };
 
   /** @hidden */
-  public handleMessage = (
-    message: AnyClientComponentMessage,
+  public handleCall = (
+    call: AnyClientComponentCall,
     connection: ToolkitConnection,
   ) => {
-    if (proto.isCoreComponentMessage(message, 'button')) {
-      this.events
-        .emit('click', connection)
-        .then(() => {
-          if (this.props.error) {
-            this.updateProps({
-              error: null,
-            });
-          }
-        })
-        .catch((e) => {
-          this.updateProps({
-            error: `${e}`,
-          });
-        });
+    if (proto.isCoreComponentCall(call, 'press')) {
+      return this.events.emit('click', connection).then(() => true as const);
     }
+    throw new Error(`Unhandled call action: ${call.action}`);
   };
 }
