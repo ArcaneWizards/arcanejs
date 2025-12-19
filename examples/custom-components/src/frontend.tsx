@@ -12,7 +12,11 @@ import {
 } from './custom-proto';
 import styled from 'styled-components';
 import { useContext, useEffect, useState } from 'react';
-import { usePressable } from '@arcanejs/toolkit-frontend/util';
+import {
+  useColorSchemePreferences,
+  usePressable,
+  VALID_COLOR_SCHEME_PREFS,
+} from '@arcanejs/toolkit-frontend/util';
 
 const StyledDiv = styled.div`
   padding: 10px;
@@ -57,6 +61,8 @@ const display = (time: StopwatchComponentProto['state']) => {
 const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
   const { sendMessage, call, renderComponent, connectionUuid } =
     useContext(StageContext);
+  const { colorSchemePreference, setColorSchemePreference } =
+    useColorSchemePreferences();
   const { handlers } = usePressable(() =>
     sendMessage<StopwatchPressMessage>?.({
       type: 'component-message',
@@ -100,6 +106,23 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
       {info.state.type === 'stopped' && info.child && (
         <ChildrenContainer>{renderComponent(info.child)}</ChildrenContainer>
       )}
+      <div>
+        Change Theme:
+        <select
+          value={colorSchemePreference}
+          onChange={(e) =>
+            setColorSchemePreference(
+              e.target.value as typeof colorSchemePreference,
+            )
+          }
+        >
+          {VALID_COLOR_SCHEME_PREFS.map((pref) => (
+            <option key={pref} value={pref}>
+              {pref}
+            </option>
+          ))}
+        </select>
+      </div>
     </StyledDiv>
   );
 };
