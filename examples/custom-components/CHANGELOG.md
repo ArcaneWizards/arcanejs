@@ -1,5 +1,23 @@
 # @arcanejs/examples-custom-components
 
+## 0.1.0
+
+### Minor Changes
+
+- 5e4ad6a: Allow for color preferences to be overridden
+
+  Introduce a new hook `useColorSchemePreferences` which can be used by
+  custom components to introduce UI that allows a user to override their theme
+  preferences (and not just use OS settings),
+  and saves the changes to localStorage.
+
+### Patch Changes
+
+- Updated dependencies [5e4ad6a]
+  - @arcanejs/toolkit-frontend@0.8.0
+  - @arcanejs/toolkit@5.0.0
+  - @arcanejs/react-toolkit@0.12.2
+
 ## 0.0.15
 
 ### Patch Changes

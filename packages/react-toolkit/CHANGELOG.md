@@ -1,5 +1,11 @@
 # @arcanejs/react-toolkit
 
+## 0.12.2
+
+### Patch Changes
+
+- @arcanejs/toolkit@5.0.0
+
 ## 0.12.1
 
 ### Patch Changes
