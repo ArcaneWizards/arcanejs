@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/toolkit",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "private": false,
   "description": "Build web-accessible control interfaces for your long-running Node.js processes",
   "keywords": [
