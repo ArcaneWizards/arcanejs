@@ -1,5 +1,11 @@
 # @arcanejs/toolkit
 
+## 5.0.1
+
+### Patch Changes
+
+- Ensure charset meta is set in HTML
+
 ## 5.0.0
 
 ### Patch Changes
