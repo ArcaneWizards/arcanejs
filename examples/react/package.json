@@ -14,6 +14,7 @@
     "start:counter": "pnpm start src/counter",
     "start:data-file": "pnpm start src/data-file",
     "start:data-files": "pnpm start src/data-files",
+    "start:dynamic-connections": "pnpm start src/dynamic-connections",
     "start:editable-group-title": "pnpm start src/editable-group-title",
     "start:readme": "pnpm start src/readme",
     "start:reorder-elements": "pnpm start src/reorder-elements",
