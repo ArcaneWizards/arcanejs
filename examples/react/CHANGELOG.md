@@ -1,5 +1,18 @@
 # @arcanejs/examples-react
 
+## 0.1.0
+
+### Minor Changes
+
+- 21bdd2e: Include a react example that allows incoming ports to be modified
+
+### Patch Changes
+
+- Updated dependencies [87d1735]
+- Updated dependencies [21bdd2e]
+  - @arcanejs/toolkit@6.0.0
+  - @arcanejs/react-toolkit@0.12.4
+
 ## 0.0.32
 
 ### Patch Changes
