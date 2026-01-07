@@ -111,6 +111,10 @@ export const ToolkitSimulatorProvider: React.FC<
         },
         renderComponent,
         connectionUuid: 'simulator',
+        connection: { state: 'connected', uuid: 'simulator' },
+        reconnect: () => {
+          // No-op in simulator
+        },
       }}
     >
       <ToolkitSimulatorContext.Provider value={{ tree, renderComponent }}>

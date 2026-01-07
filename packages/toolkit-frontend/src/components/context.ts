@@ -2,7 +2,20 @@ import { createContext } from 'react';
 
 import * as proto from '@arcanejs/protocol';
 
-type StageContextData = {
+export type StageConnectionState =
+  | {
+      state: 'connecting' | 'closed';
+    }
+  | {
+      state: 'error';
+      error: Error;
+    }
+  | {
+      state: 'connected';
+      uuid: string | null;
+    };
+
+export type StageContextData = {
   sendMessage:
     | (<M extends proto.AnyClientComponentMessage>(msg: M) => void)
     | null;
@@ -12,7 +25,9 @@ type StageContextData = {
       ) => Promise<proto.ReturnForPair<P, Action>>)
     | null;
   renderComponent: (info: proto.AnyComponentProto) => JSX.Element;
-  connectionUuid: string;
+  connectionUuid: string | null;
+  connection: StageConnectionState;
+  reconnect: () => void;
 };
 
 export const StageContext = createContext<StageContextData>(

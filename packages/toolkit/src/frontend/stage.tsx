@@ -17,7 +17,12 @@ import {
   LIGHT_THEME,
 } from '@arcanejs/toolkit-frontend/styling';
 
-import { GroupStateWrapper, StageContext } from '@arcanejs/toolkit-frontend';
+import {
+  GroupStateWrapper,
+  StageConnectionState,
+  StageContext,
+  StageContextData,
+} from '@arcanejs/toolkit-frontend';
 
 import {
   FrontendComponentRenderer,
@@ -50,7 +55,9 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     undefined,
   );
   const socket = useRef<Promise<WebSocket> | null>(null);
-  const uuid = useRef<string | null>(null);
+  const [connection, setConnection] = useState<StageConnectionState>({
+    state: 'connecting',
+  });
 
   const calls = useRef<InFlightCalls>({
     nextId: 1,
@@ -82,7 +89,7 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     switch (msg.type) {
       case 'metadata':
         // This should always be the first message
-        uuid.current = msg.connectionUuid;
+        setConnection({ state: 'connected', uuid: msg.connectionUuid });
         return;
       case 'tree-full':
         setRoot(msg.root);
@@ -110,24 +117,38 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
   }, []);
 
   const initializeWebsocket = useCallback(async () => {
+    // Close existing socket if present
+    if (socket.current) {
+      socket.current.then((s) => s.close()).catch((err) => console.error(err));
+      socket.current = null;
+    }
     console.log('initializing websocket');
     const wsUrl = new URL(window.location.href);
     wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(
-      `ws://${window.location.hostname}:${window.location.port}${window.location.pathname}`,
-    );
+    const ws = new WebSocket(wsUrl.href);
     ws.onmessage = (event) => {
       handleMessage(JSON.parse(event.data));
     };
     ws.onclose = () => {
+      setConnection({ state: 'closed' });
       console.log('socket closed');
       socket.current = null;
     };
     socket.current = new Promise<WebSocket>((resolve, reject) => {
       ws.onopen = () => {
+        console.log('socket opened');
+        setConnection({ state: 'connected', uuid: null });
         resolve(ws);
       };
       ws.onerror = (err) => {
+        setConnection({
+          state: 'error',
+          error:
+            err instanceof Error
+              ? err
+              : new Error('Unable to connect', { cause: err }),
+        });
+        console.error('socket error', err);
         reject(err);
         socket.current = null;
       };
@@ -168,20 +189,20 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     initializeWebsocket();
   }, [initializeWebsocket]);
 
+  const stageContext: StageContextData = useMemo(
+    () => ({
+      sendMessage,
+      renderComponent,
+      call,
+      connectionUuid: connection.state === 'connected' ? connection.uuid : null,
+      connection,
+      reconnect: () => void initializeWebsocket(),
+    }),
+    [sendMessage, renderComponent, call, initializeWebsocket, connection],
+  );
+
   return (
-    <StageContext.Provider
-      value={{
-        sendMessage,
-        renderComponent,
-        call,
-        get connectionUuid() {
-          if (!uuid.current) {
-            throw new Error('Unexpected missing UUID')!;
-          }
-          return uuid.current;
-        },
-      }}
-    >
+    <StageContext.Provider value={stageContext}>
       <GroupStateWrapper openByDefault={false}>
         <div className={className}>
           {root ? (
