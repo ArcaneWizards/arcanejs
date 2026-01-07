@@ -153,7 +153,9 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
         socket.current = null;
       };
     });
-    return ws;
+    // Return promise rather than WebSocket directly to ensure that
+    // it's fully opened before initializeWebsocket is resolved.
+    return socket.current;
   }, []);
 
   const sendMessage = useCallback(async (msg: proto.ClientMessage) => {
