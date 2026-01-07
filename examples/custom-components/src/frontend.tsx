@@ -59,8 +59,14 @@ const display = (time: StopwatchComponentProto['state']) => {
 };
 
 const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
-  const { sendMessage, call, renderComponent, connectionUuid } =
-    useContext(StageContext);
+  const {
+    sendMessage,
+    call,
+    renderComponent,
+    connectionUuid,
+    connection,
+    reconnect,
+  } = useContext(StageContext);
   const { colorSchemePreference, setColorSchemePreference } =
     useColorSchemePreferences();
   const { handlers } = usePressable(() =>
@@ -83,6 +89,8 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
     }),
   );
 
+  const { handlers: reconnectHandler } = usePressable(reconnect);
+
   const [timeDisplay, setDimeDisplay] = useState(display(info.state));
 
   useEffect(() => {
@@ -100,7 +108,9 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
 
   return (
     <StyledDiv>
+      <Connection>{`Connection State: ${connection.state}`}</Connection>
       <Connection>{`Connection UUID: ${connectionUuid}`}</Connection>
+      <Button {...reconnectHandler}>Reconnect</Button>
       <Time {...handlers}>{timeDisplay}</Time>
       <Button {...callHandler}>Request time from server</Button>
       {info.state.type === 'stopped' && info.child && (

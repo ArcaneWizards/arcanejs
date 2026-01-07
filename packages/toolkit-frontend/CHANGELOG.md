@@ -1,5 +1,15 @@
 # @toolkit-frontend
 
+## 0.9.0
+
+### Minor Changes
+
+- 9aec7b1: Breaking: Update connection state
+
+  Update the way in which state is handled internally,
+  and allow for connection state to be exposed using react context,
+  including a function allowing custom components to request a reconnect.
+
 ## 0.8.0
 
 ### Minor Changes

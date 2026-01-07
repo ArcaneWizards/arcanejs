@@ -1,5 +1,23 @@
 # @arcanejs/examples-custom-components
 
+## 0.2.0
+
+### Minor Changes
+
+- 9aec7b1: Add connection state to custom-components example
+
+  Update the example component so that the current connection state is also
+  rendered, and a button to reconnect is available.
+
+### Patch Changes
+
+- Updated dependencies [9aec7b1]
+- Updated dependencies [87d1735]
+- Updated dependencies [21bdd2e]
+  - @arcanejs/toolkit-frontend@0.9.0
+  - @arcanejs/toolkit@6.0.0
+  - @arcanejs/react-toolkit@0.12.4
+
 ## 0.1.1
 
 ### Patch Changes

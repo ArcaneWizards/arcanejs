@@ -41,6 +41,15 @@ export type Events = {
   'closed-connection': (connection: ToolkitConnection) => void;
 };
 
+export type ToolkitServerListenerOptions = {
+  port: number;
+  host?: string;
+};
+
+export type ToolkitServerListener = {
+  close: () => void;
+};
+
 export class Toolkit implements Parent, Listenable<Events> {
   private readonly options: ToolkitOptions;
   /**
@@ -52,6 +61,7 @@ export class Toolkit implements Parent, Listenable<Events> {
 
   /** @hidden */
   private readonly events = new EventEmitter<Events>();
+  private readonly server: Server;
 
   constructor(options: Partial<ToolkitOptions> = {}) {
     this.options = {
@@ -66,27 +76,22 @@ export class Toolkit implements Parent, Listenable<Events> {
         `path must start and end with "/", set to: ${this.options.path}`,
       );
     }
-  }
-
-  public addListener = this.events.addListener;
-  public removeListener = this.events.removeListener;
-
-  public start = (opts: InitializationOptions) => {
-    const server = new Server(
+    this.server = new Server(
       this.options,
       this.onNewConnection,
       this.onClosedConnection,
       this.onMessage,
       this.options.log,
     );
+  }
+
+  public addListener = this.events.addListener;
+  public removeListener = this.events.removeListener;
+
+  public start = (opts: InitializationOptions) => {
     if (opts.mode === 'automatic') {
-      const httpServer = createServer(server.handleHttpRequest);
-      const wss = new WebSocketServer({
-        server: httpServer,
-      });
-      wss.on('connection', server.handleWsConnection);
-      const url = `http://localhost:${opts.port}${this.options.path}`;
-      httpServer.listen(opts.port, () => {
+      this.listen({ port: opts.port }).then(() => {
+        const url = `http://localhost:${opts.port}${this.options.path}`;
         opts.onReady?.(url);
         this.options.log?.info(`Light Desk Started: ${url}`);
       });
@@ -94,13 +99,50 @@ export class Toolkit implements Parent, Listenable<Events> {
       const wss = new WebSocketServer({
         server: opts.server,
       });
-      wss.on('connection', server.handleWsConnection);
-      opts.express.get(`${this.options.path}*`, server.handleHttpRequest);
+      wss.on('connection', this.server.handleWsConnection);
+      opts.express.get(`${this.options.path}*`, this.server.handleHttpRequest);
     } else if (opts.mode === 'manual') {
-      opts.setup(server);
+      opts.setup(this.server);
     } else {
       throw new Error(`Unsupported mode`);
     }
+  };
+
+  public listen = ({
+    port,
+    host,
+  }: ToolkitServerListenerOptions): Promise<ToolkitServerListener> => {
+    const httpServer = createServer(this.server.handleHttpRequest);
+    const wss = new WebSocketServer({
+      server: httpServer,
+    });
+    wss.on('connection', this.server.handleWsConnection);
+    const close = () => {
+      wss.close();
+      httpServer.close();
+      httpServer.closeAllConnections();
+      // After a short delay, destroy any remaining sockets
+      setTimeout(() => {
+        wss.clients.forEach((client) => client.terminate());
+      }, 1000);
+    };
+    return new Promise((resolve, reject) => {
+      httpServer.on('error', (err) => {
+        reject(err);
+      });
+      wss.on('error', (err) => {
+        reject(err);
+      });
+      try {
+        httpServer.listen({ port, host }, () => {
+          resolve({
+            close,
+          });
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
   };
 
   public setRoot = (group: Group) => {

@@ -1,5 +1,9 @@
 export { Toolkit } from './backend/toolkit';
-export type { ToolkitConnection } from './backend/toolkit';
+export type {
+  ToolkitConnection,
+  ToolkitServerListenerOptions,
+  ToolkitServerListener,
+} from './backend/toolkit';
 export type { ToolkitOptions } from './backend/options';
 
 export type { AnyComponent } from './backend/components/base';

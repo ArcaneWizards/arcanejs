@@ -3,7 +3,11 @@ import { isCoreComponent } from '@arcanejs/protocol/core';
 export * as code from './core';
 
 import { Button } from './button';
-import { StageContext } from './context';
+import {
+  StageContext,
+  StageContextData,
+  StageConnectionState,
+} from './context';
 import { Group, GroupStateWrapper } from './group';
 import { Label } from './label';
 import { NestedContent } from './nesting';
@@ -29,6 +33,8 @@ export {
   TextInput,
   Timeline,
 };
+
+export type { StageContextData, StageConnectionState };
 
 export const CORE_FRONTEND_COMPONENT_RENDERER: FrontendComponentRenderer = {
   namespace: 'core',

@@ -1,5 +1,28 @@
 # @arcanejs/toolkit
 
+## 6.0.0
+
+### Minor Changes
+
+- 21bdd2e: Allow for incoming server listeners to be modified while running
+
+  Make it possible to programatically listen to additional ports and hosts,
+  and close those connections at any point.
+
+### Patch Changes
+
+- 87d1735: Address bug where messages are sent to closed socket
+
+  When first trying to send a message while there's no active connection,
+  for example after a connection has just been closed,
+  the send would fail as it wouldn't wait for the connection to be open.
+
+  This was due to `initializeWebsocket` incorrectly resolving too early.
+  `initializeWebsocket` now only resolves after the socket has been opened.
+
+- Updated dependencies [9aec7b1]
+  - @arcanejs/toolkit-frontend@0.9.0
+
 ## 5.0.1
 
 ### Patch Changes
