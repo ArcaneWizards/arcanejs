@@ -1,5 +1,14 @@
 # @arcanejs/toolkit
 
+## 6.0.1
+
+### Patch Changes
+
+- 9523eb0: Avoid fragment in WS URLs
+
+  Avoid a bug where websocket connections would fail to initialize if the current
+  window has a fragment in the URL.
+
 ## 6.0.0
 
 ### Minor Changes

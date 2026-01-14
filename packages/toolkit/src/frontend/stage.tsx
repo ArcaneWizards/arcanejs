@@ -125,6 +125,7 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     console.log('initializing websocket');
     const wsUrl = new URL(window.location.href);
     wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+    wsUrl.hash = ''; // Websocket URLs cannot contain a fragment
     const ws = new WebSocket(wsUrl.href);
     ws.onmessage = (event) => {
       handleMessage(JSON.parse(event.data));
