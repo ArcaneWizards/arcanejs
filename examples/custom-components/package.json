@@ -23,7 +23,7 @@
     "@arcanejs/react-toolkit": "workspace:^",
     "@arcanejs/toolkit": "workspace:^",
     "@arcanejs/toolkit-frontend": "workspace:^",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "react": "^18",
