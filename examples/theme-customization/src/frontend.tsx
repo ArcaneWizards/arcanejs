@@ -1,6 +1,6 @@
 import { type FC, type ReactElement } from 'react';
-import styled from 'styled-components';
 import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
+import '@arcanejs/toolkit-frontend/styles/core.css';
 import {
   DARK_THEME,
   LIGHT_THEME,
@@ -17,6 +17,7 @@ import {
   THEME_NAMESPACE,
   ThemeSwitchComponentProto,
 } from './theme-proto';
+import './theme-switch.css';
 
 const COLORFUL_DARK_THEME: Theme = {
   ...DARK_THEME,
@@ -92,55 +93,16 @@ const COLORFUL_LIGHT_THEME: Theme = {
   },
 };
 
-const ThemeSwitchCard = styled.div`
-  background: linear-gradient(
-    145deg,
-    ${(p) => p.theme.bgLight1},
-    ${(p) => p.theme.bg}
-  );
-  border: 1px solid ${(p) => p.theme.borderLighter};
-  border-radius: 14px;
-  padding: ${(p) => p.theme.sizingPx.spacing}px;
-  margin-bottom: ${(p) => p.theme.sizingPx.spacing}px;
-  display: grid;
-  gap: 12px;
-`;
-
-const ThemeSwitchTitle = styled.div`
-  font-weight: 700;
-  color: ${(p) => p.theme.textActive};
-`;
-
-const ThemeSwitchButtons = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const ThemeModeSelect = styled.select`
-  border-radius: 10px;
-  border: 1px solid ${(p) => p.theme.borderDark};
-  padding: 10px 12px;
-  font-size: 13px;
-  cursor: pointer;
-  color: ${(p) => p.theme.textActive};
-  background: ${(p) => p.theme.gradients.button};
-`;
-
-const ModeNote = styled.div`
-  color: ${(p) => p.theme.textMuted};
-  font-size: 12px;
-`;
-
 const ThemeSwitch: FC<{ info: ThemeSwitchComponentProto }> = () => {
   const { colorSchemePreference, setColorSchemePreference } =
     useColorSchemePreferences();
 
   return (
-    <ThemeSwitchCard>
-      <ThemeSwitchTitle>Appearance</ThemeSwitchTitle>
-      <ThemeSwitchButtons>
-        <ThemeModeSelect
+    <div className="theme-switch-card">
+      <div className="theme-switch-title">Appearance</div>
+      <div className="theme-switch-buttons">
+        <select
+          className="theme-mode-select"
           value={colorSchemePreference}
           onChange={(e) =>
             setColorSchemePreference(
@@ -153,13 +115,13 @@ const ThemeSwitch: FC<{ info: ThemeSwitchComponentProto }> = () => {
               {mode === 'auto' ? 'Auto/System' : `${mode} mode`}
             </option>
           ))}
-        </ThemeModeSelect>
-      </ThemeSwitchButtons>
-      <ModeNote>
+        </select>
+      </div>
+      <div className="theme-mode-note">
         Active preference is <strong>{colorSchemePreference}</strong>. The
         preference is stored in local storage per browser.
-      </ModeNote>
-    </ThemeSwitchCard>
+      </div>
+    </div>
   );
 };
 

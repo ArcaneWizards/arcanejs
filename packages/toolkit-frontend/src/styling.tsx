@@ -4,7 +4,12 @@ import {
   RuleSet,
   ThemeProvider,
 } from 'styled-components';
-import { usePreferredColorScheme } from './util';
+import React from 'react';
+import {
+  calculateClass,
+  useColorSchemePreferences,
+  usePreferredColorScheme,
+} from './util';
 
 export const GlobalStyle: ReturnType<typeof createGlobalStyle> =
   createGlobalStyle`
@@ -86,6 +91,110 @@ export const LIGHT_THEME: Theme = {
   sizingPx: DARK_THEME.sizingPx,
 };
 
+export type ThemeVariableMap = {
+  '--arcane-page-bg': string;
+  '--arcane-color-green': string;
+  '--arcane-color-red': string;
+  '--arcane-color-amber': string;
+  '--arcane-bg-dark-1': string;
+  '--arcane-bg': string;
+  '--arcane-bg-light-1': string;
+  '--arcane-border-dark': string;
+  '--arcane-border-light': string;
+  '--arcane-border-lighter': string;
+  '--arcane-border-lighterer': string;
+  '--arcane-hint': string;
+  '--arcane-hint-rgb': string;
+  '--arcane-hint-dark-1': string;
+  '--arcane-text-normal': string;
+  '--arcane-text-active': string;
+  '--arcane-text-muted': string;
+  '--arcane-shadow-box-inset': string;
+  '--arcane-shadow-text': string;
+  '--arcane-shadow-text-active': string;
+  '--arcane-gradient-button': string;
+  '--arcane-gradient-button-hover': string;
+  '--arcane-gradient-button-active': string;
+  '--arcane-gradient-button-pressed-hover': string;
+  '--arcane-gradient-hint-pressed': string;
+  '--arcane-spacing': string;
+  '--arcane-unit-height': string;
+};
+
+export const themeToCssVariables = (theme: Theme): ThemeVariableMap => ({
+  '--arcane-page-bg': theme.pageBg,
+  '--arcane-color-green': theme.colorGreen,
+  '--arcane-color-red': theme.colorRed,
+  '--arcane-color-amber': theme.colorAmber,
+  '--arcane-bg-dark-1': theme.bgDark1,
+  '--arcane-bg': theme.bg,
+  '--arcane-bg-light-1': theme.bgLight1,
+  '--arcane-border-dark': theme.borderDark,
+  '--arcane-border-light': theme.borderLight,
+  '--arcane-border-lighter': theme.borderLighter,
+  '--arcane-border-lighterer': theme.borderLighterer,
+  '--arcane-hint': theme.hint,
+  '--arcane-hint-rgb': theme.hintRGB,
+  '--arcane-hint-dark-1': theme.hintDark1,
+  '--arcane-text-normal': theme.textNormal,
+  '--arcane-text-active': theme.textActive,
+  '--arcane-text-muted': theme.textMuted,
+  '--arcane-shadow-box-inset': theme.shadows.boxShadowInset,
+  '--arcane-shadow-text': theme.shadows.textShadow,
+  '--arcane-shadow-text-active': theme.shadows.textShadowActive,
+  '--arcane-gradient-button': theme.gradients.button,
+  '--arcane-gradient-button-hover': theme.gradients.buttonHover,
+  '--arcane-gradient-button-active': theme.gradients.buttonActive,
+  '--arcane-gradient-button-pressed-hover': theme.gradients.buttonPressedHover,
+  '--arcane-gradient-hint-pressed': theme.gradients.hintPressed,
+  '--arcane-spacing': `${theme.sizingPx.spacing}px`,
+  '--arcane-unit-height': `${theme.sizingPx.unitHeight}px`,
+});
+
+const toThemeRootStyle = (
+  theme: Theme,
+  variableOverrides?: Partial<ThemeVariableMap>,
+  initialStyle?: React.CSSProperties,
+): React.CSSProperties => {
+  return {
+    ...initialStyle,
+    ...themeToCssVariables(theme),
+    ...(variableOverrides ?? {}),
+  } as React.CSSProperties;
+};
+
+export const ThemeRoot: React.FC<{
+  dark: Theme;
+  light: Theme;
+  children: React.ReactNode;
+  themeVariables?: Partial<ThemeVariableMap>;
+  rootProps?: React.HTMLAttributes<HTMLDivElement>;
+}> = ({ dark, light, children, themeVariables, rootProps }) => {
+  const { colorSchemePreference } = useColorSchemePreferences();
+  const effectiveTheme = usePreferredColorScheme();
+  const theme = effectiveTheme === 'dark' ? dark : light;
+  const style = React.useMemo(
+    () => toThemeRootStyle(theme, themeVariables, rootProps?.style),
+    [theme, themeVariables, rootProps?.style],
+  );
+
+  return (
+    <ThemeProvider theme={theme}>
+      <div
+        {...rootProps}
+        className={calculateClass(
+          'arcane-theme-root',
+          `theme-${colorSchemePreference}`,
+          rootProps?.className,
+        )}
+        style={style}
+      >
+        {children}
+      </div>
+    </ThemeProvider>
+  );
+};
+
 export const BaseStyle: ReturnType<typeof createGlobalStyle> =
   createGlobalStyle`
 * {
@@ -93,11 +202,335 @@ export const BaseStyle: ReturnType<typeof createGlobalStyle> =
 }
 
 body {
-  background: ${(p) => p.theme.pageBg};
+  background: var(--arcane-page-bg);
   margin: 0;
   padding: 0;
   font-size: 14px;
   font-family: sans-serif;
+}
+
+.arcane-stage {
+  width: 100%;
+  height: 100%;
+  background: var(--arcane-page-bg);
+  color: var(--arcane-text-normal);
+  padding: var(--arcane-spacing);
+}
+
+.arcane-button {
+  position: relative;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 200ms;
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  height: 30px;
+  color: var(--arcane-text-normal);
+  background: var(--arcane-gradient-button);
+  text-shadow: var(--arcane-shadow-text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 1px 0 0 rgba(0, 0, 0, 0.25);
+}
+
+.arcane-button:hover {
+  outline-color: rgba(243, 243, 245, 0.3);
+  background: var(--arcane-gradient-button-hover);
+  text-shadow: var(--arcane-shadow-text);
+}
+
+.arcane-button:active,
+.arcane-button.is-touching,
+.arcane-button.is-loading {
+  outline-color: rgba(255, 255, 255, 0.3);
+  background: var(--arcane-gradient-button-active);
+  text-shadow: var(--arcane-shadow-text-active);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition-duration: 50ms;
+}
+
+.arcane-button.is-error {
+  color: var(--arcane-color-red);
+  border-color: var(--arcane-color-red);
+}
+
+.arcane-button__contents {
+  padding: 6px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.arcane-button__contents > * {
+  padding: 0;
+}
+
+.arcane-button__label {
+  padding: 0 4px;
+}
+
+.arcane-touch-indicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  left: -6px;
+  bottom: -6px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-color: transparent;
+  transition: border-color 300ms;
+}
+
+.arcane-button.is-touching .arcane-touch-indicator,
+.arcane-button.is-loading .arcane-touch-indicator,
+.arcane-switch.touching .arcane-touch-indicator {
+  border-color: var(--arcane-hint);
+  background-color: rgba(var(--arcane-hint-rgb), 0.2);
+  transition: border-color 0s;
+}
+
+.arcane-text-input {
+  position: relative;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: var(--arcane-bg-dark-1);
+  border: 1px solid var(--arcane-border-dark);
+  overflow: hidden;
+  box-shadow: var(--arcane-shadow-box-inset);
+  color: var(--arcane-text-normal);
+  text-shadow: var(--arcane-shadow-text);
+}
+
+@media (max-width: 500px) {
+  .arcane-text-input {
+    flex-basis: 100%;
+  }
+}
+
+.arcane-switch {
+  position: relative;
+}
+
+.arcane-switch .inner {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 70px;
+  min-width: 70px;
+  height: 30px;
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-switch .slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  transition: left 300ms;
+}
+
+.arcane-switch .slider > .on-text,
+.arcane-switch .slider > .off-text,
+.arcane-switch .slider > .button {
+  position: absolute;
+  height: 30px;
+}
+
+.arcane-switch .slider > .on-text,
+.arcane-switch .slider > .off-text {
+  width: 40px;
+  text-align: center;
+  top: 0;
+  line-height: 28px;
+  text-shadow: var(--arcane-shadow-text-active);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.arcane-switch .slider > .on-text {
+  left: -40px;
+  background: var(--arcane-gradient-hint-pressed);
+}
+
+.arcane-switch .slider > .off-text {
+  left: 28px;
+  background: var(--arcane-gradient-button-active);
+}
+
+.arcane-switch .slider > .button {
+  top: -1px;
+  left: -1px;
+  width: 30px;
+  background: var(--arcane-gradient-button);
+  text-shadow: var(--arcane-shadow-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-switch .slider.on {
+  left: 40px;
+}
+
+.arcane-switch .slider:hover > .button {
+  background: var(--arcane-gradient-button-hover);
+}
+
+.arcane-group {
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-group.no-border {
+  border: none;
+  margin: 0 !important;
+}
+
+.arcane-group__header {
+  display: flex;
+  align-items: center;
+  padding: 5px 2px;
+  background: var(--arcane-border-dark);
+  border-bottom: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-group__header.touching {
+  background: var(--arcane-bg-dark-1);
+}
+
+.arcane-group__header.collapsed {
+  border-bottom: none;
+}
+
+.arcane-group__header > * {
+  margin: 0 3px;
+}
+
+.arcane-group__collapse-icon {
+  cursor: pointer;
+}
+
+.arcane-group__label {
+  display: inline-block;
+  border-radius: 3px;
+  background: var(--arcane-bg);
+  border: 1px solid var(--arcane-bg-light-1);
+  padding: 3px 4px;
+}
+
+.arcane-group__grow {
+  flex-grow: 1;
+}
+
+.arcane-group__collapse-bar {
+  flex-grow: 1;
+  cursor: pointer;
+  height: 30px;
+}
+
+.arcane-group__children {
+  display: flex;
+}
+
+.arcane-group__children.is-vertical {
+  flex-direction: column;
+}
+
+.arcane-group__children.is-horizontal {
+  flex-direction: row;
+  align-items: center;
+}
+
+.arcane-group__children.is-wrap {
+  flex-wrap: wrap;
+}
+
+.arcane-group__children:not(.is-wrap) {
+  flex-wrap: nowrap;
+}
+
+.arcane-group__children > * {
+  margin: calc(var(--arcane-spacing) / 2);
+}
+
+.arcane-group__editable-title {
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 2px;
+}
+
+.arcane-group__editable-title > * {
+  margin: 0 2px;
+}
+
+.arcane-group__editable-title > .icon {
+  color: var(--arcane-text-muted);
+}
+
+.arcane-group__editable-title:hover {
+  background: var(--arcane-bg);
+}
+
+.arcane-group__editable-title:hover > .icon {
+  color: var(--arcane-hint);
+}
+
+.arcane-group__title-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--arcane-text-normal);
+}
+
+.arcane-tabs {
+  display: flex;
+  flex-direction: column;
+  background: var(--arcane-border-dark);
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-tabs__list {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-tabs__item {
+  height: calc(var(--arcane-spacing) * 3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--arcane-spacing);
+  cursor: pointer;
+  background: var(--arcane-bg-dark-1);
+  margin-right: 1px;
+}
+
+.arcane-tabs__item:hover,
+.arcane-tabs__item.touching {
+  background: var(--arcane-bg-light-1);
+}
+
+.arcane-tabs__item.current {
+  color: var(--arcane-hint);
+}
+
+.arcane-tabs__item.current::after {
+  content: '';
+  border-bottom: 2px solid var(--arcane-hint);
+  display: block;
+  margin-top: calc(var(--arcane-spacing) / 2);
 }
 `;
 

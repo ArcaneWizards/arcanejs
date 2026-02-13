@@ -32,6 +32,16 @@
       "import": "./dist/styling.mjs",
       "require": "./dist/styling.js"
     },
+    "./styles": {
+      "@arcanejs/source": "./src/styles/index.ts",
+      "types": "./dist/styles/index.d.ts",
+      "import": "./dist/styles/index.mjs",
+      "require": "./dist/styles/index.js"
+    },
+    "./styles/core.css": {
+      "@arcanejs/source": "./src/styles/core.css",
+      "default": "./dist/styles/core.css"
+    },
     "./types": {
       "@arcanejs/source": "./src/types.ts",
       "types": "./dist/types.d.ts",
@@ -48,7 +58,8 @@
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "build": "rm -rf dist && tsup && check-export-map"
+    "build": "rm -rf dist && tsup && pnpm build:styles && check-export-map",
+    "build:styles": "node ./scripts/build-styles.mjs"
   },
   "devDependencies": {
     "@arcanejs/eslint-config": "workspace:^",

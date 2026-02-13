@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
 
@@ -23,7 +22,7 @@ const TextInput: FC<Props> = ({ className, info }) => {
 
   return (
     <input
-      className={className}
+      className={`arcane-text-input ${className ?? ''}`.trim()}
       defaultValue={info.value}
       ref={ref}
       onChange={(ev) =>
@@ -39,21 +38,4 @@ const TextInput: FC<Props> = ({ className, info }) => {
   );
 };
 
-const StyledTextInput: FC<Props> = styled(TextInput)`
-  position: relative;
-  box-sizing: border-box;
-  padding: 6px 8px;
-  border-radius: 3px;
-  background: ${(p) => p.theme.bgDark1};
-  border: 1px solid ${(p) => p.theme.borderDark};
-  overflow: hidden;
-  box-shadow: ${(p) => p.theme.shadows.boxShadowInset};
-  color: ${(p) => p.theme.textNormal};
-  text-shadow: ${(p) => p.theme.shadows.textShadow};
-
-  @media (max-width: 500px) {
-    flex-basis: 100%;
-  }
-`;
-
-export { StyledTextInput as TextInput };
+export { TextInput };

@@ -5,6 +5,7 @@ export default defineConfig({
     'src/components/index.tsx',
     'src/components/core/index.ts',
     'src/styling.tsx',
+    'src/styles/index.ts',
     'src/types.ts',
     'src/util/index.ts',
   ],

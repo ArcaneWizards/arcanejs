@@ -64,13 +64,17 @@ export class Server<
       throw new Error('Entrypoint file must be a .js file');
     }
     const entrypointMap = entrypoint + '.map';
+    const entrypointCss = entrypoint.replace(/\.js$/, '.css');
+    const hasEntrypointCss = fs.existsSync(entrypointCss);
     const entrypointFilename = path.basename(entrypoint);
     const entrypointMapFilename = path.basename(entrypointMap);
+    const entrypointCssFilename = path.basename(entrypointCss);
     this.title = options.title ?? '@arcanejs';
     const staticFilePaths = {
       materialSymbolsOutlined: FONTS.materialSymbolsOutlined,
       entrypointJs: entrypointFilename,
       entrypointJsMap: entrypointMapFilename,
+      ...(hasEntrypointCss ? { entrypointCss: entrypointCssFilename } : {}),
     };
     const additionalFiles =
       this.options.additionalFiles ?? ({} as TAdditionalFiles);
@@ -109,6 +113,14 @@ export class Server<
         content: await fs.promises.readFile(entrypointMap),
         contentType: 'text/plain',
       }),
+      ...(hasEntrypointCss
+        ? {
+            [this.toRoutePath(entrypointCssFilename)]: async () => ({
+              content: await fs.promises.readFile(entrypointCss),
+              contentType: 'text/css',
+            }),
+          }
+        : {}),
       ...Object.fromEntries(additionalFileEntries),
     };
     this.htmlContext = {
@@ -122,6 +134,9 @@ export class Server<
         entrypointJsMap: this.toSiteRelativeUrl(
           staticFilePaths.entrypointJsMap,
         ),
+        entrypointCss: hasEntrypointCss
+          ? this.toSiteRelativeUrl(entrypointCssFilename)
+          : null,
       },
       assetUrls: this.createAssetUrls(),
     } as ToolkitHtmlPageContext<TAdditionalFiles>;
@@ -154,6 +169,11 @@ export class Server<
                   src: url(${this.htmlContext.coreAssets.materialSymbolsOutlined}) format('woff');
                 }
               </style>
+              ${
+                this.htmlContext.coreAssets.entrypointCss
+                  ? `<link rel="stylesheet" href="${this.htmlContext.coreAssets.entrypointCss}" />`
+                  : ''
+              }
             </head>
             <body>
               <div id="root"></div>

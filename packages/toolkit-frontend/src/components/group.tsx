@@ -7,7 +7,6 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
 
@@ -21,91 +20,6 @@ interface Props {
   className?: string;
   info: proto.GroupComponent;
 }
-
-const CollapseIcon = styled(Icon)({
-  cursor: 'pointer',
-});
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 5px 2px;
-  background: ${(p) => p.theme.borderDark};
-  border-bottom: 1px solid ${(p) => p.theme.borderDark};
-
-  &.touching {
-    background: ${(p) => p.theme.bgDark1};
-  }
-
-  &.collapsed {
-    border-bottom: none;
-  }
-
-  > * {
-    margin: 0 3px;
-  }
-`;
-
-const Label = styled.span`
-  display: inline-block;
-  border-radius: 3px;
-  background: ${(p) => p.theme.bg};
-  border: 1px solid ${(p) => p.theme.bgLight1};
-  padding: 3px 4px;
-`;
-
-const Grow = styled.span({
-  flexGrow: '1',
-});
-
-const CollapseBar = styled.span({
-  flexGrow: '1',
-  cursor: 'pointer',
-  height: '30px',
-});
-
-const GroupChildren = styled.div<Pick<Props, 'info'>>`
-  display: flex;
-  flex-direction: ${(p) =>
-    p.info.direction === 'vertical' ? 'column' : 'row'};
-  flex-wrap: ${(p) => (p.info.wrap ? 'wrap' : 'nowrap')};
-  ${(p) => (p.info.direction === 'vertical' ? '' : 'align-items: center;')}
-
-  > * {
-    margin: ${(p) => p.theme.sizingPx.spacing / 2}px;
-  }
-`;
-
-const EditableTitle = styled.span`
-  display: flex;
-  align-items: center;
-  border-radius: 3px;
-  cursor: pointer;
-  padding: 3px 2px;
-
-  > * {
-    margin: 0 2px;
-  }
-
-  > .icon {
-    color: ${(p) => p.theme.textMuted};
-  }
-
-  &:hover {
-    background: ${(p) => p.theme.bg};
-
-    > .icon {
-      color: ${(p) => p.theme.hint};
-    }
-  }
-`;
-
-const TitleInput = styled.input`
-  background: none;
-  border: none;
-  outline: none;
-  color: ${(p) => p.theme.textNormal};
-`;
 
 const GroupStateContext = React.createContext<{
   isCollapsed: (
@@ -172,9 +86,15 @@ const Group: FC<Props> = ({ className, info }) => {
   const { renderComponent, sendMessage } = useContext(StageContext);
   const [editingTitle, setEditingTitle] = useState(false);
   const children = (
-    <GroupChildren info={info}>
+    <div
+      className={calculateClass(
+        'arcane-group__children',
+        info.direction === 'vertical' ? 'is-vertical' : 'is-horizontal',
+        info.wrap && 'is-wrap',
+      )}
+    >
       {info.children.map(renderComponent)}
-    </GroupChildren>
+    </div>
   );
   const collapsible = !!info.defaultCollapsibleState;
   const collapsed = info.defaultCollapsibleState
@@ -219,25 +139,38 @@ const Group: FC<Props> = ({ className, info }) => {
   );
 
   return (
-    <div className={calculateClass(className, !hasBorder && 'no-border')}>
+    <div
+      className={calculateClass(
+        'arcane-group',
+        className,
+        !hasBorder && 'no-border',
+      )}
+    >
       {displayHeader ? (
-        <Header
+        <div
           className={calculateClass(
+            'arcane-group__header',
             collapsePressable.touching && 'touching',
             collapsible && collapsed && 'collapsed',
           )}
         >
           {collapsible && (
-            <CollapseIcon
+            <Icon
+              className="arcane-group__collapse-icon"
               icon={collapsed ? 'arrow_right' : 'arrow_drop_down'}
               {...collapsePressable.handlers}
             />
           )}
-          {info.labels?.map((l) => <Label>{l.text}</Label>)}
+          {info.labels?.map((l, index) => (
+            <span key={`${l.text}-${index}`} className="arcane-group__label">
+              {l.text}
+            </span>
+          ))}
           {showTitle &&
             (info.editableTitle ? (
               editingTitle ? (
-                <TitleInput
+                <input
+                  className="arcane-group__title-input"
                   // Focus input when it's created
                   ref={(input) => input?.focus()}
                   onBlur={updateTitle}
@@ -245,21 +178,27 @@ const Group: FC<Props> = ({ className, info }) => {
                   defaultValue={info.title}
                 />
               ) : (
-                <EditableTitle onClick={() => setEditingTitle(true)}>
+                <span
+                  className="arcane-group__editable-title"
+                  onClick={() => setEditingTitle(true)}
+                >
                   <span>{info.title}</span>
                   <Icon className="icon" icon="edit" />
-                </EditableTitle>
+                </span>
               )
             ) : (
               <span>{info.title}</span>
             ))}
           {collapsible ? (
-            <CollapseBar {...collapsePressable.handlers} />
+            <span
+              className="arcane-group__collapse-bar"
+              {...collapsePressable.handlers}
+            />
           ) : (
-            <Grow />
+            <span className="arcane-group__grow" />
           )}
           {info.headers?.map((h) => h.children.map((c) => renderComponent(c)))}
-        </Header>
+        </div>
       ) : null}
       {collapsible && collapsed ? null : childrenElements}
     </div>
@@ -268,19 +207,4 @@ const Group: FC<Props> = ({ className, info }) => {
 
 Group.displayName = 'Group';
 
-const StyledGroup: FC<Props> = styled(Group)`
-  border: 1px solid ${(p) => p.theme.borderDark};
-
-  > .title {
-    padding: 5px;
-    background: ${(p) => p.theme.borderDark};
-    border-bottom: 1px solid ${(p) => p.theme.borderDark};
-  }
-
-  &.no-border {
-    border: none;
-    margin: 0 !important;
-  }
-`;
-
-export { StyledGroup as Group };
+export { Group };

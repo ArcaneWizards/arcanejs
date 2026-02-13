@@ -17,7 +17,8 @@ export type ToolkitAdditionalFiles = Record<string, ToolkitStaticFileResolver>;
 export type ToolkitCoreAssetRelativePath =
   | typeof FONTS.materialSymbolsOutlined
   | `${string}.js`
-  | `${string}.js.map`;
+  | `${string}.js.map`
+  | `${string}.css`;
 
 export type ToolkitHtmlPageContext<
   TAdditionalFiles extends ToolkitAdditionalFiles,
@@ -28,6 +29,7 @@ export type ToolkitHtmlPageContext<
     materialSymbolsOutlined: string;
     entrypointJs: string;
     entrypointJsMap: string;
+    entrypointCss: string | null;
   };
   assetUrls: Record<
     ToolkitCoreAssetRelativePath | Extract<keyof TAdditionalFiles, string>,

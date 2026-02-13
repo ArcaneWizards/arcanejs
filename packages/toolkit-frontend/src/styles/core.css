@@ -1,0 +1,373 @@
+:root {
+  --arcane-page-bg: #333;
+  --arcane-color-green: #98c379;
+  --arcane-color-red: #e06c75;
+  --arcane-color-amber: #d19a66;
+  --arcane-bg-dark-1: #252524;
+  --arcane-bg: #2a2a2b;
+  --arcane-bg-light-1: #353638;
+  --arcane-border-dark: #151516;
+  --arcane-border-light: #1c1d1d;
+  --arcane-border-lighter: #252524;
+  --arcane-border-lighterer: #6b6b67;
+  --arcane-hint: #4286f4;
+  --arcane-hint-rgb: 66, 134, 244;
+  --arcane-hint-dark-1: #2a77f3;
+  --arcane-text-normal: #f3f3f5;
+  --arcane-text-active: #ffffff;
+  --arcane-text-muted: #777777;
+  --arcane-shadow-box-inset: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.3);
+  --arcane-shadow-text: 0 -1px rgba(0, 0, 0, 0.7);
+  --arcane-shadow-text-active: 0 -1px rgba(0, 0, 0, 0.4);
+  --arcane-gradient-button: linear-gradient(to bottom, #4f5053, #343436);
+  --arcane-gradient-button-hover: linear-gradient(to bottom, #5e6064, #393a3b);
+  --arcane-gradient-button-active: linear-gradient(to bottom, #242525, #37383a);
+  --arcane-gradient-button-pressed-hover: linear-gradient(
+    to bottom,
+    #282929,
+    #414243
+  );
+  --arcane-gradient-hint-pressed: linear-gradient(to bottom, #2a77f3, #4286f4);
+  --arcane-spacing: 15px;
+  --arcane-unit-height: 40px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--arcane-page-bg);
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-family: sans-serif;
+}
+
+body.touch-mode * {
+  cursor: none !important;
+}
+
+.arcane-stage {
+  width: 100%;
+  height: 100%;
+  background: var(--arcane-page-bg);
+  color: var(--arcane-text-normal);
+  padding: var(--arcane-spacing);
+}
+
+.arcane-button {
+  position: relative;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 200ms;
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  height: 30px;
+  color: var(--arcane-text-normal);
+  background: var(--arcane-gradient-button);
+  text-shadow: var(--arcane-shadow-text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 1px 0 0 rgba(0, 0, 0, 0.25);
+}
+
+.arcane-button:hover {
+  outline-color: rgba(243, 243, 245, 0.3);
+  background: var(--arcane-gradient-button-hover);
+  text-shadow: var(--arcane-shadow-text);
+}
+
+.arcane-button:active,
+.arcane-button.is-touching,
+.arcane-button.is-loading {
+  outline-color: rgba(255, 255, 255, 0.3);
+  background: var(--arcane-gradient-button-active);
+  text-shadow: var(--arcane-shadow-text-active);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition-duration: 50ms;
+}
+
+.arcane-button.is-error {
+  color: var(--arcane-color-red);
+  border-color: var(--arcane-color-red);
+}
+
+.arcane-button__contents {
+  padding: 6px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.arcane-button__contents > * {
+  padding: 0;
+}
+
+.arcane-button__label {
+  padding: 0 4px;
+}
+
+.arcane-touch-indicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  left: -6px;
+  bottom: -6px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-color: transparent;
+  transition: border-color 300ms;
+}
+
+.arcane-button.is-touching .arcane-touch-indicator,
+.arcane-button.is-loading .arcane-touch-indicator,
+.arcane-switch.touching .arcane-touch-indicator {
+  border-color: var(--arcane-hint);
+  background-color: rgba(var(--arcane-hint-rgb), 0.2);
+  transition: border-color 0s;
+}
+
+.arcane-text-input {
+  position: relative;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: var(--arcane-bg-dark-1);
+  border: 1px solid var(--arcane-border-dark);
+  overflow: hidden;
+  box-shadow: var(--arcane-shadow-box-inset);
+  color: var(--arcane-text-normal);
+  text-shadow: var(--arcane-shadow-text);
+}
+
+@media (max-width: 500px) {
+  .arcane-text-input {
+    flex-basis: 100%;
+  }
+}
+
+.arcane-switch {
+  position: relative;
+}
+
+.arcane-switch .inner {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 70px;
+  min-width: 70px;
+  height: 30px;
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-switch .slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  transition: left 300ms;
+}
+
+.arcane-switch .slider > .on-text,
+.arcane-switch .slider > .off-text,
+.arcane-switch .slider > .button {
+  position: absolute;
+  height: 30px;
+}
+
+.arcane-switch .slider > .on-text,
+.arcane-switch .slider > .off-text {
+  width: 40px;
+  text-align: center;
+  top: 0;
+  line-height: 28px;
+  text-shadow: var(--arcane-shadow-text-active);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.arcane-switch .slider > .on-text {
+  left: -40px;
+  background: var(--arcane-gradient-hint-pressed);
+}
+
+.arcane-switch .slider > .off-text {
+  left: 28px;
+  background: var(--arcane-gradient-button-active);
+}
+
+.arcane-switch .slider > .button {
+  top: -1px;
+  left: -1px;
+  width: 30px;
+  background: var(--arcane-gradient-button);
+  text-shadow: var(--arcane-shadow-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-switch .slider.on {
+  left: 40px;
+}
+
+.arcane-switch .slider:hover > .button {
+  background: var(--arcane-gradient-button-hover);
+}
+
+.arcane-group {
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-group.no-border {
+  border: none;
+  margin: 0 !important;
+}
+
+.arcane-group__header {
+  display: flex;
+  align-items: center;
+  padding: 5px 2px;
+  background: var(--arcane-border-dark);
+  border-bottom: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-group__header.touching {
+  background: var(--arcane-bg-dark-1);
+}
+
+.arcane-group__header.collapsed {
+  border-bottom: none;
+}
+
+.arcane-group__header > * {
+  margin: 0 3px;
+}
+
+.arcane-group__collapse-icon {
+  cursor: pointer;
+}
+
+.arcane-group__label {
+  display: inline-block;
+  border-radius: 3px;
+  background: var(--arcane-bg);
+  border: 1px solid var(--arcane-bg-light-1);
+  padding: 3px 4px;
+}
+
+.arcane-group__grow {
+  flex-grow: 1;
+}
+
+.arcane-group__collapse-bar {
+  flex-grow: 1;
+  cursor: pointer;
+  height: 30px;
+}
+
+.arcane-group__children {
+  display: flex;
+}
+
+.arcane-group__children.is-vertical {
+  flex-direction: column;
+}
+
+.arcane-group__children.is-horizontal {
+  flex-direction: row;
+  align-items: center;
+}
+
+.arcane-group__children.is-wrap {
+  flex-wrap: wrap;
+}
+
+.arcane-group__children:not(.is-wrap) {
+  flex-wrap: nowrap;
+}
+
+.arcane-group__children > * {
+  margin: calc(var(--arcane-spacing) / 2);
+}
+
+.arcane-group__editable-title {
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 2px;
+}
+
+.arcane-group__editable-title > * {
+  margin: 0 2px;
+}
+
+.arcane-group__editable-title > .icon {
+  color: var(--arcane-text-muted);
+}
+
+.arcane-group__editable-title:hover {
+  background: var(--arcane-bg);
+}
+
+.arcane-group__editable-title:hover > .icon {
+  color: var(--arcane-hint);
+}
+
+.arcane-group__title-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--arcane-text-normal);
+}
+
+.arcane-tabs {
+  display: flex;
+  flex-direction: column;
+  background: var(--arcane-border-dark);
+  border: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-tabs__list {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid var(--arcane-border-dark);
+}
+
+.arcane-tabs__item {
+  height: calc(var(--arcane-spacing) * 3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--arcane-spacing);
+  cursor: pointer;
+  background: var(--arcane-bg-dark-1);
+  margin-right: 1px;
+}
+
+.arcane-tabs__item:hover,
+.arcane-tabs__item.touching {
+  background: var(--arcane-bg-light-1);
+}
+
+.arcane-tabs__item.current {
+  color: var(--arcane-hint);
+}
+
+.arcane-tabs__item.current::after {
+  content: '';
+  border-bottom: 2px solid var(--arcane-hint);
+  display: block;
+  margin-top: calc(var(--arcane-spacing) / 2);
+}
