@@ -53,7 +53,7 @@ Peer ecosystem typically used with this package:
 
 ### `@arcanejs/toolkit-frontend/styles/core.css`
 
-- Precompiled core Arcane frontend stylesheet
+- Tailwind-generated core Arcane frontend stylesheet
 
 ### `@arcanejs/toolkit-frontend/types`
 
