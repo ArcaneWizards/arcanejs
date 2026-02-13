@@ -126,6 +126,31 @@ Useful package/example commands:
 - `pnpm --filter @arcanejs/examples-react start:counter`
 - `pnpm --filter @arcanejs/examples-custom-components start`
 
+## Changesets (Required for Package Code Changes)
+This repo uses Changesets for release notes and version bumps. Agents must keep `.changeset` entries accurate so release cuts bump all affected versions.
+
+When to add a changeset:
+- Add one for code changes in these publishable packages under `packages/*`: `@arcanejs/toolkit`, `@arcanejs/react-toolkit`, `@arcanejs/toolkit-frontend`, `@arcanejs/protocol`, `@arcanejs/diff`.
+- Do not add a changeset for changes limited to docs, formatting, CI, or example/apps-only changes.
+- Do not add a changeset for private config packages unless explicitly requested (`@arcanejs/eslint-config`, `@arcanejs/typescript-config`).
+
+How to create it:
+1. Run `pnpm changeset` after making package code changes.
+2. Select every changed publishable package.
+3. Choose bump level based on impact:
+   - `patch`: bug fixes, internal refactors, non-breaking behavior changes.
+   - `minor`: backward-compatible new features.
+   - `major`: breaking API/behavior changes.
+4. Write a concise summary focused on user-visible impact.
+5. Commit the generated `.changeset/*.md` file with the code change.
+
+Authoring guidelines for changeset text:
+- Describe what changed and why it matters to package consumers.
+- Mention API additions/removals/renames and behavior changes.
+- Avoid vague text like “misc updates”.
+- If multiple packages changed, include package-specific notes in one changeset where appropriate.
+- Keep entries factual and scoped to the actual diff.
+
 ## Important Constraints and Gotchas
 - Single-process architecture by design; no multi-process state coordination.
 - No authentication/authorization built in; do not expose publicly without hardening.
