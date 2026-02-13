@@ -50,6 +50,19 @@ Expectations:
 - Run formatting after each set of edits and again before handoff if additional edits occurred.
 - Treat formatting as mandatory, not optional.
 
+## Worktree Dependency Setup
+
+Agent sessions commonly run in fresh git worktrees where dependencies are not installed yet.
+
+Required near the start of each workflow (before any other `pnpm` command):
+
+- `pnpm install`
+
+Expectations:
+
+- Run `pnpm install` from the repository root before `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm test`, `pnpm format:fix`, or any filtered `pnpm --filter ...` command.
+- Treat missing `node_modules`/workspace links in a clean worktree as expected, and resolve them with `pnpm install` first.
+
 The architecture is split across:
 
 - Server-side component model and transport (`@arcanejs/toolkit`)
