@@ -1,0 +1,26 @@
+{
+  "name": "@arcanejs/examples-custom-shell",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Example app demonstrating custom Toolkit HTML shell and static assets",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "build": "tsc --noEmit",
+    "start": "node --import=tsx --conditions=@arcanejs/source src"
+  },
+  "devDependencies": {
+    "@arcanejs/eslint-config": "workspace:^",
+    "@arcanejs/toolkit": "workspace:^",
+    "@arcanejs/typescript-config": "workspace:^",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "eslint": "^8.57.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "tsx": "^4.19.1"
+  }
+}

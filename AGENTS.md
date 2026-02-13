@@ -68,6 +68,7 @@ The architecture is split across:
 - `/examples/react`: primary usage examples for React-based apps.
 - `/examples/core`: usage without React renderer (direct toolkit classes).
 - `/examples/custom-components`: full custom namespace example (backend + frontend + protocol).
+- `/examples/custom-shell`: toolkit `htmlPage` + `additionalFiles` example with a custom HTML shell and external CSS asset.
 - `/apps/docs`: Next.js sandbox/simulator for rendering components without live WS.
 
 ## How The System Works (End-to-End)
@@ -77,7 +78,7 @@ The architecture is split across:
    - Or directly with toolkit classes (`Group`, `Button`, etc.).
 2. Toolkit hosts HTTP + WebSocket:
    - `Toolkit.start(...)` in `/packages/toolkit/src/backend/toolkit.ts`.
-   - Serves a minimal HTML shell and JS entrypoint from `Server` in `/packages/toolkit/src/backend/server.ts`.
+   - Serves HTML + static assets from `Server` in `/packages/toolkit/src/backend/server.ts` (default shell, or `ToolkitOptions.htmlPage` override).
 3. Initial client sync:
    - On WS connect, server sends `metadata` and `tree-full`.
 4. Incremental sync:
@@ -102,6 +103,7 @@ The architecture is split across:
 - `Server` (`/packages/toolkit/src/backend/server.ts`)
   - Serves HTML + static assets and handles WebSocket connections.
   - Optional custom frontend bundle via `entrypointJsFile`.
+  - Supports extra static file routes via `ToolkitOptions.additionalFiles` and custom root HTML via `ToolkitOptions.htmlPage`.
 - `Base` / `BaseParent` (`/packages/toolkit/src/backend/components/base.ts`)
   - Shared component behavior, immutable props updates, listener wiring.
   - Parent components own child lists and recursive message/call routing.
@@ -168,6 +170,7 @@ Useful package/example commands:
 - `pnpm --filter @arcanejs/toolkit-frontend build`
 - `pnpm --filter @arcanejs/examples-react start:counter`
 - `pnpm --filter @arcanejs/examples-custom-components start`
+- `pnpm --filter @arcanejs/examples-custom-shell start`
 
 ## Changesets (Required for Package Code Changes)
 
@@ -216,6 +219,9 @@ Agent rules:
 - Toolkit root can only be set once (`setRoot` throws on second call).
 - Tree updates are throttled; do not assume per-mutation immediate network flush.
 - Component keys depend on instance identity; replacing instances changes keys.
+- New examples should configure `Toolkit` logging with `pino` (prefer `pino-pretty` transport for local dev) instead of `console`, so startup and static-asset errors are visible.
+- Toolkit default frontend bootstrap depends on built files in `packages/toolkit/dist/frontend/*` (including `entrypoint.js`); if those are missing, HTTP requests for the core entrypoint return 500/404. Run toolkit build before debugging custom shell routing.
+- `ToolkitOptions.additionalFiles` keys are strict relative paths (no leading `/`), and are mounted under `ToolkitOptions.path`.
 - Core packages target React 19 (`react@^19.2.0`, `react-dom@^19.2.0`) and `@arcanejs/react-toolkit` tracks `react-reconciler@0.33.x`.
 - `packages/react-toolkit/src/index.tsx` intentionally includes compat handling for both old/new `react-reconciler` host signatures (`commitUpdate`, `createContainer`) because ArcaneJS uses reconciler internals directly.
 - In frontend package public types, avoid exported `JSX.*` return/prop types under React 19 type packages; use `ReactElement`/`ReactNode` imports to prevent DTS `TS4033` private-name failures.
