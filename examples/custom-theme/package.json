@@ -1,0 +1,33 @@
+{
+  "name": "@arcanejs/examples-custom-theme",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Example app using a custom frontend entrypoint with colourful styled-components themes",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "build": "tsc --noEmit && pnpm build:frontend",
+    "build:frontend": "rm -rf dist && esbuild src/frontend.tsx --bundle --sourcemap --outfile=dist/custom-entrypoint.js",
+    "start": "pnpm build:frontend && node --import=tsx --conditions=@arcanejs/source src"
+  },
+  "devDependencies": {
+    "@arcanejs/eslint-config": "workspace:^",
+    "@arcanejs/typescript-config": "workspace:^",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@arcanejs/react-toolkit": "workspace:^",
+    "@arcanejs/toolkit": "workspace:^",
+    "@arcanejs/toolkit-frontend": "workspace:^",
+    "esbuild": "^0.24.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "react": "^18",
+    "styled-components": "^6.1.13",
+    "tsx": "^4.19.1",
+    "zod": "^3.23.8"
+  }
+}

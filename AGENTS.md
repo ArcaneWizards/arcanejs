@@ -68,6 +68,7 @@ The architecture is split across:
 - `/examples/react`: primary usage examples for React-based apps.
 - `/examples/core`: usage without React renderer (direct toolkit classes).
 - `/examples/custom-components`: full custom namespace example (backend + frontend + protocol).
+- `/examples/custom-theme`: custom frontend entrypoint that overrides ArcaneJS styled-components themes for core components.
 - `/apps/docs`: Next.js sandbox/simulator for rendering components without live WS.
 
 ## How The System Works (End-to-End)
@@ -168,6 +169,7 @@ Useful package/example commands:
 - `pnpm --filter @arcanejs/toolkit-frontend build`
 - `pnpm --filter @arcanejs/examples-react start:counter`
 - `pnpm --filter @arcanejs/examples-custom-components start`
+- `pnpm --filter @arcanejs/examples-custom-theme start`
 
 ## Changesets (Required for Package Code Changes)
 

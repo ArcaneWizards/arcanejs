@@ -103,6 +103,9 @@ but I intend to open-source it in the future.
 For a comprehensive list of examples,
 please see the [react example directory](./examples/react/).
 
+For a custom frontend entrypoint that applies colourful styled-components themes,
+see [`examples/custom-theme`](./examples/custom-theme/).
+
 ### [Example Philips Hue App](https://github.com/arcanejs/hue-example)
 
 Check out this example repository that uses `@arcanejs/react-toolkit`
