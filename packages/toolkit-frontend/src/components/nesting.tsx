@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, type ReactNode } from 'react';
 import { styled } from 'styled-components';
 
 import { calculateClass } from '../util';
@@ -20,7 +20,7 @@ const LastNestedColor = React.createContext<GroupColor>('dark');
 
 type NestContentProps = {
   className?: string;
-  children?: JSX.Element | JSX.Element[];
+  children?: ReactNode;
 };
 
 const NestedContent: FC<NestContentProps> = ({ className, children }) => {

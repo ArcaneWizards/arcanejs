@@ -1,4 +1,5 @@
 import { isCoreComponent } from '@arcanejs/protocol/core';
+import { type ReactElement } from 'react';
 
 export * as code from './core';
 
@@ -38,7 +39,7 @@ export type { StageContextData, StageConnectionState };
 
 export const CORE_FRONTEND_COMPONENT_RENDERER: FrontendComponentRenderer = {
   namespace: 'core',
-  render: (info): JSX.Element => {
+  render: (info): ReactElement => {
     if (!isCoreComponent(info)) {
       throw new Error(`Cannot render non-core component ${info.namespace}`);
     }

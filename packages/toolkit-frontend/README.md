@@ -14,8 +14,8 @@ npm install @arcanejs/toolkit-frontend
 
 Peer ecosystem typically used with this package:
 
-- `react`
-- `react-dom`
+- `react@^19.2.0`
+- `react-dom@^19.2.0`
 - `styled-components`
 - `@arcanejs/protocol`
 

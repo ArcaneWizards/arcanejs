@@ -1,5 +1,6 @@
 import { patchJson } from '@arcanejs/diff';
 import React, {
+  ReactElement,
   useState,
   useRef,
   useCallback,
@@ -75,7 +76,7 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
   }, [renderers]);
 
   const renderComponent = useCallback(
-    (info: proto.AnyComponentProto): JSX.Element => {
+    (info: proto.AnyComponentProto): ReactElement => {
       const renderer = preparedRenderers[info.namespace];
       if (!renderer) {
         throw new Error(`no renderer for namespace ${info.namespace}`);

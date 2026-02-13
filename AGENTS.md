@@ -216,7 +216,10 @@ Agent rules:
 - Toolkit root can only be set once (`setRoot` throws on second call).
 - Tree updates are throttled; do not assume per-mutation immediate network flush.
 - Component keys depend on instance identity; replacing instances changes keys.
-- Core packages target React 18; `apps/docs` is a separate sandbox using Next/React RC versions.
+- Core packages target React 19 (`react@^19.2.0`, `react-dom@^19.2.0`) and `@arcanejs/react-toolkit` tracks `react-reconciler@0.33.x`.
+- `packages/react-toolkit/src/index.tsx` intentionally includes compat handling for both old/new `react-reconciler` host signatures (`commitUpdate`, `createContainer`) because ArcaneJS uses reconciler internals directly.
+- In frontend package public types, avoid exported `JSX.*` return/prop types under React 19 type packages; use `ReactElement`/`ReactNode` imports to prevent DTS `TS4033` private-name failures.
+- `apps/docs` remains a separate sandbox using Next/React RC versions.
 - Package READMEs are maintained, but if docs and source diverge, treat source files as authoritative.
 
 ## Where To Start For Common Tasks
