@@ -26,28 +26,27 @@ toolkit.start({
 });
 
 const App = () => {
-  const [mode, setMode] = useState<'off' | 'on'>('off');
-  const [colorIndex, setColorIndex] = useState(0);
-
-  const colorNames = ['Pink', 'Cyan', 'Lime', 'Gold'];
+  const [lightsArmed, setLightsArmed] = useState<'off' | 'on'>('off');
+  const [coolingArmed, setCoolingArmed] = useState<'off' | 'on'>('off');
 
   return (
-    <Group title="Colourful Theme Playground">
+    <Group title="Static Theme Showcase">
       <GroupHeader>
-        <Button
-          text="Rotate Accent"
-          onClick={() =>
-            setColorIndex((value) => (value + 1) % colorNames.length)
-          }
-        />
-        <Button
-          text="Toggle Mode"
-          onClick={() => setMode((value) => (value === 'off' ? 'on' : 'off'))}
-        />
+        <Button text="Start Cue" onClick={() => undefined} />
+        <Button text="Stop Cue" onClick={() => undefined} />
       </GroupHeader>
-      {`Mode: ${mode}`}
-      <Switch value={mode} onChange={setMode} />
-      {`Active Accent: ${colorNames[colorIndex]}`}
+
+      {
+        'These controls are intentionally unrelated to theme customization. Theme colors come from src/frontend.tsx.'
+      }
+
+      {`Lights Armed: ${lightsArmed}`}
+      <Switch value={lightsArmed} onChange={setLightsArmed} />
+
+      {`Cooling Armed: ${coolingArmed}`}
+      <Switch value={coolingArmed} onChange={setCoolingArmed} />
+
+      <Button text="Record Snapshot" onClick={() => undefined} />
     </Group>
   );
 };
