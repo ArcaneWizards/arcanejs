@@ -70,15 +70,10 @@ Use this package directly when you provide your own frontend bundle for custom n
 
 ```tsx
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
-import {
-  CORE_FRONTEND_COMPONENT_RENDERER,
-} from '@arcanejs/toolkit-frontend';
+import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
 
 startArcaneFrontend({
-  renderers: [
-    CORE_FRONTEND_COMPONENT_RENDERER,
-    customRenderer,
-  ],
+  renderers: [CORE_FRONTEND_COMPONENT_RENDERER, customRenderer],
 });
 ```
 

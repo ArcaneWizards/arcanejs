@@ -146,15 +146,24 @@ Supports:
 Use `prepareComponents(...)` + `ToolkitRenderer` config to add custom namespaces:
 
 ```tsx
-import { prepareComponents, CoreComponents, ToolkitRenderer } from '@arcanejs/react-toolkit';
+import {
+  prepareComponents,
+  CoreComponents,
+  ToolkitRenderer,
+} from '@arcanejs/react-toolkit';
 
 const Custom = prepareComponents('custom', {
   MyComponent,
 });
 
-ToolkitRenderer.render(<App />, toolkit, {}, {
-  componentNamespaces: [CoreComponents, Custom],
-});
+ToolkitRenderer.render(
+  <App />,
+  toolkit,
+  {},
+  {
+    componentNamespaces: [CoreComponents, Custom],
+  },
+);
 ```
 
 You must also implement matching protocol/backend/frontend layers. See:

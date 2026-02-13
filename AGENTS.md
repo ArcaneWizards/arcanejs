@@ -16,12 +16,14 @@ When working in this repo, update `AGENTS.md` in the same change if you discover
 - Important workflow changes (build/test/dev commands, entrypoints, extension patterns).
 
 When changing public-facing APIs in publishable packages (`packages/toolkit`, `packages/react-toolkit`, `packages/toolkit-frontend`, `packages/protocol`, `packages/diff`), update that package's `README.md` in the same change. Treat README updates as required for:
+
 - Export map changes (`package.json#exports`)
 - Added/removed/renamed exported symbols
 - Behavior changes that affect how consumers use the package
 - New required peer/dependency expectations for package consumers
 
 When exposing a new subpath/module that is not already re-exported by an existing entry module, update both:
+
 - `tsup.config.ts` `entry` list in that package (controls what gets built into `dist/*`)
 - `package.json#exports` for the new public import path
 
