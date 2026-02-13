@@ -26,7 +26,7 @@ type ToolkitSimulatorProps<Namespaces extends string> = {
 
 const ToolkitSimulatorContext = React.createContext<{
   tree: AnyComponentProto | null;
-  renderComponent: (info: AnyComponentProto) => JSX.Element;
+  renderComponent: (info: AnyComponentProto) => React.ReactElement;
 }>({
   tree: null,
   renderComponent: () => {
@@ -75,7 +75,7 @@ export const ToolkitSimulatorProvider: React.FC<
   }, [renderers]);
 
   const renderComponent = useCallback(
-    (info: AnyComponentProto): JSX.Element => {
+    (info: AnyComponentProto): React.ReactElement => {
       const renderer = preparedRenderers[info.namespace];
       if (!renderer) {
         throw new Error(`no renderer for namespace ${info.namespace}`);

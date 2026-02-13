@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, type ReactElement } from 'react';
 
 import * as proto from '@arcanejs/protocol';
 
@@ -24,7 +24,7 @@ export type StageContextData = {
         msg: proto.CallForPair<Namespace, P, Action>,
       ) => Promise<proto.ReturnForPair<P, Action>>)
     | null;
-  renderComponent: (info: proto.AnyComponentProto) => JSX.Element;
+  renderComponent: (info: proto.AnyComponentProto) => ReactElement;
   connectionUuid: string | null;
   connection: StageConnectionState;
   reconnect: () => void;

@@ -2,6 +2,7 @@ import React, {
   EventHandler,
   FC,
   KeyboardEvent,
+  ReactNode,
   SyntheticEvent,
   useContext,
   useState,
@@ -126,7 +127,7 @@ export const GroupStateWrapper: React.FunctionComponent<{
    * Whether new groups using `auto` should be open by default.
    */
   openByDefault: boolean;
-  children: JSX.Element | JSX.Element[];
+  children: ReactNode;
 }> = ({ openByDefault, children }) => {
   const [state, setState] = useState<
     Record<number, proto.GroupCollapsedState | undefined>

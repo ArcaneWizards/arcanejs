@@ -44,8 +44,12 @@ Not a fit:
 ## Install
 
 ```bash
-npm install react@^18 @arcanejs/toolkit @arcanejs/react-toolkit
+npm install react@^19.2.0 @arcanejs/toolkit @arcanejs/react-toolkit
 ```
+
+Version compatibility:
+
+- `@arcanejs/react-toolkit` is tested against React 19 and `react-reconciler` 0.33.x.
 
 Optional helper dependencies:
 

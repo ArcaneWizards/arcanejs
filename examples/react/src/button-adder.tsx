@@ -29,7 +29,7 @@ const App = () => {
   const [count, setCount] = React.useState(2);
   const [val, setVal] = React.useState(0);
 
-  const buttons: JSX.Element[] = [];
+  const buttons: React.ReactElement[] = [];
 
   for (let i = 0; i < count; i++) {
     buttons.push(<SliderButton key={i} value={val} onChange={setVal} />);

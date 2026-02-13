@@ -9,36 +9,7 @@ import { PreparedComponents, prepareComponents } from './registry';
 import { BaseComponentProto } from '@arcanejs/protocol';
 import { CoreComponents } from './core';
 
-type Type = string;
 type Props = Record<string, unknown>;
-type Container = ld.Group;
-type Instance = ld.AnyComponent;
-type TextInstance = ld.Label;
-
-type SuspenseInstance = any;
-type HydratableInstance = any;
-type PublicInstance = any;
-type HostContext = any;
-type UpdatePayload = any;
-type _ChildSet = any;
-type TimeoutHandle = any;
-type NoTimeout = number;
-
-type LightDeskHostConfig = Reconciler.HostConfig<
-  Type,
-  Props,
-  Container,
-  Instance,
-  TextInstance,
-  SuspenseInstance,
-  HydratableInstance,
-  PublicInstance,
-  HostContext,
-  UpdatePayload,
-  _ChildSet,
-  TimeoutHandle,
-  NoTimeout
->;
 
 const canSetProps = (
   instance: ld.AnyComponent,
@@ -49,9 +20,71 @@ type ReactToolkitConfig = {
   componentNamespaces: Array<PreparedComponents<any>>;
 };
 
-const hostConfig = ({
-  componentNamespaces,
-}: ReactToolkitConfig): LightDeskHostConfig => {
+const getPropsToSet = (props: Props): Record<string, unknown> => {
+  const updates: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(props)) {
+    // Filter out React-only props before passing data to toolkit components.
+    if (key !== 'children') {
+      updates[key] = val;
+    }
+  }
+  return updates;
+};
+
+const setInstanceProps = (
+  instance: ld.AnyComponent,
+  props: Record<string, unknown>,
+) => {
+  if (canSetProps(instance)) {
+    instance.setProps(props);
+  } else {
+    throw new Error(`Unexpected Instance: ${instance}`);
+  }
+};
+
+const scheduleMicrotaskCompat =
+  typeof queueMicrotask === 'function'
+    ? queueMicrotask
+    : (cb: () => void) => {
+        Promise.resolve().then(cb);
+      };
+
+const reportRendererError = (error: unknown) => {
+  // eslint-disable-next-line no-console
+  console.error(error);
+};
+
+const createContainerCompat = (
+  reconciler: any,
+  container: ld.Group,
+): unknown => {
+  const createContainer = reconciler.createContainer as (
+    ...args: Array<unknown>
+  ) => unknown;
+
+  if (createContainer.length <= 4) {
+    // React 18 / reconciler <= 0.30 shape.
+    return createContainer(container, 0, false, null);
+  }
+
+  // React 19 / reconciler >= 0.31 shape.
+  return createContainer(
+    container,
+    0,
+    null,
+    false,
+    null,
+    '',
+    reportRendererError,
+    reportRendererError,
+    reportRendererError,
+    null,
+  );
+};
+
+const ROOT_HOST_CONTEXT = {};
+
+const hostConfig = ({ componentNamespaces }: ReactToolkitConfig) => {
   const processedNamespaces: Record<string, PreparedComponents<any>> = {};
   for (const namespace of componentNamespaces) {
     if (processedNamespaces[namespace._namespace]) {
@@ -60,54 +93,71 @@ const hostConfig = ({
     processedNamespaces[namespace._namespace] = namespace;
   }
 
-  return {
+  const hostTransitionContext = React.createContext<unknown>(null);
+  let currentUpdatePriority = DefaultEventPriority;
+
+  const config: any = {
     supportsMutation: true,
     supportsPersistence: false,
     noTimeout: -1,
     isPrimaryRenderer: true,
     supportsHydration: false,
+    supportsMicrotasks: true,
+    NotPendingTransition: null,
+    HostTransitionContext: hostTransitionContext,
 
     afterActiveInstanceBlur: () => null,
-    appendChild: (parentInstance, child) => {
+    appendChild: (parentInstance: ld.AnyComponent, child: ld.AnyComponent) => {
       if (parentInstance instanceof BaseParent) {
         parentInstance.appendChild(child);
       } else {
         throw new Error(`Unexpected Parent: ${parentInstance}`);
       }
     },
-    appendInitialChild: (parentInstance, child) => {
+    appendInitialChild: (
+      parentInstance: ld.AnyComponent,
+      child: ld.AnyComponent,
+    ) => {
       if (parentInstance instanceof BaseParent) {
         parentInstance.appendChild(child);
       } else {
         throw new Error(`Unexpected Parent: ${parentInstance}`);
       }
     },
-    appendChildToContainer(container, child) {
+    appendChildToContainer(container: ld.Group, child: ld.AnyComponent) {
       container.appendChild(child);
     },
     beforeActiveInstanceBlur: () => null,
-    cancelTimeout: (id) => clearTimeout(id),
-    clearContainer: (container) => container.removeAllChildren(),
-    commitMount: () => {
+    cancelTimeout: (id: ReturnType<typeof setTimeout>) => clearTimeout(id),
+    clearContainer: (container: ld.Group) => container.removeAllChildren(),
+    commitMount: (_instance: ld.AnyComponent, _type: string, _props: Props) => {
       throw new Error(`Unexpected call to commitMount()`);
     },
-    commitUpdate(
-      instance,
-      updatePayload,
-      _type,
-      _prevProps,
-      _nextProps,
-      _internalHandle,
-    ) {
-      if (canSetProps(instance)) {
-        instance.setProps(updatePayload);
-      } else {
-        throw new Error(`Unexpected Instance: ${instance}`);
+    commitUpdate(instance: ld.AnyComponent, ...args: Array<unknown>) {
+      if (typeof args[0] === 'string') {
+        // React 19 signature: (instance, type, prevProps, nextProps, handle)
+        const nextProps = args[2] as Props;
+        setInstanceProps(instance, getPropsToSet(nextProps));
+        return;
+      }
+
+      // React 18 signature: (instance, updatePayload, type, prevProps, nextProps, handle)
+      const updatePayload = args[0] as Record<string, unknown> | null;
+      if (updatePayload) {
+        setInstanceProps(instance, updatePayload);
+        return;
+      }
+      const nextProps = args[3] as Props | undefined;
+      if (nextProps) {
+        setInstanceProps(instance, getPropsToSet(nextProps));
       }
     },
-    commitTextUpdate: (textInstance, _oldText, newText) =>
-      textInstance.setText(newText),
-    createInstance: (type, props) => {
+    commitTextUpdate: (
+      textInstance: ld.Label,
+      _oldText: string,
+      newText: string,
+    ) => textInstance.setText(newText),
+    createInstance: (type: string, props: Props) => {
       const [namespace, typeName] = type.split(':', 2);
       if (!namespace || !typeName) {
         throw new Error(`Invalid type: ${type}`);
@@ -125,107 +175,112 @@ const hostConfig = ({
       const instance = creator(props);
       return instance;
     },
-    createTextInstance: (text) => new ld.Label({ text }),
+    createTextInstance: (text: string) => new ld.Label({ text }),
     detachDeletedInstance: () => null,
-    getChildHostContext: (parentHostContext) => parentHostContext,
+    getChildHostContext: (parentHostContext: unknown) => parentHostContext,
     getCurrentEventPriority: () => DefaultEventPriority,
+    getCurrentUpdatePriority: () => currentUpdatePriority,
     getInstanceFromNode: () => {
       throw new Error('Not yet implemented.');
     },
     getInstanceFromScope: () => {
       throw new Error('Not yet implemented.');
     },
-    getPublicInstance: (instance) => instance,
-    getRootHostContext: () => null,
-    insertBefore: (parentInstance, child, beforeChild) => {
+    getPublicInstance: (instance: ld.AnyComponent) => instance,
+    getRootHostContext: () => ROOT_HOST_CONTEXT,
+    insertBefore: (
+      parentInstance: ld.AnyComponent,
+      child: ld.AnyComponent,
+      beforeChild: ld.AnyComponent,
+    ) => {
       if (parentInstance instanceof BaseParent) {
         parentInstance.insertBefore(child, beforeChild);
       } else {
         throw new Error(`Unexpected Parent: ${parentInstance}`);
       }
     },
-    insertInContainerBefore: (container, child, beforeChild) =>
-      container.insertBefore(child, beforeChild),
+    insertInContainerBefore: (
+      container: ld.Group,
+      child: ld.AnyComponent,
+      beforeChild: ld.AnyComponent,
+    ) => container.insertBefore(child, beforeChild),
     finalizeInitialChildren: () => false,
+    maySuspendCommit: () => false,
+    preloadInstance: () => false,
     prepareForCommit: () => null,
     preparePortalMount: () => null,
     prepareScopeUpdate: () => null,
     prepareUpdate: (
-      _instance,
-      _type,
-      _oldProps,
-      newProps,
-      _rootContainer,
-      _hostContext,
-    ) => {
-      const updates: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(newProps)) {
-        // Filter out extra props from set properties
-        if (key !== 'children') {
-          updates[key] = val;
-        }
-      }
-      if (Object.keys(updates).length) {
-        return updates;
-      } else {
-        return null;
-      }
+      _instance: ld.AnyComponent,
+      _type: string,
+      _oldProps: Props,
+      newProps: Props,
+      _rootContainer: ld.Group,
+      _hostContext: unknown,
+    ): Record<string, unknown> | null => {
+      const updates = getPropsToSet(newProps as Props);
+      return Object.keys(updates).length ? updates : null;
     },
-    removeChild(parentInstance, child) {
+    requestPostPaintCallback: (callback: (endTime: number) => void) => {
+      setTimeout(() => callback(Date.now()), 0);
+    },
+    removeChild(parentInstance: ld.AnyComponent, child: ld.AnyComponent) {
       if (parentInstance instanceof BaseParent) {
         parentInstance.removeChild(child);
       } else {
         throw new Error(`Unexpected Parent: ${parentInstance}`);
       }
     },
-    removeChildFromContainer: (container, child) =>
+    removeChildFromContainer: (container: ld.Group, child: ld.AnyComponent) =>
       container.removeChild(child),
     resetAfterCommit: () => null,
     resetTextContent: () => {
       throw new Error(`Unexpected call to resetTextContent()`);
     },
-    scheduleTimeout: (fn, delay) => setTimeout(fn, delay),
+    resetFormInstance: () => null,
+    resolveEventTimeStamp: () => Date.now(),
+    resolveEventType: () => null,
+    resolveUpdatePriority: () => currentUpdatePriority,
+    scheduleTimeout: (fn: () => void, delay?: number) => setTimeout(fn, delay),
+    scheduleMicrotask: scheduleMicrotaskCompat,
+    setCurrentUpdatePriority: (newPriority: number) => {
+      currentUpdatePriority = newPriority;
+    },
+    shouldAttemptEagerTransition: () => false,
     shouldSetTextContent: () => false,
+    startSuspendingCommit: () => null,
+    suspendInstance: () => null,
+    trackSchedulerEvent: () => null,
+    waitForCommitToBeReady: () => null,
 
-    // Not-implemented
-    hideInstance: () => {
-      // eslint-disable-next-line no-console
-      console.log('Not-implemented: hideInstance');
-    },
-    hideTextInstance: () => {
-      // eslint-disable-next-line no-console
-      console.log('Not-implemented: hideTextInstance');
-    },
-    unhideInstance: () => {
-      // eslint-disable-next-line no-console
-      console.log('Not-implemented: unhideInstance');
-    },
-    unhideTextInstance: () => {
-      // eslint-disable-next-line no-console
-      console.log('Not-implemented: unhideTextInstance');
-    },
+    hideInstance: () => null,
+    hideTextInstance: () => null,
+    unhideInstance: () => null,
+    unhideTextInstance: () => null,
   };
+
+  return config;
 };
 
 export const ToolkitRenderer = {
   renderGroup: (
-    component: JSX.Element,
+    component: React.ReactElement,
     container: ld.Group,
     config: ReactToolkitConfig = {
       componentNamespaces: [CoreComponents],
     },
   ) => {
-    const reconciler = Reconciler(hostConfig(config) as LightDeskHostConfig);
-    const root = (reconciler as any).createContainer(container, 0, false, null);
+    const reconciler = Reconciler(hostConfig(config) as any) as any;
+    const root = createContainerCompat(reconciler, container);
     const componentWithContexts = (
       <LoggerContext.Provider value={container.log}>
         {component}
       </LoggerContext.Provider>
     );
-    reconciler.updateContainer(componentWithContexts, root, null);
+    reconciler.updateContainer(componentWithContexts, root, null, undefined);
   },
   render: (
-    component: JSX.Element,
+    component: React.ReactElement,
     container: ld.Toolkit,
     rootGroupProps?: GroupProps,
     config: ReactToolkitConfig = {

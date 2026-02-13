@@ -19,6 +19,12 @@ Most users should pair this with [`@arcanejs/react-toolkit`](https://www.npmjs.c
 npm install @arcanejs/toolkit
 ```
 
+If you use the default Arcane frontend renderer, install React peers:
+
+```bash
+npm install react@^19.2.0 react-dom@^19.2.0
+```
+
 ## Quick Start (Without React)
 
 ```ts

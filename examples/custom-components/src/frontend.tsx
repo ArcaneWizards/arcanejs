@@ -139,7 +139,7 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
 
 const CUSTOM_FRONTEND_COMPONENT_RENDERER: FrontendComponentRenderer = {
   namespace: 'custom',
-  render: (info): JSX.Element => {
+  render: (info): React.ReactElement => {
     if (!isCustomComponent(info)) {
       throw new Error(`Cannot render non-core component ${info.namespace}`);
     }
