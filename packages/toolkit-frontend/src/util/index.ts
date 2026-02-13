@@ -4,7 +4,10 @@ export * from './touch';
 
 // TODO: move this to a new core-frontend library
 export const cn = (...args: (string | undefined | null | false)[]): string =>
-  args.filter((a) => !!a).join(' ');
+  args
+    .flatMap((a) => (a ? a.split(/\s/) : []))
+    .filter((a) => !!a)
+    .join(' ');
 
 // Backward-compatibility alias; prefer `cn`.
 export const calculateClass = cn;

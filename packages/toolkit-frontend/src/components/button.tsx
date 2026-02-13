@@ -46,14 +46,16 @@ const Button: FC<Props> = (props) => {
   return (
     <div
       className={cn(
-        'arcane-button',
-        'relative box-border cursor-pointer border outline-none',
-        'rounded-arcane-btn border-arcane-btn-border h-arcane-btn',
-        'overflow-visible transition-all duration-200',
-        'flex items-center justify-center text-arcane-btn-text bg-arcane-grad-btn hover:bg-arcane-grad-btn-hover',
-        'text-shadow-arcane-btn shadow-arcane-btn',
-        'active:bg-arcane-grad-btn-active active:text-shadow-arcane-btn-active active:shadow-arcane-btn-active',
-        'active:duration-50',
+        `
+          relative box-border flex h-arcane-btn cursor-pointer items-center
+          justify-center overflow-visible rounded-arcane-btn border
+          border-arcane-btn-border bg-arcane-grad-btn text-arcane-btn-text
+          shadow-arcane-btn transition-all duration-200 outline-none
+          text-shadow-arcane-btn
+          hover:bg-arcane-grad-btn-hover
+          active:bg-arcane-grad-btn-active active:shadow-arcane-btn-active
+          active:duration-50 active:text-shadow-arcane-btn-active
+        `,
         (touching || state.state === 'pressed' || state.state === 'loading') &&
           'bg-arcane-grad-btn-active',
         (touching || state.state === 'pressed' || state.state === 'loading') &&
@@ -70,7 +72,10 @@ const Button: FC<Props> = (props) => {
     >
       <div
         className={cn(
-          'pointer-events-none absolute -inset-1.5 rounded-md border-2 border-transparent bg-transparent transition-colors duration-300',
+          `
+            pointer-events-none absolute -inset-1.5 rounded-md border-2
+            border-transparent bg-transparent transition-colors duration-300
+          `,
           (touching || state.state === 'loading') &&
             'border-arcane-hint bg-arcane-hint-soft duration-0',
         )}
