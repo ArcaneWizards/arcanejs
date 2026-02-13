@@ -142,7 +142,7 @@ How to create it:
    - `minor`: backward-compatible new features.
    - `major`: breaking API/behavior changes.
 4. Write a concise summary focused on user-visible impact.
-5. Commit the generated `.changeset/*.md` file with the code change.
+5. Stage the generated `.changeset/*.md` file with the code change.
 
 Authoring guidelines for changeset text:
 - Describe what changed and why it matters to package consumers.
@@ -150,6 +150,15 @@ Authoring guidelines for changeset text:
 - Avoid vague text like “misc updates”.
 - If multiple packages changed, include package-specific notes in one changeset where appropriate.
 - Keep entries factual and scoped to the actual diff.
+
+## Commit Signing Workflow
+This repository requires signed commits using external key material and user interaction.
+
+Agent rules:
+- Do not create commits by default as part of normal workflow.
+- If a commit is needed, explicitly confirm with the user first so they can respond to signing prompts.
+- Prefer preparing changes, staging guidance, and commit message suggestions unless the user asks the agent to run `git commit`.
+- Never create unsigned commits.
 
 ## Important Constraints and Gotchas
 - Single-process architecture by design; no multi-process state coordination.
