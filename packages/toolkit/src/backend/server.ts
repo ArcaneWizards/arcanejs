@@ -6,7 +6,12 @@ import type { ClientMessage, ServerMessage } from '@arcanejs/protocol';
 import type { Logger } from '@arcanejs/protocol/logging';
 import escapeHTML from 'escape-html';
 
-import { ToolkitOptions } from './options.js';
+import {
+  ToolkitAdditionalFiles,
+  ToolkitHtmlPageContext,
+  ToolkitOptions,
+  ToolkitStaticFile,
+} from './options.js';
 import { FONTS } from '../shared/static.js';
 
 // Get the module resolution custom conditions
@@ -28,20 +33,22 @@ const distDir = () => {
  * to avoid any risk of directory traversal attacks.
  */
 type PreparedStaticFiles = {
-  [id: string]: { path: string; contentType: string };
+  [id: string]: () => Promise<ToolkitStaticFile>;
 };
 
 export interface Connection {
   sendMessage(msg: ServerMessage): void;
 }
 
-export class Server {
+export class Server<
+  TAdditionalFiles extends ToolkitAdditionalFiles = Record<never, never>,
+> {
   private readonly staticFiles: PreparedStaticFiles;
-  private readonly entrypointFilename: string;
+  private readonly htmlContext: ToolkitHtmlPageContext<TAdditionalFiles>;
   private title: string;
 
   public constructor(
-    private readonly options: ToolkitOptions,
+    private readonly options: ToolkitOptions<TAdditionalFiles>,
     private readonly onNewConnection: (connection: Connection) => void,
     private readonly onClosedConnection: (connection: Connection) => void,
     private readonly onMessage: (
@@ -57,25 +64,67 @@ export class Server {
       throw new Error('Entrypoint file must be a .js file');
     }
     const entrypointMap = entrypoint + '.map';
-    this.entrypointFilename = path.basename(entrypoint);
-    this.title = escapeHTML(options.title ?? '@arcanejs');
+    const entrypointFilename = path.basename(entrypoint);
+    const entrypointMapFilename = path.basename(entrypointMap);
+    this.title = options.title ?? '@arcanejs';
+    const staticFilePaths = {
+      materialSymbolsOutlined: FONTS.materialSymbolsOutlined,
+      entrypointJs: entrypointFilename,
+      entrypointJsMap: entrypointMapFilename,
+    };
+    const additionalFiles =
+      this.options.additionalFiles ?? ({} as TAdditionalFiles);
+    const additionalFileEntries = Object.entries(additionalFiles).map(
+      ([relativePath, loader]) =>
+        [
+          this.toRoutePath(relativePath),
+          async () => {
+            const asset = await loader();
+            if (!Buffer.isBuffer(asset.content)) {
+              throw new Error(
+                `Additional file "${relativePath}" did not return a Buffer in content`,
+              );
+            }
+            return asset;
+          },
+        ] as const,
+    );
 
     this.staticFiles = {
-      [`/${FONTS.materialSymbolsOutlined}`]: {
-        path:
-          this.options.materialIconsFontFile ??
-          require.resolve('material-symbols/material-symbols-outlined.woff2'),
-        contentType: 'font/woff2',
-      },
-      [`/${this.entrypointFilename}`]: {
-        path: entrypoint,
+      [this.toRoutePath(staticFilePaths.materialSymbolsOutlined)]:
+        async () => ({
+          content: await fs.promises.readFile(
+            this.options.materialIconsFontFile ??
+              require.resolve(
+                'material-symbols/material-symbols-outlined.woff2',
+              ),
+          ),
+          contentType: 'font/woff2',
+        }),
+      [this.toRoutePath(staticFilePaths.entrypointJs)]: async () => ({
+        content: await fs.promises.readFile(entrypoint),
         contentType: 'text/javascript',
-      },
-      [`/${path.basename(entrypointMap)}`]: {
-        path: entrypointMap,
+      }),
+      [this.toRoutePath(staticFilePaths.entrypointJsMap)]: async () => ({
+        content: await fs.promises.readFile(entrypointMap),
         contentType: 'text/plain',
-      },
+      }),
+      ...Object.fromEntries(additionalFileEntries),
     };
+    this.htmlContext = {
+      title: this.title,
+      path: this.options.path,
+      coreAssets: {
+        materialSymbolsOutlined: this.toSiteRelativeUrl(
+          staticFilePaths.materialSymbolsOutlined,
+        ),
+        entrypointJs: this.toSiteRelativeUrl(staticFilePaths.entrypointJs),
+        entrypointJsMap: this.toSiteRelativeUrl(
+          staticFilePaths.entrypointJsMap,
+        ),
+      },
+      assetUrls: this.createAssetUrls(),
+    } as ToolkitHtmlPageContext<TAdditionalFiles>;
 
     log?.debug('Static Assets: %o', this.staticFiles);
   }
@@ -84,45 +133,56 @@ export class Server {
     req: http.IncomingMessage,
     res: http.ServerResponse,
   ): Promise<void> => {
-    this.log?.debug('handleHttpRequest %s', req.url);
-    if (req.url === this.options.path) {
-      const content = `
+    const requestUrl =
+      (req as http.IncomingMessage & { originalUrl?: string }).originalUrl ??
+      req.url;
+    this.log?.debug('handleHttpRequest %s', requestUrl);
+    const pathname = this.parsePathname(requestUrl);
+    if (pathname === this.options.path) {
+      const content =
+        (await this.options.htmlPage?.(this.htmlContext)) ??
+        `
           <html>
             <head>
-              <title>${this.title}</title>
+              <title>${escapeHTML(this.htmlContext.title)}</title>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1">
               <style type="text/css">
                 @font-face {
                   font-family: 'Material Symbols Outlined';
                   font-style: normal;
-                  src: url(${FONTS.materialSymbolsOutlined}) format('woff');
+                  src: url(${this.htmlContext.coreAssets.materialSymbolsOutlined}) format('woff');
                 }
               </style>
             </head>
             <body>
               <div id="root"></div>
-              <script type="text/javascript" src="${this.options.path}${this.entrypointFilename}"></script>
+              <script type="text/javascript" src="${this.htmlContext.coreAssets.entrypointJs}"></script>
             </body>
           </html>`;
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(content, 'utf-8');
       return;
     }
-    if (req.url && req.url.startsWith(this.options.path)) {
-      const relativePath = req.url.substr(this.options.path.length - 1);
+    if (pathname && pathname.startsWith(this.options.path)) {
+      const relativePath = pathname.substr(this.options.path.length - 1);
       const f = this.staticFiles[relativePath];
       if (f) {
-        return fs.promises.stat(f.path).then(
-          () => {
-            this.sendStaticFile(f.path, res, f.contentType);
-          },
-          (err) => {
+        try {
+          const response = await f();
+          res.writeHead(200, { 'Content-Type': response.contentType });
+          res.end(response.content);
+          return;
+        } catch (err) {
+          if (err instanceof Error) {
             this.log?.error(err);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Expected static file not found', 'utf-8');
-          },
-        );
+          } else {
+            this.log?.error('Error loading static file: %o', err);
+          }
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Expected static file not found', 'utf-8');
+          return;
+        }
       }
     }
 
@@ -130,27 +190,43 @@ export class Server {
     res.end('not found', 'utf-8');
   };
 
-  private sendStaticFile = (
-    file: string,
-    response: http.ServerResponse,
-    contentType: string,
-  ) => {
-    fs.readFile(file, (error, content) => {
-      if (error) {
-        if (error.code === 'ENOENT') {
-          response.writeHead(404, { 'Content-Type': 'text/plain' });
-          response.end('file not found', 'utf-8');
-        } else {
-          response.writeHead(500, { 'Content-Type': 'text/plain' });
-          response.end('Error', 'utf-8');
-          this.log?.error(`Error reading static file: %s`, error);
-        }
-      } else {
-        response.writeHead(200, { 'Content-Type': contentType });
-        response.end(content, 'utf-8');
-      }
-    });
+  private parsePathname = (url?: string): string => {
+    if (!url) return '';
+    try {
+      return new URL(url, 'http://127.0.0.1').pathname;
+    } catch {
+      return url;
+    }
   };
+
+  private toRoutePath = (relativePath: string): string => {
+    if (!relativePath) {
+      throw new Error('Static file path must be non-empty');
+    }
+    if (relativePath.startsWith('/')) {
+      throw new Error(
+        `Static file path "${relativePath}" must be relative and not start with "/"`,
+      );
+    }
+    return `/${relativePath}`;
+  };
+
+  private toSiteRelativeUrl = (relativePath: string): string => {
+    const normalizedPath = relativePath.replace(/^\/+/, '');
+    return `${this.options.path}${normalizedPath}`;
+  };
+
+  private createAssetUrls =
+    (): ToolkitHtmlPageContext<TAdditionalFiles>['assetUrls'] => {
+      const urls = {} as ToolkitHtmlPageContext<TAdditionalFiles>['assetUrls'];
+      for (const routePath of Object.keys(this.staticFiles)) {
+        const relativePath = routePath.replace(/^\/+/, '');
+        urls[relativePath as keyof typeof urls] = this.toSiteRelativeUrl(
+          relativePath,
+        ) as (typeof urls)[keyof typeof urls];
+      }
+      return urls;
+    };
 
   public handleWsConnection = <S extends WebSocket>(ws: S) => {
     const connection: Connection = {

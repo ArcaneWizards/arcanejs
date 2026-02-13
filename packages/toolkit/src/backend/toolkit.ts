@@ -3,6 +3,7 @@ import { diffJson } from '@arcanejs/diff/diff';
 import {
   DEFAULT_LIGHT_DESK_OPTIONS,
   InitializationOptions,
+  ToolkitAdditionalFiles,
   ToolkitOptions,
 } from './options';
 import { Connection, Server } from './server';
@@ -50,8 +51,12 @@ export type ToolkitServerListener = {
   close: () => void;
 };
 
-export class Toolkit implements Parent, Listenable<Events> {
-  private readonly options: ToolkitOptions;
+export class Toolkit<
+    TAdditionalFiles extends ToolkitAdditionalFiles = Record<never, never>,
+  >
+  implements Parent, Listenable<Events>
+{
+  private readonly options: ToolkitOptions<TAdditionalFiles>;
   /**
    * Mapping from components to unique IDs that identify them
    */
@@ -61,13 +66,13 @@ export class Toolkit implements Parent, Listenable<Events> {
 
   /** @hidden */
   private readonly events = new EventEmitter<Events>();
-  private readonly server: Server;
+  private readonly server: Server<TAdditionalFiles>;
 
-  constructor(options: Partial<ToolkitOptions> = {}) {
+  constructor(options: Partial<ToolkitOptions<TAdditionalFiles>> = {}) {
     this.options = {
       ...DEFAULT_LIGHT_DESK_OPTIONS,
       ...options,
-    };
+    } as ToolkitOptions<TAdditionalFiles>;
     if (
       !this.options.path.endsWith('/') ||
       !this.options.path.startsWith('/')
@@ -88,7 +93,7 @@ export class Toolkit implements Parent, Listenable<Events> {
   public addListener = this.events.addListener;
   public removeListener = this.events.removeListener;
 
-  public start = (opts: InitializationOptions) => {
+  public start = (opts: InitializationOptions<TAdditionalFiles>) => {
     if (opts.mode === 'automatic') {
       this.listen({ port: opts.port }).then(() => {
         const url = `http://localhost:${opts.port}${this.options.path}`;
