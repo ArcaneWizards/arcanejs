@@ -73,7 +73,7 @@
   "dependencies": {
     "@arcanejs/protocol": "workspace:^",
     "@arcanejs/toolkit": "workspace:^",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "react": "^19.2.0",
     "react-reconciler": "0.33.0"
   },

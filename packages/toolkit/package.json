@@ -134,7 +134,7 @@
     "@arcanejs/protocol": "workspace:^",
     "escape-html": "^1.0.3",
     "express": "^4.21.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "material-symbols": "^0.25.0",
     "uuid": "^11.0.3",
     "ws": "^8.18.0"
