@@ -1,23 +1,11 @@
 import React, { FC, useCallback } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
-
-import {
-  buttonPressed,
-  buttonStateNormal,
-  buttonStateNormalHover,
-} from '../styling';
 import { trackTouch } from '../util/touch';
 
 import { StageContext } from './context';
 import { calculateClass } from '../util';
 import { TRANSPARENCY_SVG_URI } from './core';
-
-const CLASS_SLIDER_DISPLAY = 'slider-display';
-const CLASS_SLIDER_VALUE = 'slider-value';
-const CLASS_GRADIENT = 'gradient';
-const CLASS_GROW = 'grow';
 
 const OPEN_SLIDER_WIDTH = 400;
 const SLIDER_PADDING = 15;
@@ -206,13 +194,14 @@ const SliderButton: FC<Props> = ({ info, className }) => {
   return (
     <div
       className={calculateClass(
+        'arcane-slider-button',
         className,
         `state-${state.state}`,
-        info.grow && CLASS_GROW,
+        info.grow && 'arcane-slider-button--grow',
       )}
     >
       <div
-        className="inner"
+        className="arcane-slider-button__inner"
         onMouseDown={() => setState({ state: 'mouse-down' })}
         onMouseUp={() => input.current?.focus()}
         onTouchStart={onTouchStart}
@@ -225,147 +214,23 @@ const SliderButton: FC<Props> = ({ info, className }) => {
           onBlur={onBlur}
           onKeyDown={onKeyDown}
         />
-        <div className={CLASS_SLIDER_VALUE}>{valueDisplay}</div>
+        <div className="arcane-slider-button__value">{valueDisplay}</div>
         <div
           className={calculateClass(
-            CLASS_SLIDER_DISPLAY,
-            sliderGradient && CLASS_GRADIENT,
+            'arcane-slider-button__display',
+            sliderGradient && 'arcane-slider-button__display--gradient',
           )}
           style={sliderGradient}
         >
-          <div className="inner" style={{ width: valueCSSPercent }} />
+          <div
+            className="arcane-slider-button__display-inner"
+            style={{ width: valueCSSPercent }}
+          />
         </div>
-        <div className={CLASS_SLIDER_VALUE}>{valueDisplay}</div>
+        <div className="arcane-slider-button__value">{valueDisplay}</div>
       </div>
     </div>
   );
 };
 
-const StyledSliderButton: FC<Props> = styled(SliderButton)`
-  position: relative;
-  min-width: 100px;
-  min-height: 30px;
-
-  &.${CLASS_GROW} {
-    flex-grow: 1;
-  }
-
-  > .inner {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    padding: 0 ${SLIDER_PADDING / 2}px;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    cursor: pointer;
-    transition: all 200ms;
-    border-radius: 3px;
-    border: 1px solid ${(p) => p.theme.borderDark};
-    ${buttonStateNormal}
-
-    > input {
-      color: ${(p) => p.theme.textNormal};
-      opacity: 0;
-      margin: 0 -9px;
-      padding: 6px 8px;
-      width: 0;
-      pointer-events: none;
-      transition: all 200ms;
-      border-radius: 3px;
-      background: ${(p) => p.theme.bgDark1};
-      border: 1px solid ${(p) => p.theme.borderDark};
-      overflow: hidden;
-      box-shadow: ${(p) => p.theme.shadows.boxShadowInset};
-    }
-
-    > .${CLASS_SLIDER_DISPLAY} {
-      flex-grow: 1;
-      margin: 0 ${SLIDER_PADDING / 2}px;
-      height: 4px;
-      background: ${(p) => p.theme.bgDark1};
-      border: 1px solid ${(p) => p.theme.borderDark};
-
-      > .inner {
-        height: 100%;
-        background: ${(p) => p.theme.hint};
-      }
-
-      &.${CLASS_GRADIENT} {
-        height: 10px;
-
-        > .inner {
-          position: relative;
-          background: none;
-          border-right: 2px solid ${(p) => p.theme.borderDark};
-
-          &::before {
-            content: '';
-            position: absolute;
-            width: 4px;
-            top: -5px;
-            bottom: -5px;
-            right: -3px;
-            background: ${(p) => p.theme.borderDark};
-          }
-
-          &::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            top: -4px;
-            bottom: -4px;
-            right: -2px;
-            background: ${(p) => p.theme.textNormal};
-          }
-        }
-      }
-    }
-
-    > .${CLASS_SLIDER_VALUE} {
-      width: ${SLIDER_VALUE_WIDTH}px;
-      margin: 0 -${SLIDER_VALUE_WIDTH / 2}px;
-      line-height: 30px;
-      text-align: center;
-      opacity: 0;
-    }
-
-    &:hover {
-      ${buttonStateNormalHover}
-    }
-  }
-
-  &.state-mouse-down {
-    > .inner {
-      ${buttonPressed}
-    }
-  }
-
-  &.state-focused {
-    > .inner {
-      > input {
-        opacity: 1;
-        width: 60%;
-        padding: 0 5px;
-        margin: 0;
-      }
-    }
-  }
-
-  &.state-touching {
-    z-index: 100;
-
-    .inner {
-      background: ${(p) => p.theme.bgDark1};
-      width: ${OPEN_SLIDER_WIDTH}px;
-
-      > .${CLASS_SLIDER_VALUE} {
-        opacity: 1;
-        margin: 0 ${SLIDER_PADDING / 2}px;
-      }
-    }
-  }
-`;
-
-export { StyledSliderButton as SliderButton };
+export { SliderButton };

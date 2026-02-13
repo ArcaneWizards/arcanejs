@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
+import { calculateClass } from '../util';
 
 interface Props {
   className?: string;
@@ -9,12 +9,15 @@ interface Props {
 }
 
 const Label: FC<Props> = ({ className, info }) => (
-  <div className={className}>{info.text}</div>
+  <div
+    className={calculateClass(
+      'arcane-label',
+      className,
+      info.bold && 'arcane-label--bold',
+    )}
+  >
+    {info.text}
+  </div>
 );
 
-const StyledLabel: FC<Props> = styled(Label)`
-  font-weight: ${(p) => (p.info.bold ? 'bold' : 'normal')};
-  white-space: nowrap;
-`;
-
-export { StyledLabel as Label };
+export { Label };
