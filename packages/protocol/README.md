@@ -1,43 +1,105 @@
-# `@arcanejs/diff`
+# `@arcanejs/protocol`
 
-[![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Fdiff)](https://www.npmjs.com/package/@arcanejs/diff)
+[![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Fprotocol)](https://www.npmjs.com/package/@arcanejs/protocol)
 
-This package provides an easy way to:
+TypeScript protocol contracts for ArcaneJS.
 
-- Create diffs by comparing objects
-- Update objects by applying diffs
+This package defines the shared wire/message types used between:
 
-This library is written in TypeScript,
-and produces diffs that are type-safe,
-and can only be applied to objects that match the type
-of the objects being compared.
+- ArcaneJS server runtime (`@arcanejs/toolkit`)
+- Browser frontend stage (`@arcanejs/toolkit/frontend` + `@arcanejs/toolkit-frontend`)
+- Custom extensions (custom namespaces/components)
 
-This package is part of the
-[`arcanejs` project](https://github.com/ArcaneWizards/arcanejs#arcanejs),
-and is used to maintain a copy of a JSON tree in downstream clients in real-time
-via websockets.
+## Install
 
-## Usage
+```bash
+npm install @arcanejs/protocol
+```
+
+## What It Defines
+
+## Base protocol (`@arcanejs/protocol`)
+
+- Base component envelope (`BaseComponentProto`, `AnyComponentProto`)
+- Server messages:
+  - `metadata`
+  - `tree-full`
+  - `tree-diff`
+  - `call-response`
+- Client messages:
+  - `component-message`
+  - `component-call`
+- Type helpers for call/response pair typing:
+  - `BaseClientComponentCallPair`
+  - `CallForPair`
+  - `ReturnForPair`
+
+## Core namespace (`@arcanejs/protocol/core`)
+
+Core component protocol types and guards:
+
+- Component types: `ButtonComponent`, `GroupComponent`, `LabelComponent`, `RectComponent`, `SliderButtonComponent`, `SwitchComponent`, `TabComponent`, `TabsComponent`, `TextInputComponent`, `TimelineComponent`
+- Message types: `CoreComponentMessage` and specific message variants
+- Call type map: `CoreComponentCalls`
+- Guards:
+  - `isCoreComponent(...)`
+  - `isCoreComponentMessage(...)`
+  - `isCoreComponentCall(...)`
+
+## Supporting modules
+
+- `@arcanejs/protocol/styles`: shared style contracts (`GroupComponentStyle`, `LabelComponentStyle`)
+- `@arcanejs/protocol/logging`: logger contract (`Logger`)
+
+## Usage Example
 
 ```ts
-import { diffJson, Diff } from '@arcanejs/diff/diff';
-import { patchJson } from '@arcanejs/diff/patch';
+import type {
+  ServerMessage,
+  ClientMessage,
+  BaseComponentProto,
+  CallForPair,
+  ReturnForPair,
+} from '@arcanejs/protocol';
 
-type E = {
-  foo: string;
-  bar?: number[];
+import type {
+  CoreComponentCalls,
+  CoreComponentMessage,
+} from '@arcanejs/protocol/core';
+
+const onServerMessage = (msg: ServerMessage) => {
+  if (msg.type === 'tree-full') {
+    const root: BaseComponentProto<string, string> = msg.root;
+    console.log(root.namespace, root.component);
+  }
 };
 
-const a: E = { foo: 'bar' };
-const b: E = { foo: 'baz', bar: [1] };
+const message: CoreComponentMessage = {
+  type: 'component-message',
+  namespace: 'core',
+  componentKey: 1,
+  component: 'switch',
+};
 
-const diffA: Diff<E> = diffJson(a, b);
+const callMessage: CallForPair<'core', CoreComponentCalls, 'press'> = {
+  type: 'component-call',
+  namespace: 'core',
+  componentKey: 5,
+  action: 'press',
+};
 
-const resultA = patchJson(a, diffA);
+type PressReturn = ReturnForPair<CoreComponentCalls, 'press'>; // true
+const _resultExample: PressReturn = true;
 
-console.log(resultB); // { foo: 'baz', bar: [1] }
-
-const c = { baz: 'foo' };
-
-const resultB = patchJson(c, diffA); // TypeScript Type Error: Property 'baz' is missing in type '{ foo: string; bar?: number[] | undefined; }' but required in type '{ baz: string; }'
+const _clientMessage: ClientMessage = message;
 ```
+
+## Notes
+
+- This package is primarily type contracts and guard helpers.
+- `tree-diff` payloads use `Diff<...>` from `@arcanejs/diff`.
+- Custom namespaces should follow the same pattern as `core`: define component proto types, message/call unions, and guard helpers.
+
+## Example Reference
+
+- Custom protocol implementation example: <https://github.com/ArcaneWizards/arcanejs/blob/main/examples/custom-components/src/custom-proto.ts>

@@ -2,18 +2,127 @@
 
 [![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Ftoolkit)](https://www.npmjs.com/package/@arcanejs/toolkit)
 
-This package provides the core functionality behind the ArcaneJS framework,
-allowing you to quickly build single-process Node.js apps with
-real-time interactive control panels that are exposed as web pages.
+Core server/runtime package for ArcaneJS control panels.
 
-This library provides a tree-like API for creating & updating control panels,
-and responding to user input.
+`@arcanejs/toolkit` provides:
 
-We highly-recommend that rather than integrating with this library directly,
-you make use of the
-[`@arcanejs/react-toolkit`](https://www.npmjs.com/package/@arcanejs/react-toolkit)
-library, that allows you to compose your control panels using server-side react.
+- A server-side component tree (`Group`, `Button`, `Switch`, etc.)
+- HTTP + WebSocket transport for syncing state to browsers
+- Tree diff broadcasting (`tree-full` + `tree-diff`)
+- Routing for fire-and-forget messages and request/response calls
 
-For more details,
-please see the main documentation on our GitHub repository:
-[github.com/ArcaneWizards/arcanejs](https://github.com/ArcaneWizards/arcanejs#arcanejs)
+Most users should pair this with [`@arcanejs/react-toolkit`](https://www.npmjs.com/package/@arcanejs/react-toolkit), but this package can also be used directly.
+
+## Install
+
+```bash
+npm install @arcanejs/toolkit
+```
+
+## Quick Start (Without React)
+
+```ts
+import { Toolkit, Group, Button, Label } from '@arcanejs/toolkit';
+
+const toolkit = new Toolkit({
+  title: 'My Control Panel',
+  path: '/',
+});
+
+toolkit.start({
+  mode: 'automatic',
+  port: 3000,
+});
+
+const root = new Group({ direction: 'vertical', title: 'Controls' });
+const status = new Label({ text: 'Idle' });
+const trigger = new Button({
+  text: 'Run',
+  onClick: async () => {
+    status.setText('Running...');
+    await doWork();
+    status.setText('Done');
+  },
+});
+
+root.appendChildren(status, trigger);
+toolkit.setRoot(root);
+```
+
+## Public API
+
+### Top-level exports
+
+- `Toolkit`
+- Components: `Button`, `Group`, `GroupHeader`, `Label`, `Rect`, `SliderButton`, `Switch`, `Tab`, `Tabs`, `TextInput`, `Timeline`
+- Types: `ToolkitOptions`, `ToolkitConnection`, `ToolkitServerListenerOptions`, `ToolkitServerListener`, `AnyComponent`
+
+### Subpath exports
+
+- `@arcanejs/toolkit/components/*`: component classes and types
+- `@arcanejs/toolkit/components/base`: `Base`, `BaseParent`, `EventEmitter`, related types
+- `@arcanejs/toolkit/frontend`: browser entrypoint helpers (`startArcaneFrontend`)
+- `@arcanejs/toolkit/util`: utility exports like `HUE_GRADIENT` and `IDMap`
+
+## Toolkit Lifecycle
+
+`Toolkit.start(...)` supports three modes:
+
+- `automatic`: creates internal HTTP + WebSocket server on a port
+- `express`: attaches websocket handling + route mounting to existing Express/HTTP server
+- `manual`: gives direct access to `Server` for custom integration
+
+`Toolkit.listen(...)` is also available when you want direct lifecycle control and a closable listener handle.
+
+## Toolkit Options
+
+`new Toolkit(options)` supports:
+
+- `title?: string`: page title
+- `path: string` (default: `/`): route prefix where Arcane UI is served
+- `log?: Logger`: optional logger (`debug`, `info`, `warn`, `error`)
+- `entrypointJsFile?: string`: custom frontend bundle path for custom namespaces/components
+- `materialIconsFontFile?: string`: explicit path to `material-symbols-outlined.woff2` when auto-resolution is not possible
+
+Important constraint:
+
+- `path` must start and end with `/` (for example: `/`, `/control/`)
+
+## Events and Connections
+
+`Toolkit` emits:
+
+- `new-connection`: when a browser connects
+- `closed-connection`: when a browser disconnects
+
+Use `toolkit.getConnections()` to inspect active connections. Each connection has a stable `uuid`.
+
+## Component Notes
+
+Core components are stateful server objects. Notable interaction behavior:
+
+- `Button` uses request/response call flow (`press` action)
+- `Switch` and `SliderButton` support controlled and uncontrolled usage
+- `TextInput` updates value from browser messages
+- `Group` supports editable titles and collapsible defaults (`open`, `closed`, `auto`)
+- `Tabs` only accepts `Tab` children
+
+## Architectural Constraints
+
+- Single-process architecture by design
+- No built-in authentication/authorization
+- `Toolkit.setRoot(...)` can only be called once
+- Tree updates are throttled internally
+
+## Related Packages
+
+- [`@arcanejs/react-toolkit`](https://www.npmjs.com/package/@arcanejs/react-toolkit): React renderer for composing server-side component trees
+- [`@arcanejs/toolkit-frontend`](https://www.npmjs.com/package/@arcanejs/toolkit-frontend): browser renderer components and stage context
+- [`@arcanejs/protocol`](https://www.npmjs.com/package/@arcanejs/protocol): wire protocol types
+- [`@arcanejs/diff`](https://www.npmjs.com/package/@arcanejs/diff): JSON diff/patch engine
+
+## Examples
+
+- React examples: <https://github.com/ArcaneWizards/arcanejs/tree/main/examples/react>
+- Core API examples (no React renderer): <https://github.com/ArcaneWizards/arcanejs/tree/main/examples/core>
+- Custom namespace end-to-end example: <https://github.com/ArcaneWizards/arcanejs/tree/main/examples/custom-components>

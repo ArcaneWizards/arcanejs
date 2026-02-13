@@ -2,42 +2,75 @@
 
 [![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Fdiff)](https://www.npmjs.com/package/@arcanejs/diff)
 
-This package provides an easy way to:
+Typed JSON diff/patch utilities used by ArcaneJS to synchronize state efficiently.
 
-- Create diffs by comparing objects
-- Update objects by applying diffs
+`@arcanejs/diff` provides:
 
-This library is written in TypeScript,
-and produces diffs that are type-safe,
-and can only be applied to objects that match the type
-of the objects being compared.
+- `diffJson(a, b)` to compute structural differences
+- `patchJson(old, diff)` to apply a diff and reconstruct the new value
+- Type-level diff contracts (`Diff<T>`, `NestedDiff<T>`, `JSONValue`, etc.)
 
-This package is part of the
-[`arcanejs` project](https://github.com/ArcaneWizards/arcanejs#arcanejs),
-and is used to maintain a copy of a JSON tree in downstream clients in real-time
-via websockets.
+## Install
+
+```bash
+npm install @arcanejs/diff
+```
+
+## API
+
+### `diffJson(a, b)`
+
+Compares two JSON-compatible values and returns a typed diff.
+
+Possible diff forms:
+
+- `{ type: 'match' }`
+- `{ type: 'value', after }` for primitive/type changes
+- `{ type: 'splice', start, count, items }` for array length changes
+- `{ type: 'modified-a', changes }` for same-length array item updates
+- `{ type: 'modified-o', additions?, deletions?, changes? }` for object updates
+
+### `patchJson(old, diff)`
+
+Applies a diff to a previous value and returns the patched result.
+
+Patch behavior is immutable (returns new arrays/objects where needed).
 
 ## Usage
 
 ```ts
-import { diffJson, Diff } from '@arcanejs/diff/diff';
-import { patchJson } from '@arcanejs/diff/patch';
+import { diffJson, patchJson, type Diff } from '@arcanejs/diff';
 
-type E = {
-  foo: string;
-  bar?: number[];
+type Model = {
+  name: string;
+  values: number[];
 };
 
-const a: E = { foo: 'bar' };
-const b: E = { foo: 'baz', bar: [1] };
+const previous: Model = { name: 'A', values: [1, 2, 3] };
+const next: Model = { name: 'B', values: [1, 4, 3, 5] };
 
-const diffA: Diff<E> = diffJson(a, b);
+const diff: Diff<Model> = diffJson(previous, next);
+const reconstructed = patchJson(previous, diff);
 
-const resultA = patchJson(a, diffA);
-
-console.log(resultB); // { foo: 'baz', bar: [1] }
-
-const c = { baz: 'foo' };
-
-const resultB = patchJson(c, diffA); // TypeScript Type Error: Property 'baz' is missing in type '{ foo: string; bar?: number[] | undefined; }' but required in type '{ baz: string; }'
+console.log(reconstructed); // { name: 'B', values: [1, 4, 3, 5] }
 ```
+
+## Type Safety
+
+`Diff<T>` is parameterized on the JSON value type, so diffs and patch operations remain tied to the expected shape.
+
+## Error Cases
+
+`patchJson` throws when diff/value kinds are incompatible, for example:
+
+- applying `splice` to non-arrays
+- applying `modified-o` to non-objects
+
+## ArcaneJS Usage
+
+ArcaneJS server tracks the last tree sent to each client and sends `tree-diff` updates computed with `diffJson`; browser stage reconstructs latest tree with `patchJson`.
+
+Relevant references:
+
+- Diff producer: <https://github.com/ArcaneWizards/arcanejs/blob/main/packages/toolkit/src/backend/toolkit.ts>
+- Diff consumer: <https://github.com/ArcaneWizards/arcanejs/blob/main/packages/toolkit/src/frontend/stage.tsx>
