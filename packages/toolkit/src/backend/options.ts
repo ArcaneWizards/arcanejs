@@ -18,7 +18,8 @@ export type ToolkitCoreAssetRelativePath =
   | typeof FONTS.materialSymbolsOutlined
   | `${string}.js`
   | `${string}.js.map`
-  | `${string}.css`;
+  | `${string}.css`
+  | `${string}.css.map`;
 
 export type ToolkitHtmlPageContext<
   TAdditionalFiles extends ToolkitAdditionalFiles,
@@ -28,8 +29,9 @@ export type ToolkitHtmlPageContext<
   coreAssets: {
     materialSymbolsOutlined: string;
     entrypointJs: string;
-    entrypointJsMap: string;
+    entrypointJsMap: string | null;
     entrypointCss: string | null;
+    entrypointCssMap: string | null;
   };
   assetUrls: Record<
     ToolkitCoreAssetRelativePath | Extract<keyof TAdditionalFiles, string>,
@@ -65,8 +67,10 @@ export interface ToolkitOptions<
    * This is only needed if you have defined custom extensions,
    * and need to load custom frontend code that includes your extensions.
    *
-   * This will allow access to both the js file and the `.js.map` file,
-   * that matches this name.
+   * ArcaneJS expects an associated `.css` file with the same basename
+   * (for example `entrypoint.js` + `entrypoint.css`) so browser styles are
+   * served automatically. Source map files (`.js.map`, `.css.map`) are optional,
+   * and exposed when present.
    */
   entrypointJsFile?: string;
   /**

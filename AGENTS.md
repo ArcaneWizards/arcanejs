@@ -119,7 +119,7 @@ The architecture is split across:
 - `Server` (`/packages/toolkit/src/backend/server.ts`)
   - Serves HTML + static assets and handles WebSocket connections.
   - Optional custom frontend bundle via `entrypointJsFile`.
-  - Exposes an optional sibling entrypoint stylesheet (`<entrypoint>.css`) as `coreAssets.entrypointCss` when present.
+  - Exposes optional sibling entrypoint assets when present: `<entrypoint>.css`, `<entrypoint>.js.map`, and `<entrypoint>.css.map` via `coreAssets`.
   - Supports extra static file routes via `ToolkitOptions.additionalFiles` and custom root HTML via `ToolkitOptions.htmlPage`.
 - `Base` / `BaseParent` (`/packages/toolkit/src/backend/components/base.ts`)
   - Shared component behavior, immutable props updates, listener wiring.
@@ -243,6 +243,7 @@ Agent rules:
 - New example workspaces should include a local `.eslintrc.js` (same pattern as existing examples) so `pnpm lint` picks up TypeScript files correctly.
 - Toolkit default frontend bootstrap depends on built files in `packages/toolkit/dist/frontend/*` (including `entrypoint.js`); if those are missing, HTTP requests for the core entrypoint return 500/404. Run toolkit build before debugging custom shell routing.
 - `@arcanejs/toolkit-frontend/styles/core.css` is the distributed core stylesheet for class-based frontend styles; import it in custom frontend entrypoints so they emit a matching CSS asset.
+- Avoid synchronous filesystem APIs (`fs.existsSync`, `fs.readFileSync`, `fs.statSync`, etc.) across the repo; prefer `fs.promises` and lazy async initialization with memoized promises for shared setup paths.
 - `ToolkitOptions.additionalFiles` keys are strict relative paths (no leading `/`), and are mounted under `ToolkitOptions.path`.
 - Core packages target React 19 (`react@^19.2.0`, `react-dom@^19.2.0`) and `@arcanejs/react-toolkit` tracks `react-reconciler@0.33.x`.
 - `packages/react-toolkit/src/index.tsx` intentionally includes compat handling for both old/new `react-reconciler` host signatures (`commitUpdate`, `createContainer`) because ArcaneJS uses reconciler internals directly.
