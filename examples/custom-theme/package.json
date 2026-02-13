@@ -19,6 +19,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@arcanejs/protocol": "workspace:^",
     "@arcanejs/react-toolkit": "workspace:^",
     "@arcanejs/toolkit": "workspace:^",
     "@arcanejs/toolkit-frontend": "workspace:^",

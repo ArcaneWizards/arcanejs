@@ -1,67 +1,150 @@
+import { isCoreComponent } from '@arcanejs/protocol/core';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
-import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
+import {
+  CORE_FRONTEND_COMPONENT_RENDERER,
+  Group,
+} from '@arcanejs/toolkit-frontend';
 import { DARK_THEME, LIGHT_THEME } from '@arcanejs/toolkit-frontend/styling';
+import { FrontendComponentRenderer } from '@arcanejs/toolkit-frontend/types';
+import { useColorSchemePreferences } from '@arcanejs/toolkit-frontend/util';
+import styled from 'styled-components';
 
-const vibrantDarkTheme = {
+const tastefulDarkTheme = {
   ...DARK_THEME,
-  pageBg: '#12002b',
-  bgDark1: '#1e0a3c',
-  bg: '#2d1457',
-  bgLight1: '#44227a',
-  borderDark: '#00d1ff',
-  borderLight: '#ff66c4',
-  borderLighter: '#ffa600',
-  borderLighterer: '#7aff66',
-  hint: '#00e5ff',
-  hintRGB: '0, 229, 255',
-  hintDark1: '#00b8d4',
-  colorGreen: '#7aff66',
-  colorRed: '#ff5f9e',
-  colorAmber: '#ffd166',
-  textNormal: '#f8f3ff',
-  textActive: '#ffffff',
-  textMuted: '#cdb7f8',
+  pageBg: '#0f172a',
+  bgDark1: '#162033',
+  bg: '#1e293b',
+  bgLight1: '#2a3650',
+  borderDark: '#334155',
+  borderLight: '#475569',
+  borderLighter: '#526280',
+  borderLighterer: '#64748b',
+  hint: '#60a5fa',
+  hintRGB: '96, 165, 250',
+  hintDark1: '#3b82f6',
+  colorGreen: '#34d399',
+  colorRed: '#f87171',
+  colorAmber: '#fbbf24',
+  textNormal: '#e2e8f0',
+  textActive: '#f8fafc',
+  textMuted: '#94a3b8',
   gradients: {
-    button: 'linear-gradient(to bottom, #ff4ecd, #8f49ff)',
-    buttonHover: 'linear-gradient(to bottom, #ff75db, #a76eff)',
-    buttonActive: 'linear-gradient(to bottom, #7d3ce8, #ff3fb8)',
-    buttonPressedHover: 'linear-gradient(to bottom, #a74fff, #ff61cc)',
-    hintPressed: 'linear-gradient(to bottom, #00b8d4, #00e5ff)',
+    button: 'linear-gradient(to bottom, #3b4b67, #2b3952)',
+    buttonHover: 'linear-gradient(to bottom, #486081, #334763)',
+    buttonActive: 'linear-gradient(to bottom, #2a3851, #233146)',
+    buttonPressedHover: 'linear-gradient(to bottom, #334763, #2a3b56)',
+    hintPressed: 'linear-gradient(to bottom, #3b82f6, #60a5fa)',
   },
 };
 
-const vibrantLightTheme = {
+const tastefulLightTheme = {
   ...LIGHT_THEME,
-  pageBg: '#fff7fb',
-  bgDark1: '#ffe0f2',
-  bg: '#fff0f9',
-  bgLight1: '#fff9e6',
-  borderDark: '#ff66c4',
-  borderLight: '#00b8d4',
-  borderLighter: '#ffd166',
-  borderLighterer: '#7aff66',
-  hint: '#9b5de5',
-  hintRGB: '155, 93, 229',
-  hintDark1: '#7e3fd2',
-  colorGreen: '#2dbd6e',
-  colorRed: '#d7267b',
-  colorAmber: '#d98b00',
-  textNormal: '#4a245e',
-  textActive: '#2f163d',
-  textMuted: '#9b7aad',
+  pageBg: '#f4f7fb',
+  bgDark1: '#e6ecf5',
+  bg: '#ffffff',
+  bgLight1: '#f8fbff',
+  borderDark: '#c7d2e3',
+  borderLight: '#d6e0ef',
+  borderLighter: '#e2e8f0',
+  borderLighterer: '#edf2f8',
+  hint: '#4f46e5',
+  hintRGB: '79, 70, 229',
+  hintDark1: '#4338ca',
+  colorGreen: '#10b981',
+  colorRed: '#ef4444',
+  colorAmber: '#f59e0b',
+  textNormal: '#1e293b',
+  textActive: '#0f172a',
+  textMuted: '#64748b',
   gradients: {
-    button: 'linear-gradient(to bottom, #ffc1e8, #c5b3ff)',
-    buttonHover: 'linear-gradient(to bottom, #ffdbf1, #d8caff)',
-    buttonActive: 'linear-gradient(to bottom, #e1cdfd, #ffb0de)',
-    buttonPressedHover: 'linear-gradient(to bottom, #f1ddff, #ffc6e6)',
-    hintPressed: 'linear-gradient(to bottom, #7e3fd2, #9b5de5)',
+    button: 'linear-gradient(to bottom, #f8fafc, #e2e8f0)',
+    buttonHover: 'linear-gradient(to bottom, #ffffff, #e8edf5)',
+    buttonActive: 'linear-gradient(to bottom, #dde5f0, #f4f7fb)',
+    buttonPressedHover: 'linear-gradient(to bottom, #e7edf6, #f8fbff)',
+    hintPressed: 'linear-gradient(to bottom, #4338ca, #4f46e5)',
+  },
+};
+
+const ThemeControlsContainer = styled.div`
+  display: flex;
+  gap: ${(p) => p.theme.sizingPx.spacing / 2}px;
+  margin-bottom: ${(p) => p.theme.sizingPx.spacing}px;
+`;
+
+const ThemeButton = styled.button<{ $selected: boolean }>`
+  cursor: pointer;
+  border-radius: 999px;
+  border: 1px solid ${(p) => (p.$selected ? p.theme.hint : p.theme.borderDark)};
+  padding: 6px 12px;
+  color: ${(p) => p.theme.textNormal};
+  background: ${(p) =>
+    p.$selected ? `rgba(${p.theme.hintRGB}, 0.22)` : p.theme.gradients.button};
+  box-shadow: ${(p) =>
+    p.$selected ? 'none' : 'inset 0 1px 0 rgba(255, 255, 255, 0.15)'};
+
+  &:hover {
+    background: ${(p) =>
+      p.$selected
+        ? `rgba(${p.theme.hintRGB}, 0.28)`
+        : p.theme.gradients.buttonHover};
+  }
+`;
+
+const ThemeControls = () => {
+  const { colorSchemePreference, setColorSchemePreference } =
+    useColorSchemePreferences();
+
+  return (
+    <ThemeControlsContainer>
+      <ThemeButton
+        type="button"
+        $selected={colorSchemePreference === 'auto'}
+        onClick={() => setColorSchemePreference('auto')}
+      >
+        Theme: Auto
+      </ThemeButton>
+      <ThemeButton
+        type="button"
+        $selected={colorSchemePreference === 'dark'}
+        onClick={() => setColorSchemePreference('dark')}
+      >
+        Theme: Dark
+      </ThemeButton>
+      <ThemeButton
+        type="button"
+        $selected={colorSchemePreference === 'light'}
+        onClick={() => setColorSchemePreference('light')}
+      >
+        Theme: Light
+      </ThemeButton>
+    </ThemeControlsContainer>
+  );
+};
+
+const CUSTOM_CORE_RENDERER: FrontendComponentRenderer = {
+  namespace: 'core',
+  render: (info): JSX.Element => {
+    if (!isCoreComponent(info)) {
+      throw new Error(`Cannot render non-core component ${info.namespace}`);
+    }
+
+    if (info.component === 'group' && info.title === 'Static Theme Showcase') {
+      return (
+        <>
+          <ThemeControls />
+          <Group key={info.key} info={info} />
+        </>
+      );
+    }
+
+    return CORE_FRONTEND_COMPONENT_RENDERER.render(info);
   },
 };
 
 startArcaneFrontend({
-  renderers: [CORE_FRONTEND_COMPONENT_RENDERER],
+  renderers: [CUSTOM_CORE_RENDERER],
   themes: {
-    dark: vibrantDarkTheme,
-    light: vibrantLightTheme,
+    dark: tastefulDarkTheme,
+    light: tastefulLightTheme,
   },
 });

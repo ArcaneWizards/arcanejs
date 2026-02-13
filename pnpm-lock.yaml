@@ -164,6 +164,9 @@ importers:
 
   examples/custom-theme:
     dependencies:
+      '@arcanejs/protocol':
+        specifier: workspace:^
+        version: link:../../packages/protocol
       '@arcanejs/react-toolkit':
         specifier: workspace:^
         version: link:../../packages/react-toolkit
