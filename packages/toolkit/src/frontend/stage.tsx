@@ -1,6 +1,7 @@
 import { patchJson } from '@arcanejs/diff';
 import React, {
   ReactElement,
+  ReactNode,
   useState,
   useRef,
   useCallback,
@@ -28,6 +29,7 @@ export type Props = {
   className?: string;
   renderers: FrontendComponentRenderers;
   themeRootProps?: React.HTMLAttributes<HTMLDivElement>;
+  loadingState?: () => ReactNode;
 };
 
 type InFlightCall = {
@@ -41,7 +43,7 @@ type InFlightCalls = {
   calls: Map<number, InFlightCall>;
 };
 
-const Stage: React.FC<Props> = ({ className, renderers }) => {
+const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
   const [root, setRoot] = useState<proto.AnyComponentProto | undefined>(
     undefined,
   );
@@ -199,13 +201,13 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
     <StageContext.Provider value={stageContext}>
       <GroupStateWrapper openByDefault={false}>
         <div className={className}>
-          {root ? (
-            renderComponent(root)
-          ) : (
-            <div className="arcane-stage__no-root">
-              No root has been added to the light desk
-            </div>
-          )}
+          {root
+            ? renderComponent(root)
+            : loadingState?.() ?? (
+                <div className="arcane-stage__no-root">
+                  No root has been added to the light desk
+                </div>
+              )}
         </div>
       </GroupStateWrapper>
     </StageContext.Provider>
