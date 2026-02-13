@@ -220,6 +220,7 @@ Agent rules:
 - Tree updates are throttled; do not assume per-mutation immediate network flush.
 - Component keys depend on instance identity; replacing instances changes keys.
 - New examples should configure `Toolkit` logging with `pino` (prefer `pino-pretty` transport for local dev) instead of `console`, so startup and static-asset errors are visible.
+- New example workspaces should include a local `.eslintrc.js` (same pattern as existing examples) so `pnpm lint` picks up TypeScript files correctly.
 - Toolkit default frontend bootstrap depends on built files in `packages/toolkit/dist/frontend/*` (including `entrypoint.js`); if those are missing, HTTP requests for the core entrypoint return 500/404. Run toolkit build before debugging custom shell routing.
 - `ToolkitOptions.additionalFiles` keys are strict relative paths (no leading `/`), and are mounted under `ToolkitOptions.path`.
 - Core packages target React 19 (`react@^19.2.0`, `react-dom@^19.2.0`) and `@arcanejs/react-toolkit` tracks `react-reconciler@0.33.x`.
