@@ -6,23 +6,66 @@
   --color-arcane-btn-border: var(--arcane-border-dark);
   --color-arcane-btn-text: var(--arcane-text-normal);
   --color-arcane-btn-err: var(--arcane-color-red);
+  --color-arcane-bg: var(--arcane-bg);
+  --color-arcane-bg-dark-1: var(--arcane-bg-dark-1);
+  --color-arcane-bg-light-1: var(--arcane-bg-light-1);
+  --color-arcane-text: var(--arcane-text-normal);
+  --color-arcane-text-muted: var(--arcane-text-muted);
   --color-arcane-hint: var(--arcane-hint);
   --color-arcane-hint-soft: rgba(var(--val-arcane-hint-rgb), 0.2);
   --val-arcane-hint-rgb: var(--arcane-hint-rgb);
   --background-image-arcane-grad-btn: var(--arcane-gradient-button);
   --background-image-arcane-grad-btn-hover: var(--arcane-gradient-button-hover);
   --background-image-arcane-grad-btn-active: var(--arcane-gradient-button-active);
+  --background-image-arcane-grad-hint-pressed: var(
+    --arcane-gradient-hint-pressed
+  );
   --shadow-arcane-btn: inset 0 1px 0 rgba(255, 255, 255, 0.15),
     0 1px 0 0 rgba(0, 0, 0, 0.25);
   --shadow-arcane-btn-active: inset 0 1px 2px rgba(0, 0, 0, 0.2),
     0 1px 0 0 rgba(255, 255, 255, 0.15);
+  --shadow-arcane-box-inset: var(--arcane-shadow-box-inset);
   --text-shadow-arcane-btn: var(--arcane-shadow-text);
   --text-shadow-arcane-btn-active: var(--arcane-shadow-text-active);
+  --font-arcane-icon: 'Material Symbols Outlined', sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  --tracking-normal: 0em;
+  --text-arcane-icon: 22px;
+  --text-arcane-normal: 1em;
+  --text-arcane-title: 1.5em;
+  --text-arcane-subtitle: 1em;
+  --text-arcane-timeline-indicator: 40px;
+  --leading-arcane-switch-label: 28px;
+  --leading-arcane-slider-value: 30px;
+  --spacing-arcane: var(--arcane-spacing);
+  --spacing-arcane-half: calc(var(--arcane-spacing) / 2);
   --spacing-arcane-btn: 30px;
-  --spacing-1: calc(var(--arcane-spacing) * 4 / 15);
-  --spacing-1_5: calc(var(--arcane-spacing) * 6 / 15);
+  --spacing-arcane-rect: 30px;
+  --spacing-arcane-touch-indicator: 6px;
+  --spacing-arcane-tabs-item: calc(var(--arcane-spacing) * 3);
+  --spacing-arcane-timeline-bar: 10px;
+  --spacing-arcane-switch-track: 70px;
+  --spacing-arcane-switch-knob: 30px;
+  --spacing-arcane-switch-label: 40px;
+  --spacing-arcane-switch-off-left: 28px;
+  --spacing-arcane-slider-min: 100px;
+  --spacing-arcane-slider-open: 400px;
+  --spacing-arcane-slider-pad: 7.5px;
+  --spacing-arcane-slider-value: 60px;
+  --spacing-arcane-slider-display: 4px;
+  --spacing-arcane-slider-gradient-display: 10px;
+  --spacing-arcane-slider-input-hidden: 9px;
+  --spacing-arcane-slider-value-hidden: 30px;
+  --spacing-0: 0px;
+  --spacing-0_5: calc(var(--arcane-spacing) / 4);
+  --spacing-1: calc(var(--arcane-spacing) / 2);
+  --spacing-1_5: calc(var(--arcane-spacing) / 2 * 3);
+  --spacing-2: calc(var(--arcane-spacing));
   --radius-arcane-btn: 3px;
+  --radius-arcane-touch-indicator: 6px;
   --radius-md: calc(var(--arcane-spacing) * 6 / 15);
+  --z-index-arcane-slider-touching: 100;
 }
 
 .arcane-theme-root {

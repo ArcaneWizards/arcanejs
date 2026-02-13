@@ -80,9 +80,11 @@ const Button: FC<Props> = (props) => {
             'border-arcane-hint bg-arcane-hint-soft duration-0',
         )}
       />
-      <div className="flex items-center justify-center px-1 py-1.5">
+      <div className={cn('flex items-center justify-center px-0.5')}>
         {props.info.icon && <Icon icon={props.info.icon} />}
-        {props.info.text && <span className="px-1">{props.info.text}</span>}
+        {props.info.text && (
+          <span className={cn('px-1')}>{props.info.text}</span>
+        )}
       </div>
     </div>
   );

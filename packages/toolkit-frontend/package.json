@@ -56,7 +56,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint . --max-warnings 0",
+    "lint": "pnpm build:styles && ESLINT_USE_FLAT_CONFIG=true eslint . --max-warnings 0",
     "build": "rm -rf dist && tsup && pnpm build:styles && check-export-map",
     "build:styles": "tailwindcss -i ./src/styles/core.css -o ./dist/styles/core.css"
   },

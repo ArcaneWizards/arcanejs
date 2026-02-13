@@ -1,6 +1,6 @@
 import React, { FC, type ReactNode } from 'react';
 
-import { calculateClass } from '../util';
+import { cn } from '../util';
 
 type GroupColor = 'dark' | 'lighter' | 'lighterer';
 
@@ -27,10 +27,12 @@ const NestedContent: FC<NestContentProps> = ({ className, children }) => {
 
   return (
     <div
-      className={calculateClass(
-        'arcane-nested-content',
+      className={cn(
+        'p-2 shadow-arcane-box-inset',
+        color === 'dark' && 'bg-arcane-bg-dark-1',
+        color === 'lighter' && 'bg-arcane-bg',
+        color === 'lighterer' && 'bg-arcane-bg-light-1',
         className,
-        `color-${color}`,
       )}
     >
       <LastNestedColor.Provider value={nextColor(color)}>

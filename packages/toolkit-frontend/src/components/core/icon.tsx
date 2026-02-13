@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { calculateClass } from '../../util';
+import { cn } from '../../util';
 
 export const ICON_CLASS = 'icon';
 
@@ -17,7 +17,14 @@ const Icon: React.FunctionComponent<Props> = ({
   ...props
 }) => (
   <span
-    className={calculateClass('arcane-icon', className, ICON_CLASS)}
+    className={cn(
+      `
+        inline-block text-arcane-icon leading-none font-normal tracking-normal
+        whitespace-nowrap
+      `,
+      'font-arcane-icon',
+      className,
+    )}
     {...props}
   >
     {icon}

@@ -69,6 +69,7 @@ const groupA = groupGroup.appendChild(
 
 slider.addListener('change', (value) => {
   sliderValue.setText(`Slider Value: ${value}`);
+  slider.setValue(value);
 });
 
 const groupB = groupGroup.appendChild(

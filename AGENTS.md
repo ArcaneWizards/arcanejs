@@ -251,6 +251,7 @@ Agent rules:
 - Avoid one-off custom utility names like `arc-btn-*`; prefer token-driven classes (for example `border-arcane-btn-border`) directly in components rather than hand-authored single-use utility selectors.
 - `@arcanejs/toolkit-frontend` no longer requires `styled-components` at runtime; theming/styling relies on CSS variables + distributed CSS assets.
 - `packages/toolkit-frontend` linting uses ESLint flat config (`eslint.config.mjs`) with `ESLINT_USE_FLAT_CONFIG=true` so ESM-only plugins like `eslint-plugin-better-tailwindcss` load correctly under ESLint 8.
+- `packages/toolkit-frontend` runs `pnpm build:styles` before linting; `eslint-plugin-better-tailwindcss` is configured to validate `cn(...)` class strings (`callees: ['cn']`) with `no-unknown-classes` enabled and broader stylistic Tailwind rules disabled during migration.
 - `@arcanejs/toolkit-frontend/styling` no longer provides styled-components compatibility helpers (`PreferredThemeProvider`, `BaseStyle`, `GlobalStyle`); use `ThemeRoot` plus the distributed stylesheet instead.
 - `ThemeRoot` is class-only and does not accept dark/light theme objects; Arcane base theme variables are defined on `:root`, and mode-specific overrides are applied via `.arcane-theme-root.theme-dark/.theme-light/.theme-auto`.
 - Avoid synchronous filesystem APIs (`fs.existsSync`, `fs.readFileSync`, `fs.statSync`, etc.) across the repo; prefer `fs.promises` and lazy async initialization with memoized promises for shared setup paths.

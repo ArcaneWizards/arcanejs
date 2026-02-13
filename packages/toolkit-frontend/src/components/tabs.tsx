@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
 
-import { calculateClass } from '../util';
+import { cn } from '../util';
 
 import { StageContext } from './context';
 import { NestedContent } from './nesting';
@@ -18,15 +18,23 @@ const Tabs: FC<Props> = (props) => {
   const tab = props.info.tabs[currentTab];
 
   return (
-    <div className="arcane-tabs">
-      <div className="arcane-tabs__list">
+    <div
+      className={cn(
+        'flex flex-col border border-arcane-btn-border bg-arcane-btn-border',
+      )}
+    >
+      <div className={cn('flex flex-row border-b border-arcane-btn-border')}>
         {props.info.tabs.map((tab, i) => (
           <div
             key={i}
-            className={calculateClass(
-              'arcane-tabs__item',
-              touching === i && 'touching',
-              currentTab === i && 'current',
+            className={cn(
+              `
+                relative mr-px flex h-arcane-tabs-item cursor-pointer
+                items-center bg-arcane-bg-dark-1 px-arcane
+                hover:bg-arcane-bg-light-1
+              `,
+              touching === i && 'bg-arcane-bg-light-1',
+              currentTab === i && 'text-arcane-hint',
             )}
             onClick={() => setCurrentTab(i)}
             onTouchStart={(event) => {
@@ -40,6 +48,13 @@ const Tabs: FC<Props> = (props) => {
             }}
           >
             {tab.name}
+            {currentTab === i ? (
+              <span
+                className={cn(
+                  'absolute inset-x-2 bottom-1 h-0.5 bg-arcane-hint',
+                )}
+              />
+            ) : null}
           </div>
         ))}
       </div>

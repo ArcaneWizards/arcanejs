@@ -2,28 +2,29 @@ import React, { FC } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
 import { TRANSPARENCY_SVG_URI } from './core';
-import { calculateClass } from '../util';
+import { cn } from '../util';
 
 interface Props {
   className?: string;
   info: proto.RectComponent;
 }
 
-const CLS_GROW = 'grow';
-
 const Rect: FC<Props> = ({ className, info }) => (
   <div
-    className={calculateClass(
-      'arcane-rect',
+    className={cn(
+      `
+        h-arcane-rect min-w-arcane-rect overflow-hidden rounded-arcane-btn
+        border border-arcane-btn-border bg-repeat
+      `,
+      info.grow && 'grow',
       className,
-      info.grow && `arcane-rect--${CLS_GROW}`,
     )}
-    style={{ backgroundImage: `url('${TRANSPARENCY_SVG_URI}')` }}
+    style={{
+      backgroundImage: `url('${TRANSPARENCY_SVG_URI}')`,
+      backgroundSize: '10px',
+    }}
   >
-    <div
-      className="arcane-rect__inner"
-      style={{ backgroundColor: info.color }}
-    />
+    <div className={cn('size-full')} style={{ backgroundColor: info.color }} />
   </div>
 );
 

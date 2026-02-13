@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
+import { cn } from '../util';
 
 import { StageContext } from './context';
 
@@ -22,7 +23,14 @@ const TextInput: FC<Props> = ({ className, info }) => {
 
   return (
     <input
-      className={`arcane-text-input ${className ?? ''}`.trim()}
+      className={cn(
+        `
+          relative box-border overflow-hidden rounded-arcane-btn border
+          border-arcane-btn-border bg-arcane-bg-dark-1 px-1 py-0.5
+          text-arcane-text shadow-arcane-box-inset text-shadow-arcane-btn
+        `,
+        className,
+      )}
       defaultValue={info.value}
       ref={ref}
       onChange={(ev) =>

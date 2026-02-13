@@ -34,5 +34,8 @@ export default [
         callees: ['cn'],
       },
     },
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'error',
+    },
   },
 ];
