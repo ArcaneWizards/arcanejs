@@ -6,7 +6,7 @@ import { rootComponent, Props as RootProps } from './stage';
 
 export type ArcaneFrontendOptions = Pick<
   RootProps,
-  'renderers' | 'themeRootProps'
+  'renderers' | 'themeRootProps' | 'loadingState'
 >;
 
 export const startArcaneFrontend = (opts: ArcaneFrontendOptions) => {

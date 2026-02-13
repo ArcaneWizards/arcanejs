@@ -74,6 +74,7 @@ toolkit.setRoot(root);
 
 - `renderers`: frontend component renderer list
 - `themeRootProps?: React.HTMLAttributes<HTMLDivElement>` (root theme container props)
+- `loadingState?: () => ReactNode` (custom render output while waiting for initial websocket metadata/tree sync)
 
 Theme switching is handled by Arcane via root classes (`theme-auto`, `theme-dark`, `theme-light`). Theme customization is CSS-only by overriding Arcane CSS variables in your entrypoint stylesheet.
 
