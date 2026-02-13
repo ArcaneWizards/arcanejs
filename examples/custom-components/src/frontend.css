@@ -1,0 +1,31 @@
+.custom-stopwatch {
+  padding: 10px;
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-stopwatch__connection {
+  padding: 10px;
+  color: green;
+}
+
+.custom-stopwatch__time {
+  cursor: pointer;
+  padding: 10px;
+  color: red;
+}
+
+.custom-stopwatch__time:hover {
+  opacity: 0.5;
+}
+
+.custom-stopwatch__button {
+  margin-bottom: 10px;
+}
+
+.custom-stopwatch__children {
+  border: 1px solid blue;
+  padding: 10px;
+}

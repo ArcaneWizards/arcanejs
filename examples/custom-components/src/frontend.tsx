@@ -2,6 +2,7 @@ import {
   CORE_FRONTEND_COMPONENT_RENDERER,
   StageContext,
 } from '@arcanejs/toolkit-frontend';
+import '@arcanejs/toolkit-frontend/styles/core.css';
 import { FrontendComponentRenderer } from '@arcanejs/toolkit-frontend/types';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import {
@@ -10,45 +11,13 @@ import {
   StopwatchComponentProto,
   StopwatchPressMessage,
 } from './custom-proto';
-import styled from 'styled-components';
 import { useContext, useEffect, useState } from 'react';
 import {
   useColorSchemePreferences,
   usePressable,
   VALID_COLOR_SCHEME_PREFS,
 } from '@arcanejs/toolkit-frontend/util';
-
-const StyledDiv = styled.div`
-  padding: 10px;
-  border: 1px solid red;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Connection = styled.div`
-  padding: 10px;
-  color: green;
-`;
-
-const Time = styled.div`
-  cursor: pointer;
-  padding: 10px;
-  color: red;
-
-  &:hover {
-    opacity: 0.5;
-  }
-`;
-
-const Button = styled.button`
-  margin-bottom: 10px;
-`;
-
-const ChildrenContainer = styled.div`
-  border: 1px solid blue;
-  padding: 10px;
-`;
+import './frontend.css';
 
 const display = (time: StopwatchComponentProto['state']) => {
   if (time.type === 'stopped') {
@@ -107,14 +76,22 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
   }, [info.state]);
 
   return (
-    <StyledDiv>
-      <Connection>{`Connection State: ${connection.state}`}</Connection>
-      <Connection>{`Connection UUID: ${connectionUuid}`}</Connection>
-      <Button {...reconnectHandler}>Reconnect</Button>
-      <Time {...handlers}>{timeDisplay}</Time>
-      <Button {...callHandler}>Request time from server</Button>
+    <div className="custom-stopwatch">
+      <div className="custom-stopwatch__connection">{`Connection State: ${connection.state}`}</div>
+      <div className="custom-stopwatch__connection">{`Connection UUID: ${connectionUuid}`}</div>
+      <button className="custom-stopwatch__button" {...reconnectHandler}>
+        Reconnect
+      </button>
+      <div className="custom-stopwatch__time" {...handlers}>
+        {timeDisplay}
+      </div>
+      <button className="custom-stopwatch__button" {...callHandler}>
+        Request time from server
+      </button>
       {info.state.type === 'stopped' && info.child && (
-        <ChildrenContainer>{renderComponent(info.child)}</ChildrenContainer>
+        <div className="custom-stopwatch__children">
+          {renderComponent(info.child)}
+        </div>
       )}
       <div>
         Change Theme:
@@ -133,7 +110,7 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
           ))}
         </select>
       </div>
-    </StyledDiv>
+    </div>
   );
 };
 

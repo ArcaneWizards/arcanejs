@@ -70,6 +70,13 @@ toolkit.setRoot(root);
 - `@arcanejs/toolkit/frontend`: browser entrypoint helpers (`startArcaneFrontend`)
 - `@arcanejs/toolkit/util`: utility exports like `HUE_GRADIENT` and `IDMap`
 
+`startArcaneFrontend(...)` supports:
+
+- `renderers`: frontend component renderer list
+- `themeRootProps?: React.HTMLAttributes<HTMLDivElement>` (root theme container props)
+
+Theme switching is handled by Arcane via root classes (`theme-auto`, `theme-dark`, `theme-light`). Theme customization is CSS-only by overriding Arcane CSS variables in your entrypoint stylesheet.
+
 ## Toolkit Lifecycle
 
 `Toolkit.start(...)` supports three modes:
@@ -87,11 +94,11 @@ toolkit.setRoot(root);
 - `title?: string`: page title
 - `path: string` (default: `/`): route prefix where Arcane UI is served
 - `log?: Logger`: optional logger (`debug`, `info`, `warn`, `error`)
-- `entrypointJsFile?: string`: custom frontend bundle path for custom namespaces/components
+- `entrypointJsFile?: string`: custom frontend bundle path for custom namespaces/components. ArcaneJS expects a same-basename stylesheet (`.css`) to exist for this entrypoint so styles can be served automatically. Source maps (`.js.map`, `.css.map`) are optional and exposed when present.
 - `materialIconsFontFile?: string`: explicit path to `material-symbols-outlined.woff2` when auto-resolution is not possible
 - `additionalFiles?: Record<string, () => Promise<{ contentType: string; content: Buffer }>>`: additional static files served from the toolkit path. Keys are relative request paths (for example `styles/app.css` -> `/your-path/styles/app.css`), and must not start with `/`.
 - `htmlPage?: (context) => string | Promise<string>`: custom HTML renderer for the root route. Context includes:
-  - `coreAssets`: URLs for built-in toolkit static assets (`materialSymbolsOutlined`, `entrypointJs`, `entrypointJsMap`)
+  - `coreAssets`: URLs for built-in toolkit static assets (`materialSymbolsOutlined`, `entrypointJs`, `entrypointJsMap`, `entrypointCss`, `entrypointCssMap`)
   - `assetUrls`: URL mapping for all static assets by relative path (core + `additionalFiles`)
   - `title`, `path`
 

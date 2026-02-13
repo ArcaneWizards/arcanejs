@@ -7,16 +7,9 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol';
-import {
-  BaseStyle,
-  GlobalStyle,
-  Theme,
-  DARK_THEME,
-  LIGHT_THEME,
-} from '@arcanejs/toolkit-frontend/styling';
+import { ThemeRoot } from '@arcanejs/toolkit-frontend/styling';
 
 import {
   GroupStateWrapper,
@@ -29,15 +22,12 @@ import {
   FrontendComponentRenderer,
   FrontendComponentRenderers,
 } from '@arcanejs/toolkit-frontend/types';
-import { PreferredThemeProvider } from '../../../toolkit-frontend/src/styling';
+import { calculateClass } from '@arcanejs/toolkit-frontend/util';
 
 export type Props = {
   className?: string;
   renderers: FrontendComponentRenderers;
-  themes?: {
-    dark: Theme;
-    light: Theme;
-  };
+  themeRootProps?: React.HTMLAttributes<HTMLDivElement>;
 };
 
 type InFlightCall = {
@@ -212,7 +202,7 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
           {root ? (
             renderComponent(root)
           ) : (
-            <div className="no-root">
+            <div className="arcane-stage__no-root">
               No root has been added to the light desk
             </div>
           )}
@@ -222,23 +212,13 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
   );
 };
 
-const StyledStage = styled(Stage)`
-  width: 100%;
-  height: 100%;
-  background-color: ${(p) => p.theme.pageBg};
-  color: ${(p) => p.theme.textNormal};
-  padding: ${(p) => p.theme.sizingPx.spacing}px;
-`;
-
 export function rootComponent(props: Props) {
   return (
-    <PreferredThemeProvider
-      dark={props.themes?.dark ?? DARK_THEME}
-      light={props.themes?.light ?? LIGHT_THEME}
-    >
-      <BaseStyle />
-      <GlobalStyle />
-      <StyledStage {...props} />
-    </PreferredThemeProvider>
+    <ThemeRoot rootProps={props.themeRootProps}>
+      <Stage
+        {...props}
+        className={calculateClass('arcane-stage', props.className)}
+      />
+    </ThemeRoot>
   );
 }

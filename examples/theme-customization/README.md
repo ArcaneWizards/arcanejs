@@ -1,10 +1,10 @@
 # Theme customization example
 
-This example demonstrates a custom frontend entrypoint that overrides both
-light and dark styled-components themes with a more colorful, modern look and
-larger spacing. It also includes a custom `theme-switch` component namespace to
-control appearance mode (`auto/system`, `dark`, `light`) from inside the Arcane
-UI.
+This example demonstrates a custom frontend entrypoint that overrides Arcane
+CSS variables using CSS only (no JS theme objects), including separate variable
+sets for dark, light, and auto/system mode. It also includes a custom
+`theme-switch` component namespace to control appearance mode
+(`auto/system`, `dark`, `light`) from inside the Arcane UI.
 
 Included controls:
 

@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
 
@@ -9,53 +8,6 @@ interface Props {
   className?: string;
   info: proto.TimelineComponent;
 }
-
-const Wrapper = styled.div`
-  flex-grow: 1;
-`;
-
-const Data = styled.div`
-  display: flex;
-`;
-
-const Metadata = styled.div`
-  flex-grow: 1;
-`;
-
-const SourceData = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: end;
-  justify-content: center;
-`;
-
-const IndicatorIcon = styled(Icon)`
-  font-size: 40px;
-`;
-
-const Bar = styled.div`
-  width: 100%;
-  height: 10px;
-  border: 1px solid ${(p) => p.theme.borderDark};
-  background: ${(p) => p.theme.borderDark};
-`;
-
-const Fill = styled.div`
-  height: 100%;
-  background: ${(p) => p.theme.hint};
-`;
-
-const Title = styled.div`
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-`;
-
-const Subtitle = styled.div`
-  font-size: 1em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-`;
 
 const Timeline: FC<Props> = (props) => {
   const { className, info } = props;
@@ -98,29 +50,35 @@ const Timeline: FC<Props> = (props) => {
   }, [frameState, info.state]);
 
   return (
-    <Wrapper className={className}>
-      <Data>
-        <Metadata>
-          {info.title && <Title>{info.title}</Title>}
+    <div className={`arcane-timeline ${className ?? ''}`.trim()}>
+      <div className="arcane-timeline__data">
+        <div className="arcane-timeline__metadata">
+          {info.title && (
+            <div className="arcane-timeline__title">{info.title}</div>
+          )}
           {info.subtitles?.map((subtitle, k) => (
-            <Subtitle key={k}>{subtitle}</Subtitle>
+            <div key={k} className="arcane-timeline__subtitle">
+              {subtitle}
+            </div>
           ))}
-        </Metadata>
-        <SourceData>
+        </div>
+        <div className="arcane-timeline__source">
           {info.source?.name}
-          <IndicatorIcon
+          <Icon
+            className="arcane-timeline__indicator"
             icon={info.state.state === 'playing' ? 'play_arrow' : 'pause'}
           />
-        </SourceData>
-      </Data>
-      <Bar>
-        <Fill
+        </div>
+      </div>
+      <div className="arcane-timeline__bar">
+        <div
+          className="arcane-timeline__fill"
           style={{
             width: `${Math.min(100, (100 * currentTimeMillis) / info.state.totalTimeMillis)}%`,
           }}
         />
-      </Bar>
-    </Wrapper>
+      </div>
+    </div>
   );
 };
 

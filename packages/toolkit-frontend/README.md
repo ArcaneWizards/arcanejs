@@ -16,7 +16,6 @@ Peer ecosystem typically used with this package:
 
 - `react@^19.2.0`
 - `react-dom@^19.2.0`
-- `styled-components`
 - `@arcanejs/protocol`
 
 ## What It Provides
@@ -24,8 +23,9 @@ Peer ecosystem typically used with this package:
 - Core frontend renderer: `CORE_FRONTEND_COMPONENT_RENDERER`
 - Core UI components (`Button`, `Group`, `Switch`, `Tabs`, etc.)
 - Stage context and connection state (`StageContext`)
-- Theme primitives (`DARK_THEME`, `LIGHT_THEME`, `BaseStyle`, `GlobalStyle`)
+- Theme root wrapper (`ThemeRoot`)
 - Touch/mouse interaction helpers (`usePressable`, `trackTouch`, `initialiseListeners`)
+- Precompiled core stylesheet export (`@arcanejs/toolkit-frontend/styles/core.css`)
 
 ## Public Exports
 
@@ -45,10 +45,15 @@ Peer ecosystem typically used with this package:
 
 ### `@arcanejs/toolkit-frontend/styling`
 
-- `DARK_THEME`, `LIGHT_THEME`
-- `PreferredThemeProvider`
-- `BaseStyle`, `GlobalStyle`
-- shared button/touch style fragments and `Theme` type
+- `ThemeRoot`
+
+### `@arcanejs/toolkit-frontend/styles`
+
+- `CORE_STYLE_PATH`
+
+### `@arcanejs/toolkit-frontend/styles/core.css`
+
+- Precompiled core Arcane frontend stylesheet
 
 ### `@arcanejs/toolkit-frontend/types`
 
@@ -69,6 +74,7 @@ In most apps you will not call this package directly; `@arcanejs/toolkit` serves
 Use this package directly when you provide your own frontend bundle for custom namespaces:
 
 ```tsx
+import '@arcanejs/toolkit-frontend/styles/core.css';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
 
@@ -76,6 +82,14 @@ startArcaneFrontend({
   renderers: [CORE_FRONTEND_COMPONENT_RENDERER, customRenderer],
 });
 ```
+
+`@arcanejs/toolkit-frontend/styles/core.css` is required and should be imported once in your frontend entrypoint.
+
+`startArcaneFrontend` supports:
+
+- `themeRootProps?: React.HTMLAttributes<HTMLDivElement>`: props for the root theme container.
+
+Theme switching is class-based (`theme-auto`, `theme-dark`, `theme-light`) and managed internally from `useColorSchemePreferences`; theme customization should be done in CSS by overriding Arcane variables on `.arcane-theme-root` for those classes.
 
 ## Stage Context
 

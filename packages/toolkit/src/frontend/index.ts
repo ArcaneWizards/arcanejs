@@ -4,7 +4,10 @@ import { initialiseListeners } from '@arcanejs/toolkit-frontend/util';
 
 import { rootComponent, Props as RootProps } from './stage';
 
-export type ArcaneFrontendOptions = Pick<RootProps, 'renderers' | 'themes'>;
+export type ArcaneFrontendOptions = Pick<
+  RootProps,
+  'renderers' | 'themeRootProps'
+>;
 
 export const startArcaneFrontend = (opts: ArcaneFrontendOptions) => {
   initialiseListeners();

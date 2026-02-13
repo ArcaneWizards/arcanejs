@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { styled } from 'styled-components';
 
 import * as proto from '@arcanejs/protocol/core';
 
@@ -12,46 +11,6 @@ interface Props {
   info: proto.TabsComponent;
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: ${(p) => p.theme.borderDark};
-  border: 1px solid ${(p) => p.theme.borderDark};
-`;
-
-const TabList = styled.div`
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid ${(p) => p.theme.borderDark};
-`;
-
-const TabItem = styled.div`
-  height: ${(p) => p.theme.sizingPx.spacing * 3}px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 ${(p) => p.theme.sizingPx.spacing}px;
-  cursor: pointer;
-  background: ${(p) => p.theme.bgDark1};
-  margin-right: 1px;
-
-  &:hover,
-  &.touching {
-    background: ${(p) => p.theme.bgLight1};
-  }
-
-  &.current {
-    color: ${(p) => p.theme.hint};
-
-    &::after {
-      content: '';
-      border-bottom: 2px solid ${(p) => p.theme.hint};
-      display: block;
-      margin-top: ${(p) => p.theme.sizingPx.spacing / 2}px;
-    }
-  }
-`;
-
 const Tabs: FC<Props> = (props) => {
   const { renderComponent } = React.useContext(StageContext);
   const [touching, setTouching] = React.useState<null | number>(null);
@@ -59,12 +18,13 @@ const Tabs: FC<Props> = (props) => {
   const tab = props.info.tabs[currentTab];
 
   return (
-    <Wrapper>
-      <TabList>
+    <div className="arcane-tabs">
+      <div className="arcane-tabs__list">
         {props.info.tabs.map((tab, i) => (
-          <TabItem
+          <div
             key={i}
             className={calculateClass(
+              'arcane-tabs__item',
               touching === i && 'touching',
               currentTab === i && 'current',
             )}
@@ -80,11 +40,11 @@ const Tabs: FC<Props> = (props) => {
             }}
           >
             {tab.name}
-          </TabItem>
+          </div>
         ))}
-      </TabList>
+      </div>
       <NestedContent>{tab?.child && renderComponent(tab.child)}</NestedContent>
-    </Wrapper>
+    </div>
   );
 };
 

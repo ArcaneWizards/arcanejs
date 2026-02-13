@@ -3,13 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { AnyComponentProto } from '@arcanejs/protocol';
 import { StageContext } from '@arcanejs/toolkit-frontend';
-import {
-  BaseStyle,
-  DARK_THEME,
-  GlobalStyle,
-  LIGHT_THEME,
-  PreferredThemeProvider,
-} from '@arcanejs/toolkit-frontend/styling';
+import { ThemeRoot } from '@arcanejs/toolkit-frontend/styling';
 import { Group } from '@arcanejs/toolkit/components/group';
 import { IDMap } from '@arcanejs/toolkit/util';
 import { Base, Parent } from '@arcanejs/toolkit/components/base';
@@ -37,13 +31,7 @@ const ToolkitSimulatorContext = React.createContext<{
 export const ToolkitDisplay: FC = () => {
   const { tree, renderComponent } = React.useContext(ToolkitSimulatorContext);
 
-  return (
-    <PreferredThemeProvider dark={DARK_THEME} light={LIGHT_THEME}>
-      <BaseStyle />
-      <GlobalStyle />
-      {tree && renderComponent(tree)}
-    </PreferredThemeProvider>
-  );
+  return <ThemeRoot>{tree && renderComponent(tree)}</ThemeRoot>;
 };
 
 export const ToolkitSimulatorProvider: React.FC<
