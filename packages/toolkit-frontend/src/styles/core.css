@@ -59,7 +59,7 @@
   --arcane-unit-height: 40px;
 }
 
-.arcane-theme-root.theme-dark {
+@utility arcane-theme-dark {
   --arcane-page-bg: #333;
   --arcane-color-green: #98c379;
   --arcane-color-red: #e06c75;
@@ -91,49 +91,13 @@
   --arcane-gradient-hint-pressed: linear-gradient(to bottom, #2a77f3, #4286f4);
 }
 
+.arcane-theme-root.theme-dark {
+  @apply arcane-theme-dark;
+}
+
 @media (prefers-color-scheme: dark) {
   .arcane-theme-root.theme-auto {
-    --arcane-page-bg: #333;
-    --arcane-color-green: #98c379;
-    --arcane-color-red: #e06c75;
-    --arcane-color-amber: #d19a66;
-    --arcane-bg-dark-1: #252524;
-    --arcane-bg: #2a2a2b;
-    --arcane-bg-light-1: #353638;
-    --arcane-border-dark: #151516;
-    --arcane-border-light: #1c1d1d;
-    --arcane-border-lighter: #252524;
-    --arcane-border-lighterer: #6b6b67;
-    --arcane-hint: #4286f4;
-    --arcane-hint-rgb: 66, 134, 244;
-    --arcane-hint-dark-1: #2a77f3;
-    --arcane-text-normal: #f3f3f5;
-    --arcane-text-active: #ffffff;
-    --arcane-text-muted: #777777;
-    --arcane-shadow-box-inset: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.3);
-    --arcane-shadow-text: 0 -1px rgba(0, 0, 0, 0.7);
-    --arcane-shadow-text-active: 0 -1px rgba(0, 0, 0, 0.4);
-    --arcane-gradient-button: linear-gradient(to bottom, #4f5053, #343436);
-    --arcane-gradient-button-hover: linear-gradient(
-      to bottom,
-      #5e6064,
-      #393a3b
-    );
-    --arcane-gradient-button-active: linear-gradient(
-      to bottom,
-      #242525,
-      #37383a
-    );
-    --arcane-gradient-button-pressed-hover: linear-gradient(
-      to bottom,
-      #282929,
-      #414243
-    );
-    --arcane-gradient-hint-pressed: linear-gradient(
-      to bottom,
-      #2a77f3,
-      #4286f4
-    );
+    @apply arcane-theme-dark;
   }
 }
 
