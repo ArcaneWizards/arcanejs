@@ -1,43 +1,106 @@
-# `@arcanejs/diff`
+# `@arcanejs/toolkit-frontend`
 
-[![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Fdiff)](https://www.npmjs.com/package/@arcanejs/diff)
+[![NPM Version](https://img.shields.io/npm/v/%40arcanejs%2Ftoolkit-frontend)](https://www.npmjs.com/package/@arcanejs/toolkit-frontend)
 
-This package provides an easy way to:
+Browser-side renderer components and stage utilities for ArcaneJS.
 
-- Create diffs by comparing objects
-- Update objects by applying diffs
+This package is used by `@arcanejs/toolkit`'s default frontend bundle, and can also be used directly when building custom frontend entrypoints for custom component namespaces.
 
-This library is written in TypeScript,
-and produces diffs that are type-safe,
-and can only be applied to objects that match the type
-of the objects being compared.
+## Install
 
-This package is part of the
-[`arcanejs` project](https://github.com/ArcaneWizards/arcanejs#arcanejs),
-and is used to maintain a copy of a JSON tree in downstream clients in real-time
-via websockets.
-
-## Usage
-
-```ts
-import { diffJson, Diff } from '@arcanejs/diff/diff';
-import { patchJson } from '@arcanejs/diff/patch';
-
-type E = {
-  foo: string;
-  bar?: number[];
-};
-
-const a: E = { foo: 'bar' };
-const b: E = { foo: 'baz', bar: [1] };
-
-const diffA: Diff<E> = diffJson(a, b);
-
-const resultA = patchJson(a, diffA);
-
-console.log(resultB); // { foo: 'baz', bar: [1] }
-
-const c = { baz: 'foo' };
-
-const resultB = patchJson(c, diffA); // TypeScript Type Error: Property 'baz' is missing in type '{ foo: string; bar?: number[] | undefined; }' but required in type '{ baz: string; }'
+```bash
+npm install @arcanejs/toolkit-frontend
 ```
+
+Peer ecosystem typically used with this package:
+
+- `react`
+- `react-dom`
+- `styled-components`
+- `@arcanejs/protocol`
+
+## What It Provides
+
+- Core frontend renderer: `CORE_FRONTEND_COMPONENT_RENDERER`
+- Core UI components (`Button`, `Group`, `Switch`, `Tabs`, etc.)
+- Stage context and connection state (`StageContext`)
+- Theme primitives (`DARK_THEME`, `LIGHT_THEME`, `BaseStyle`, `GlobalStyle`)
+- Touch/mouse interaction helpers (`usePressable`, `trackTouch`, `initialiseListeners`)
+
+## Public Exports
+
+### `@arcanejs/toolkit-frontend`
+
+- `CORE_FRONTEND_COMPONENT_RENDERER`
+- Component exports: `Button`, `Group`, `GroupStateWrapper`, `Label`, `NestedContent`, `Rect`, `SliderButton`, `Switch`, `Tabs`, `TextInput`, `Timeline`
+- `StageContext`
+- Types: `StageContextData`, `StageConnectionState`
+- `code` namespace re-export (`core` helpers such as `Icon`, transparency SVG constants)
+
+### `@arcanejs/toolkit-frontend/components/core`
+
+- `Icon`
+- `TRANSPARENCY_SVG`
+- `TRANSPARENCY_SVG_URI`
+
+### `@arcanejs/toolkit-frontend/styling`
+
+- `DARK_THEME`, `LIGHT_THEME`
+- `PreferredThemeProvider`
+- `BaseStyle`, `GlobalStyle`
+- shared button/touch style fragments and `Theme` type
+
+### `@arcanejs/toolkit-frontend/types`
+
+- `FrontendComponentRenderer`
+- `FrontendComponentRenderers`
+
+### `@arcanejs/toolkit-frontend/util`
+
+- `calculateClass`
+- touch helpers: `initialiseListeners`, `usePressable`, `trackTouch`, etc.
+- theme preference hooks: `useColorSchemePreferences`, `usePreferredColorScheme`
+- `VALID_COLOR_SCHEME_PREFS`
+
+## Typical Usage
+
+In most apps you will not call this package directly; `@arcanejs/toolkit` serves a prebuilt frontend entrypoint.
+
+Use this package directly when you provide your own frontend bundle for custom namespaces:
+
+```tsx
+import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
+import {
+  CORE_FRONTEND_COMPONENT_RENDERER,
+} from '@arcanejs/toolkit-frontend';
+
+startArcaneFrontend({
+  renderers: [
+    CORE_FRONTEND_COMPONENT_RENDERER,
+    customRenderer,
+  ],
+});
+```
+
+## Stage Context
+
+`StageContext` provides browser-side runtime hooks for custom renderers:
+
+- `sendMessage(...)`: fire-and-forget component messages
+- `call(...)`: request/response component calls
+- `renderComponent(...)`: render nested protocol components
+- `connection`, `connectionUuid`, `reconnect()`
+
+## When To Use This Package
+
+Use `@arcanejs/toolkit-frontend` if you are:
+
+- creating custom frontend renderers for non-core namespaces
+- customizing ArcaneJS theme/styling behavior
+- implementing browser-side interaction behavior integrated with Arcane stage context
+
+If you only need server-side panel composition, use `@arcanejs/react-toolkit` and the default toolkit frontend.
+
+## Example
+
+- Custom frontend entrypoint example: <https://github.com/ArcaneWizards/arcanejs/blob/main/examples/custom-components/src/frontend.tsx>
