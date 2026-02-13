@@ -102,6 +102,202 @@ ToolkitRenderer.render(<App />, toolkit);
 
 Core component props/events map directly to the corresponding classes in `@arcanejs/toolkit`.
 
+## Core Component API
+
+These are the React components most users consume directly from `@arcanejs/react-toolkit`.
+
+### `Button`
+
+Props:
+
+- `text?: string | null`
+- `icon?: string | null` (Material Symbols Outlined icon name)
+- `mode?: 'normal' | 'pressed'`
+- `error?: string | null`
+- `onClick?: (connection) => void | Promise<void>`
+
+Notes:
+
+- `onClick` uses request/response semantics and can be async.
+- Throwing (or rejecting) in `onClick` surfaces an error state in the UI.
+
+```tsx
+<Button
+  text="Run"
+  icon="play_arrow"
+  onClick={async () => {
+    await runTask();
+  }}
+/>
+```
+
+### `Group`
+
+Props:
+
+- `direction?: 'horizontal' | 'vertical'`
+- `wrap?: boolean`
+- `border?: true`
+- `title?: string | null`
+- `labels?: Array<{ text: string }> | null`
+- `editableTitle?: boolean`
+- `defaultCollapsibleState?: 'open' | 'closed' | 'auto'`
+- `onTitleChanged?: (title, connection) => void`
+
+Use `Group` as the primary layout primitive and nest groups freely.
+
+```tsx
+<Group
+  direction="vertical"
+  title="Fixture Settings"
+  border
+  editableTitle
+  onTitleChanged={(title) => setPanelTitle(title)}
+>
+  <Label text="Master Intensity" />
+  <SliderButton value={master} min={0} max={100} onChange={setMaster} />
+</Group>
+```
+
+### `GroupHeader`
+
+`GroupHeader` lets you place controls in a group's header area.
+
+```tsx
+<Group title="Playlist">
+  <GroupHeader>
+    <Button text="Add" onClick={addItem} />
+    <Button text="Shuffle" onClick={shuffle} />
+  </GroupHeader>
+  <Label text="Current Queue" />
+</Group>
+```
+
+### `Label`
+
+Props:
+
+- `text: string | null`
+- `bold?: boolean`
+
+```tsx
+<Label text={`Connected: ${isConnected ? 'yes' : 'no'}`} bold />
+```
+
+### `Rect`
+
+Props:
+
+- `color?: string`
+- `grow?: boolean`
+
+Useful for color/state swatches.
+
+```tsx
+<Group>
+  <Label text="Current Color" />
+  <Rect color={`hsl(${hue}deg 100% 50%)`} grow />
+</Group>
+```
+
+### `SliderButton`
+
+Props:
+
+- `value: number` (required)
+- `min?: number` (default `0`)
+- `max?: number` (default `255`)
+- `step?: number` (default `5`)
+- `defaultValue?: number` (for uncontrolled style workflows)
+- `gradient?: Array<{ color: string; position: number }>`
+- `grow?: boolean`
+- `onChange?: (value, connection) => void | Promise<void>`
+
+```tsx
+<SliderButton
+  value={temperature}
+  min={2700}
+  max={6500}
+  step={100}
+  onChange={setTemperature}
+/>
+```
+
+### `Switch`
+
+Props:
+
+- `value?: 'on' | 'off'`
+- `defaultValue?: 'on' | 'off'`
+- `onChange?: (state, connection) => void | Promise<void>`
+
+```tsx
+<Switch value={enabled} onChange={setEnabled} />
+```
+
+### `Tabs` and `Tab`
+
+`Tabs` only accepts `Tab` children. Each `Tab` should contain one child component subtree.
+
+```tsx
+<Tabs>
+  <Tab name="Input">
+    <Group>
+      <TextInput value={input} onChange={setInput} />
+    </Group>
+  </Tab>
+  <Tab name="Output">
+    <Group>
+      <Label text={output} />
+    </Group>
+  </Tab>
+</Tabs>
+```
+
+### `TextInput`
+
+Props:
+
+- `value?: string | null`
+- `onChange?: (value, connection) => void | Promise<void>`
+
+```tsx
+<TextInput value={name} onChange={setName} />
+```
+
+### `Timeline`
+
+Props:
+
+- `state?`:
+  - `{ state: 'playing'; totalTimeMillis; effectiveStartTime; speed }`
+  - `{ state: 'stopped'; totalTimeMillis; currentTimeMillis }`
+- `title?: string | null`
+- `subtitles?: string[] | null`
+- `source?: { name: string } | null`
+
+```tsx
+<Timeline
+  title="Show Timeline"
+  subtitles={[`Cue ${cue}`, `BPM ${bpm}`]}
+  source={{ name: activeTrack }}
+  state={
+    playing
+      ? {
+          state: 'playing',
+          totalTimeMillis: duration,
+          effectiveStartTime: startedAt,
+          speed: 1,
+        }
+      : {
+          state: 'stopped',
+          totalTimeMillis: duration,
+          currentTimeMillis: pausedAt,
+        }
+  }
+/>
+```
+
 ## Helper Modules
 
 ### `@arcanejs/react-toolkit/connections`
