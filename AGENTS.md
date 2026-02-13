@@ -3,6 +3,22 @@
 ## Purpose
 This repository is `arcanejs`, a pnpm/turbo monorepo for building realtime control panels for single-process Node.js apps.
 
+## Agent Maintenance Rules
+Treat this file as a living operational map for future agents.
+
+When working in this repo, update `AGENTS.md` in the same change if you discover any of the following:
+- Documentation in this file no longer matches actual source behavior.
+- New architecture boundaries, runtime flows, or package responsibilities.
+- New gotchas, failure modes, or non-obvious constraints that can save future debugging time.
+- Important workflow changes (build/test/dev commands, entrypoints, extension patterns).
+
+Expectations for updates:
+- Prefer small, precise edits over broad rewrites.
+- Keep guidance implementation-anchored (point to concrete files/functions).
+- Record facts, not speculation; verify against source before adding.
+- If a discrepancy is uncertain, add it as a clearly-labeled “Open Question” instead of asserting it as fact.
+- Do not remove older guidance unless it is confirmed obsolete or incorrect.
+
 The architecture is split across:
 - Server-side component model and transport (`@arcanejs/toolkit`)
 - Protocol types (`@arcanejs/protocol`)
