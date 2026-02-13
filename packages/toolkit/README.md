@@ -89,6 +89,11 @@ toolkit.setRoot(root);
 - `log?: Logger`: optional logger (`debug`, `info`, `warn`, `error`)
 - `entrypointJsFile?: string`: custom frontend bundle path for custom namespaces/components
 - `materialIconsFontFile?: string`: explicit path to `material-symbols-outlined.woff2` when auto-resolution is not possible
+- `additionalFiles?: Record<string, () => Promise<{ contentType: string; content: Buffer }>>`: additional static files served from the toolkit path. Keys are relative request paths (for example `styles/app.css` -> `/your-path/styles/app.css`), and must not start with `/`.
+- `htmlPage?: (context) => string | Promise<string>`: custom HTML renderer for the root route. Context includes:
+  - `coreAssets`: URLs for built-in toolkit static assets (`materialSymbolsOutlined`, `entrypointJs`, `entrypointJsMap`)
+  - `assetUrls`: URL mapping for all static assets by relative path (core + `additionalFiles`)
+  - `title`, `path`
 
 Important constraint:
 

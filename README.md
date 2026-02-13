@@ -98,10 +98,12 @@ https://www.instagram.com/LightningParadox/
 The full source-code for this application is not currently public,
 but I intend to open-source it in the future.
 
-## [Examples](./examples/react/)
+## Examples
 
-For a comprehensive list of examples,
-please see the [react example directory](./examples/react/).
+- [React examples](./examples/react/)
+- [Core toolkit example](./examples/core/)
+- [Custom components example](./examples/custom-components/)
+- [Custom shell example (`htmlPage` + `additionalFiles`)](./examples/custom-shell/)
 
 ### [Example Philips Hue App](https://github.com/arcanejs/hue-example)
 

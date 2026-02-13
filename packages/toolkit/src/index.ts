@@ -4,7 +4,14 @@ export type {
   ToolkitServerListenerOptions,
   ToolkitServerListener,
 } from './backend/toolkit';
-export type { ToolkitOptions } from './backend/options';
+export type {
+  ToolkitAdditionalFiles,
+  ToolkitCoreAssetRelativePath,
+  ToolkitHtmlPageContext,
+  ToolkitOptions,
+  ToolkitStaticFile,
+  ToolkitStaticFileResolver,
+} from './backend/options';
 
 export type { AnyComponent } from './backend/components/base';
 export { Button } from './backend/components/button';

@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #f6f8fb;
+  color: #162134;
+  font-family:
+    'Avenir Next',
+    Avenir,
+    'Segoe UI',
+    sans-serif;
+}
+
+.custom-shell-header {
+  margin: 0;
+  padding: 16px 20px;
+  border-bottom: 2px solid #d4deec;
+  background: linear-gradient(120deg, #dde8ff 0%, #f3f8ff 100%);
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+#root {
+  padding: 16px;
+}

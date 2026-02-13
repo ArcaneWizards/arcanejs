@@ -162,6 +162,43 @@ importers:
         specifier: ^5.3.3
         version: 5.4.5
 
+  examples/custom-shell:
+    dependencies:
+      pino:
+        specifier: ^9.5.0
+        version: 9.5.0
+      pino-pretty:
+        specifier: ^11.3.0
+        version: 11.3.0
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
+    devDependencies:
+      '@arcanejs/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@arcanejs/toolkit':
+        specifier: workspace:^
+        version: link:../../packages/toolkit
+      '@arcanejs/typescript-config':
+        specifier: workspace:^
+        version: link:../../packages/typescript-config
+      '@types/eslint':
+        specifier: ^8.56.5
+        version: 8.56.5
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.11.24
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      tsup:
+        specifier: ^8.1.0
+        version: 8.1.0(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5))(typescript@5.4.5)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   examples/react:
     dependencies:
       '@arcanejs/react-toolkit':
