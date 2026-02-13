@@ -168,9 +168,11 @@ export class Toolkit implements Parent, Listenable<Events> {
         if (!this.rootGroup) return;
         const root = this.rootGroup.getProtoInfo(this.componentIDMap);
         for (const [connection, meta] of this.connections.entries()) {
+          const diff = diffJson(meta.lastTreeSent, root);
+          if (diff.type === 'match') continue;
           connection.sendMessage({
             type: 'tree-diff',
-            diff: diffJson(meta.lastTreeSent, root),
+            diff,
           });
           meta.lastTreeSent = root;
         }
