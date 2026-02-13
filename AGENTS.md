@@ -22,6 +22,8 @@ When changing public-facing APIs in publishable packages (`packages/toolkit`, `p
 - Behavior changes that affect how consumers use the package
 - New required peer/dependency expectations for package consumers
 
+Do not update package READMEs for backend-only/internal implementation details that do not change package usage, public API, or consumer-facing behavior.
+
 When exposing a new subpath/module that is not already re-exported by an existing entry module, update both:
 
 - `tsup.config.ts` `entry` list in that package (controls what gets built into `dist/*`)
@@ -215,6 +217,7 @@ Agent rules:
 - No authentication/authorization built in; do not expose publicly without hardening.
 - Toolkit root can only be set once (`setRoot` throws on second call).
 - Tree updates are throttled; do not assume per-mutation immediate network flush.
+- `Toolkit.updateTree()` suppresses no-op websocket updates: when `diffJson(lastTreeSent, currentTree)` returns `{ type: 'match' }`, no `tree-diff` message is sent.
 - Component keys depend on instance identity; replacing instances changes keys.
 - Core packages target React 18; `apps/docs` is a separate sandbox using Next/React RC versions.
 - Package READMEs are maintained, but if docs and source diverge, treat source files as authoritative.
