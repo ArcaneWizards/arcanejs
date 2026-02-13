@@ -245,6 +245,7 @@ Agent rules:
 - `@arcanejs/toolkit-frontend/styles/core.css` is the distributed core stylesheet for class-based frontend styles; import it in custom frontend entrypoints so they emit a matching CSS asset.
 - `@arcanejs/toolkit-frontend` no longer requires `styled-components` at runtime; theming/styling relies on CSS variables + distributed CSS assets.
 - `@arcanejs/toolkit-frontend/styling` no longer provides styled-components compatibility helpers (`PreferredThemeProvider`, `BaseStyle`, `GlobalStyle`); use `ThemeRoot` plus the distributed stylesheet instead.
+- `ThemeRoot` is class-only and does not accept dark/light theme objects; customize theme values in CSS by overriding `--arcane-*` variables on `.arcane-theme-root.theme-dark/.theme-light/.theme-auto`.
 - Avoid synchronous filesystem APIs (`fs.existsSync`, `fs.readFileSync`, `fs.statSync`, etc.) across the repo; prefer `fs.promises` and lazy async initialization with memoized promises for shared setup paths.
 - `ToolkitOptions.additionalFiles` keys are strict relative paths (no leading `/`), and are mounted under `ToolkitOptions.path`.
 - Core packages target React 19 (`react@^19.2.0`, `react-dom@^19.2.0`) and `@arcanejs/react-toolkit` tracks `react-reconciler@0.33.x`.

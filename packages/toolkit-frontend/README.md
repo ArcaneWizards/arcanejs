@@ -23,7 +23,7 @@ Peer ecosystem typically used with this package:
 - Core frontend renderer: `CORE_FRONTEND_COMPONENT_RENDERER`
 - Core UI components (`Button`, `Group`, `Switch`, `Tabs`, etc.)
 - Stage context and connection state (`StageContext`)
-- Theme primitives (`DARK_THEME`, `LIGHT_THEME`, `ThemeRoot`)
+- Theme root wrapper (`ThemeRoot`)
 - Touch/mouse interaction helpers (`usePressable`, `trackTouch`, `initialiseListeners`)
 - Precompiled core stylesheet export (`@arcanejs/toolkit-frontend/styles/core.css`)
 
@@ -45,9 +45,7 @@ Peer ecosystem typically used with this package:
 
 ### `@arcanejs/toolkit-frontend/styling`
 
-- `DARK_THEME`, `LIGHT_THEME`
 - `ThemeRoot`
-- `Theme`, `ThemeVariableMap`, `themeToCssVariables`
 
 ### `@arcanejs/toolkit-frontend/styles`
 
@@ -87,11 +85,11 @@ startArcaneFrontend({
 
 `@arcanejs/toolkit-frontend/styles/core.css` is required and should be imported once in your frontend entrypoint.
 
-`startArcaneFrontend` also supports styling migration options:
+`startArcaneFrontend` supports:
 
-- `themes?: { dark; light }` (legacy-compatible, still supported)
-- `themeVariables?: Partial<ThemeVariableMap>`: CSS variable overrides at root
-- `themeRootProps?: React.HTMLAttributes<HTMLDivElement>`: props for root theme container
+- `themeRootProps?: React.HTMLAttributes<HTMLDivElement>`: props for the root theme container.
+
+Theme switching is class-based (`theme-auto`, `theme-dark`, `theme-light`) and managed internally from `useColorSchemePreferences`; theme customization should be done in CSS by overriding Arcane variables on `.arcane-theme-root` for those classes.
 
 ## Stage Context
 

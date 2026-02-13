@@ -73,9 +73,9 @@ toolkit.setRoot(root);
 `startArcaneFrontend(...)` supports:
 
 - `renderers`: frontend component renderer list
-- `themes?: { dark; light }` (legacy-compatible themed objects)
-- `themeVariables?: Partial<ThemeVariableMap>` (CSS variable overrides)
 - `themeRootProps?: React.HTMLAttributes<HTMLDivElement>` (root theme container props)
+
+Theme switching is handled by Arcane via root classes (`theme-auto`, `theme-dark`, `theme-light`). Theme customization is CSS-only by overriding Arcane CSS variables in your entrypoint stylesheet.
 
 ## Toolkit Lifecycle
 

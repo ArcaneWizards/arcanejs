@@ -9,13 +9,7 @@ import React, {
 } from 'react';
 
 import * as proto from '@arcanejs/protocol';
-import {
-  ThemeVariableMap,
-  Theme,
-  DARK_THEME,
-  LIGHT_THEME,
-  ThemeRoot,
-} from '@arcanejs/toolkit-frontend/styling';
+import { ThemeRoot } from '@arcanejs/toolkit-frontend/styling';
 
 import {
   GroupStateWrapper,
@@ -33,11 +27,6 @@ import { calculateClass } from '@arcanejs/toolkit-frontend/util';
 export type Props = {
   className?: string;
   renderers: FrontendComponentRenderers;
-  themes?: {
-    dark: Theme;
-    light: Theme;
-  };
-  themeVariables?: Partial<ThemeVariableMap>;
   themeRootProps?: React.HTMLAttributes<HTMLDivElement>;
 };
 
@@ -225,12 +214,7 @@ const Stage: React.FC<Props> = ({ className, renderers }) => {
 
 export function rootComponent(props: Props) {
   return (
-    <ThemeRoot
-      dark={props.themes?.dark ?? DARK_THEME}
-      light={props.themes?.light ?? LIGHT_THEME}
-      themeVariables={props.themeVariables}
-      rootProps={props.themeRootProps}
-    >
+    <ThemeRoot rootProps={props.themeRootProps}>
       <Stage
         {...props}
         className={calculateClass('arcane-stage', props.className)}
