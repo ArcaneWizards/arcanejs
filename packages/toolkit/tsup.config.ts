@@ -33,7 +33,6 @@ export default defineConfig([
       '@arcanejs/toolkit-frontend',
       'react',
       'react-dom',
-      'styled-components',
     ],
   },
 ]);

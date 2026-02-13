@@ -4,11 +4,9 @@ import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { AnyComponentProto } from '@arcanejs/protocol';
 import { StageContext } from '@arcanejs/toolkit-frontend';
 import {
-  BaseStyle,
   DARK_THEME,
-  GlobalStyle,
   LIGHT_THEME,
-  PreferredThemeProvider,
+  ThemeRoot,
 } from '@arcanejs/toolkit-frontend/styling';
 import { Group } from '@arcanejs/toolkit/components/group';
 import { IDMap } from '@arcanejs/toolkit/util';
@@ -38,11 +36,9 @@ export const ToolkitDisplay: FC = () => {
   const { tree, renderComponent } = React.useContext(ToolkitSimulatorContext);
 
   return (
-    <PreferredThemeProvider dark={DARK_THEME} light={LIGHT_THEME}>
-      <BaseStyle />
-      <GlobalStyle />
+    <ThemeRoot dark={DARK_THEME} light={LIGHT_THEME}>
       {tree && renderComponent(tree)}
-    </PreferredThemeProvider>
+    </ThemeRoot>
   );
 };
 

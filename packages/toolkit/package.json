@@ -125,7 +125,6 @@
     "eslint": "^8.57.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "styled-components": "^6.1.13",
     "tsup": "^8.1.0",
     "typescript": "^5.3.3"
   },
@@ -142,8 +141,7 @@
   "peerDependencies": {
     "@arcanejs/toolkit-frontend": "workspace:^",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "styled-components": "^6.1.13"
+    "react-dom": "^19.2.0"
   },
   "peerDependenciesMeta": {
     "@arcanejs/toolkit-frontend": {
@@ -153,9 +151,6 @@
       "optional": true
     },
     "react-dom": {
-      "optional": true
-    },
-    "styled-components": {
       "optional": true
     }
   },

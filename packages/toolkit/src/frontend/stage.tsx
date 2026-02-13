@@ -10,8 +10,6 @@ import React, {
 
 import * as proto from '@arcanejs/protocol';
 import {
-  BaseStyle,
-  GlobalStyle,
   ThemeVariableMap,
   Theme,
   DARK_THEME,
@@ -233,8 +231,6 @@ export function rootComponent(props: Props) {
       themeVariables={props.themeVariables}
       rootProps={props.themeRootProps}
     >
-      <BaseStyle />
-      <GlobalStyle />
       <Stage
         {...props}
         className={calculateClass('arcane-stage', props.className)}

@@ -16,7 +16,6 @@ Peer ecosystem typically used with this package:
 
 - `react@^19.2.0`
 - `react-dom@^19.2.0`
-- `styled-components`
 - `@arcanejs/protocol`
 
 ## What It Provides
@@ -24,7 +23,7 @@ Peer ecosystem typically used with this package:
 - Core frontend renderer: `CORE_FRONTEND_COMPONENT_RENDERER`
 - Core UI components (`Button`, `Group`, `Switch`, `Tabs`, etc.)
 - Stage context and connection state (`StageContext`)
-- Theme primitives (`DARK_THEME`, `LIGHT_THEME`, `ThemeRoot`, `BaseStyle`, `GlobalStyle`)
+- Theme primitives (`DARK_THEME`, `LIGHT_THEME`, `ThemeRoot`)
 - Touch/mouse interaction helpers (`usePressable`, `trackTouch`, `initialiseListeners`)
 - Precompiled core stylesheet export (`@arcanejs/toolkit-frontend/styles/core.css`)
 
@@ -48,10 +47,7 @@ Peer ecosystem typically used with this package:
 
 - `DARK_THEME`, `LIGHT_THEME`
 - `ThemeRoot`
-- `PreferredThemeProvider`
-- `BaseStyle`, `GlobalStyle`
 - `Theme`, `ThemeVariableMap`, `themeToCssVariables`
-- shared button/touch style fragments
 
 ### `@arcanejs/toolkit-frontend/styles`
 
@@ -88,6 +84,8 @@ startArcaneFrontend({
   renderers: [CORE_FRONTEND_COMPONENT_RENDERER, customRenderer],
 });
 ```
+
+`@arcanejs/toolkit-frontend/styles/core.css` is required and should be imported once in your frontend entrypoint.
 
 `startArcaneFrontend` also supports styling migration options:
 

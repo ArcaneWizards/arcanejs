@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "build": "tsc --noEmit && pnpm build:frontend",
-    "build:frontend": "rm -rf dist && esbuild src/frontend.tsx --bundle --sourcemap --outfile=dist/custom-entrypoint.js",
+    "build:frontend": "rm -rf dist && esbuild src/frontend.tsx --bundle --sourcemap --conditions=@arcanejs/source --outfile=dist/custom-entrypoint.js",
     "start": "pnpm build:frontend && node --import=tsx --conditions=@arcanejs/source src"
   },
   "devDependencies": {
@@ -27,7 +27,6 @@
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "react": "^19.2.0",
-    "styled-components": "^6.1.13",
     "tsx": "^4.19.1",
     "zod": "^3.23.8"
   }
