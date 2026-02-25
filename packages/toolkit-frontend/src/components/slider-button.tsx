@@ -201,7 +201,22 @@ const SliderButton: FC<Props> = ({ info, className }) => {
       )}
     >
       <div
-        className="arcane-slider-button__inner"
+        className={cn(
+          `
+            absolute inset-y-0 left-0 flex w-full cursor-pointer items-center
+            rounded-arcane-btn border border-arcane-btn-border
+            bg-arcane-grad-btn px-arcane-slider-pad text-arcane-text
+            shadow-arcane-btn transition-all duration-200 text-shadow-arcane-btn
+            hover:bg-arcane-grad-btn-hover
+          `,
+          state.state === 'mouse-down' &&
+            `
+              !bg-arcane-grad-btn-active !text-shadow-arcane-btn-active
+              !shadow-arcane-btn-active !duration-50
+            `,
+          state.state === 'touching' &&
+            '!w-arcane-slider-open !bg-arcane-bg-dark-1',
+        )}
         onMouseDown={() => setState({ state: 'mouse-down' })}
         onMouseUp={() => input.current?.focus()}
         onTouchStart={onTouchStart}
