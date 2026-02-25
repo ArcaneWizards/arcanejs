@@ -247,42 +247,8 @@ body.touch-mode * {
   border: 1px solid var(--arcane-border-dark);
 }
 
-.arcane-slider-button__display-inner {
-  height: 100%;
-  background: var(--arcane-hint);
-}
-
 .arcane-slider-button__display.arcane-slider-button__display--gradient {
   height: 10px;
-}
-
-.arcane-slider-button__display.arcane-slider-button__display--gradient
-  > .arcane-slider-button__display-inner {
-  position: relative;
-  background: none;
-  border-right: 2px solid var(--arcane-border-dark);
-}
-
-.arcane-slider-button__display.arcane-slider-button__display--gradient
-  > .arcane-slider-button__display-inner::before {
-  content: '';
-  position: absolute;
-  width: 4px;
-  top: -5px;
-  bottom: -5px;
-  right: -3px;
-  background: var(--arcane-border-dark);
-}
-
-.arcane-slider-button__display.arcane-slider-button__display--gradient
-  > .arcane-slider-button__display-inner::after {
-  content: '';
-  position: absolute;
-  width: 2px;
-  top: -4px;
-  bottom: -4px;
-  right: -2px;
-  background: var(--arcane-text-normal);
 }
 
 .arcane-slider-button__value {

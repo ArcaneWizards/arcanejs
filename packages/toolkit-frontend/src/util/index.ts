@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export * from './touch';
 
 // TODO: move this to a new core-frontend library
-export const cn = (...args: (string | undefined | null | false)[]): string =>
-  args
-    .flatMap((a) => (a ? a.split(/\s/) : []))
-    .filter((a) => !!a)
-    .join(' ');
+export const cn = (...args: ClassValue[]): string => twMerge(clsx(args));
 
 // Backward-compatibility alias; prefer `cn`.
 export const calculateClass = cn;

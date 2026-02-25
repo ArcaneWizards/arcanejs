@@ -4,7 +4,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { trackTouch } from '../util/touch';
 
 import { StageContext } from './context';
-import { calculateClass } from '../util';
+import { calculateClass, cn } from '../util';
 import { TRANSPARENCY_SVG_URI } from './core';
 
 const OPEN_SLIDER_WIDTH = 400;
@@ -223,9 +223,15 @@ const SliderButton: FC<Props> = ({ info, className }) => {
           style={sliderGradient}
         >
           <div
-            className="arcane-slider-button__display-inner"
+            className={cn(
+              `h-full bg-arcane-hint`,
+              sliderGradient && `border-arcane-btn-border relative border-r-[2px] bg-transparent`,
+              sliderGradient && `before:absolute before:w-[4px] before:-top-[5px] before:-bottom-[5px] before:-right-[3px] before:bg-arcane-btn-border`,
+              sliderGradient && `after:absolute after:w-[2px] after:-top-[4px] after:-bottom-[4px] after:-right-[2px] after:bg-arcane-btn-text`
+            )}
             style={{ width: valueCSSPercent }}
-          />
+          >
+          </div>
         </div>
         <div className="arcane-slider-button__value">{valueDisplay}</div>
       </div>
