@@ -218,18 +218,6 @@ body.touch-mode * {
   transition-duration: 50ms;
 }
 
-.arcane-slider-button__display {
-  flex-grow: 1;
-  margin: 0 7.5px;
-  height: 4px;
-  background: var(--arcane-bg-dark-1);
-  border: 1px solid var(--arcane-border-dark);
-}
-
-.arcane-slider-button__display.arcane-slider-button__display--gradient {
-  height: 10px;
-}
-
 .arcane-slider-button.state-touching {
   z-index: 100;
 }

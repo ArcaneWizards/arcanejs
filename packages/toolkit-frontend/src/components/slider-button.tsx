@@ -212,9 +212,9 @@ const SliderButton: FC<Props> = ({ info, className }) => {
             `
               pointer-events-none -mx-arcane-slider-input-hidden my-0 w-0
               overflow-hidden rounded-arcane-btn border border-arcane-btn-border
-              bg-arcane-bg-dark-1 px-arcane-slider-input-px
-              py-0 text-arcane-text opacity-0
-              shadow-arcane-box-inset transition-all duration-200
+              bg-arcane-bg-dark-1 px-arcane-slider-input-px py-0
+              text-arcane-text opacity-0 shadow-arcane-box-inset transition-all
+              duration-200
             `,
             state.state === 'focused' &&
               `
@@ -240,9 +240,12 @@ const SliderButton: FC<Props> = ({ info, className }) => {
           {valueDisplay}
         </div>
         <div
-          className={calculateClass(
-            'arcane-slider-button__display',
-            sliderGradient && 'arcane-slider-button__display--gradient',
+          className={cn(
+            `
+              mx-arcane-slider-pad h-arcane-slider-display grow border
+              border-arcane-btn-border bg-arcane-bg-dark-1
+            `,
+            sliderGradient && 'h-arcane-slider-gradient-display',
           )}
           style={sliderGradient}
         >
