@@ -166,5 +166,4 @@ body.touch-mode * {
   height: 100%;
   background: var(--arcane-page-bg);
   color: var(--arcane-text-normal);
-  padding: var(--arcane-spacing);
 }
