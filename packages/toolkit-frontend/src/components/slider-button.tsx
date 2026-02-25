@@ -208,6 +208,20 @@ const SliderButton: FC<Props> = ({ info, className }) => {
         style={state.state === 'touching' ? { left: state.innerLeft } : {}}
       >
         <input
+          className={cn(
+            `
+              pointer-events-none -mx-arcane-slider-input-hidden my-0 w-0
+              overflow-hidden rounded-arcane-btn border border-arcane-btn-border
+              bg-arcane-bg-dark-1 px-arcane-slider-input-px
+              py-0 text-arcane-text opacity-0
+              shadow-arcane-box-inset transition-all duration-200
+            `,
+            state.state === 'focused' &&
+              `
+                mx-0 w-3/5
+                opacity-100
+              `,
+          )}
           type="text"
           ref={input}
           onFocus={onFocus}
