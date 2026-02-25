@@ -214,7 +214,17 @@ const SliderButton: FC<Props> = ({ info, className }) => {
           onBlur={onBlur}
           onKeyDown={onKeyDown}
         />
-        <div className="arcane-slider-button__value">{valueDisplay}</div>
+        <div
+          className={cn(
+            `
+              -mx-arcane-slider-value-hidden w-arcane-slider-value text-center
+              leading-arcane-slider-value-hidden opacity-0
+            `,
+            state.state === 'touching' && 'mx-arcane-slider-pad opacity-100',
+          )}
+        >
+          {valueDisplay}
+        </div>
         <div
           className={calculateClass(
             'arcane-slider-button__display',
@@ -225,15 +235,27 @@ const SliderButton: FC<Props> = ({ info, className }) => {
           <div
             className={cn(
               `h-full bg-arcane-hint`,
-              sliderGradient && `border-arcane-btn-border relative border-r-[2px] bg-transparent`,
-              sliderGradient && `before:absolute before:w-[4px] before:-top-[5px] before:-bottom-[5px] before:-right-[3px] before:bg-arcane-btn-border`,
-              sliderGradient && `after:absolute after:w-[2px] after:-top-[4px] after:-bottom-[4px] after:-right-[2px] after:bg-arcane-btn-text`
+              sliderGradient &&
+                `border-arcane-btn-border relative border-r-[2px] bg-transparent`,
+              sliderGradient &&
+                `before:absolute before:w-[4px] before:-top-[5px] before:-bottom-[5px] before:-right-[3px] before:bg-arcane-btn-border`,
+              sliderGradient &&
+                `after:absolute after:w-[2px] after:-top-[4px] after:-bottom-[4px] after:-right-[2px] after:bg-arcane-btn-text`,
             )}
             style={{ width: valueCSSPercent }}
-          >
-          </div>
+          ></div>
         </div>
-        <div className="arcane-slider-button__value">{valueDisplay}</div>
+        <div
+          className={cn(
+            `
+              -mx-arcane-slider-value-hidden w-arcane-slider-value text-center
+              leading-arcane-slider-value-hidden opacity-0
+            `,
+            state.state === 'touching' && 'mx-arcane-slider-pad opacity-100',
+          )}
+        >
+          {valueDisplay}
+        </div>
       </div>
     </div>
   );

@@ -251,14 +251,6 @@ body.touch-mode * {
   height: 10px;
 }
 
-.arcane-slider-button__value {
-  width: 60px;
-  margin: 0 -30px;
-  line-height: 30px;
-  text-align: center;
-  opacity: 0;
-}
-
 .arcane-slider-button.state-touching {
   z-index: 100;
 }
@@ -266,9 +258,4 @@ body.touch-mode * {
 .arcane-slider-button.state-touching .arcane-slider-button__inner {
   background: var(--arcane-bg-dark-1);
   width: 400px;
-}
-
-.arcane-slider-button.state-touching .arcane-slider-button__value {
-  opacity: 1;
-  margin: 0 7.5px;
 }
