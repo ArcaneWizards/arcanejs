@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
-import { calculateClass } from '../util';
+import { cn } from '../util';
 
 interface Props {
   className?: string;
@@ -10,10 +10,10 @@ interface Props {
 
 const Label: FC<Props> = ({ className, info }) => (
   <div
-    className={calculateClass(
-      'arcane-label',
+    className={cn(
+      'font-normal whitespace-nowrap',
+      info.bold && 'font-bold',
       className,
-      info.bold && 'arcane-label--bold',
     )}
   >
     {info.text}

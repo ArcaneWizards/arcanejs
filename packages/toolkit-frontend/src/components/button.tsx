@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
 
-import { calculateClass, usePressable } from '../util';
+import { cn, usePressable } from '../util';
 
 import { Icon } from './core';
 import { StageContext } from './context';
@@ -45,21 +45,45 @@ const Button: FC<Props> = (props) => {
 
   return (
     <div
-      className={calculateClass(
-        'arcane-button',
+      className={cn(
+        `
+          relative box-border flex h-arcane-btn cursor-pointer items-center
+          justify-center overflow-visible rounded-arcane-btn border
+          border-arcane-btn-border bg-arcane-grad-btn text-arcane-btn-text
+          shadow-arcane-btn transition-all duration-200 outline-none
+          text-shadow-arcane-btn
+          hover:bg-arcane-grad-btn-hover
+          active:bg-arcane-grad-btn-active active:shadow-arcane-btn-active
+          active:duration-50 active:text-shadow-arcane-btn-active
+        `,
+        (touching || state.state === 'pressed' || state.state === 'loading') &&
+          'bg-arcane-grad-btn-active',
+        (touching || state.state === 'pressed' || state.state === 'loading') &&
+          'text-shadow-arcane-btn-active',
+        (touching || state.state === 'pressed' || state.state === 'loading') &&
+          'shadow-arcane-btn-active',
+        (touching || state.state === 'pressed' || state.state === 'loading') &&
+          'duration-50',
+        state.state === 'error' && 'border-arcane-btn-err text-arcane-btn-err',
         props.className,
-        (touching || state.state === 'pressed') && 'is-touching',
-        state.state === 'loading' && 'is-loading',
-        state.state === 'error' && 'is-error',
       )}
       {...handlers}
       title={state.state === 'error' ? state.error : undefined}
     >
-      <div className="arcane-touch-indicator" />
-      <div className="arcane-button__contents">
+      <div
+        className={cn(
+          `
+            pointer-events-none absolute -inset-1.5 rounded-md border-2
+            border-transparent bg-transparent transition-colors duration-300
+          `,
+          (touching || state.state === 'loading') &&
+            'border-arcane-hint bg-arcane-hint-soft duration-0',
+        )}
+      />
+      <div className={cn('flex items-center justify-center px-0.5')}>
         {props.info.icon && <Icon icon={props.info.icon} />}
         {props.info.text && (
-          <span className="arcane-button__label">{props.info.text}</span>
+          <span className={cn('px-1')}>{props.info.text}</span>
         )}
       </div>
     </div>

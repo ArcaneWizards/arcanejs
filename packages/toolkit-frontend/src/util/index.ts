@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export * from './touch';
 
 // TODO: move this to a new core-frontend library
-export const calculateClass = (
-  ...args: (string | undefined | null | false)[]
-): string => args.filter((a) => !!a).join(' ');
+export const cn = (...args: ClassValue[]): string => twMerge(clsx(args));
+
+// Backward-compatibility alias; prefer `cn`.
+export const calculateClass = cn;
 
 const COLOR_SCHEME_SETTINGS = 'arcane-color-scheme-preference';
 export const VALID_COLOR_SCHEME_PREFS = ['auto', 'dark', 'light'] as const;

@@ -1,38 +1,4 @@
-.arcane-theme-root.theme-dark {
-  --arcane-page-bg: #0b1120;
-  --arcane-color-green: #5eead4;
-  --arcane-color-red: #fb7185;
-  --arcane-color-amber: #fbbf24;
-  --arcane-bg-dark-1: #111827;
-  --arcane-bg: #172554;
-  --arcane-bg-light-1: #1d4ed8;
-  --arcane-border-dark: #0f172a;
-  --arcane-border-light: #1e3a8a;
-  --arcane-border-lighter: #2563eb;
-  --arcane-border-lighterer: #38bdf8;
-  --arcane-hint: #22d3ee;
-  --arcane-hint-rgb: 34, 211, 238;
-  --arcane-hint-dark-1: #0891b2;
-  --arcane-text-normal: #e2e8f0;
-  --arcane-text-active: #f8fafc;
-  --arcane-text-muted: #a5b4fc;
-  --arcane-shadow-box-inset: inset 0px 0px 10px 0px rgba(15, 23, 42, 0.6);
-  --arcane-shadow-text: 0 -1px rgba(2, 6, 23, 0.8);
-  --arcane-shadow-text-active: 0 -1px rgba(8, 47, 73, 0.8);
-  --arcane-gradient-button: linear-gradient(to bottom, #2563eb, #1d4ed8);
-  --arcane-gradient-button-hover: linear-gradient(to bottom, #3b82f6, #1e40af);
-  --arcane-gradient-button-active: linear-gradient(to bottom, #1e3a8a, #1d4ed8);
-  --arcane-gradient-button-pressed-hover: linear-gradient(
-    to bottom,
-    #0ea5e9,
-    #2563eb
-  );
-  --arcane-gradient-hint-pressed: linear-gradient(to bottom, #06b6d4, #0ea5e9);
-  --arcane-spacing: 24px;
-  --arcane-unit-height: 48px;
-}
-
-.arcane-theme-root.theme-light {
+.arcane-theme-root {
   --arcane-page-bg: #f0f9ff;
   --arcane-color-green: #0f766e;
   --arcane-color-red: #be123c;
@@ -64,6 +30,38 @@
   --arcane-gradient-hint-pressed: linear-gradient(to bottom, #0ea5e9, #38bdf8);
   --arcane-spacing: 24px;
   --arcane-unit-height: 48px;
+}
+
+.arcane-theme-root.theme-dark {
+  --arcane-page-bg: #0b1120;
+  --arcane-color-green: #5eead4;
+  --arcane-color-red: #fb7185;
+  --arcane-color-amber: #fbbf24;
+  --arcane-bg-dark-1: #111827;
+  --arcane-bg: #172554;
+  --arcane-bg-light-1: #1d4ed8;
+  --arcane-border-dark: #0f172a;
+  --arcane-border-light: #1e3a8a;
+  --arcane-border-lighter: #2563eb;
+  --arcane-border-lighterer: #38bdf8;
+  --arcane-hint: #22d3ee;
+  --arcane-hint-rgb: 34, 211, 238;
+  --arcane-hint-dark-1: #0891b2;
+  --arcane-text-normal: #e2e8f0;
+  --arcane-text-active: #f8fafc;
+  --arcane-text-muted: #a5b4fc;
+  --arcane-shadow-box-inset: inset 0px 0px 10px 0px rgba(15, 23, 42, 0.6);
+  --arcane-shadow-text: 0 -1px rgba(2, 6, 23, 0.8);
+  --arcane-shadow-text-active: 0 -1px rgba(8, 47, 73, 0.8);
+  --arcane-gradient-button: linear-gradient(to bottom, #2563eb, #1d4ed8);
+  --arcane-gradient-button-hover: linear-gradient(to bottom, #3b82f6, #1e40af);
+  --arcane-gradient-button-active: linear-gradient(to bottom, #1e3a8a, #1d4ed8);
+  --arcane-gradient-button-pressed-hover: linear-gradient(
+    to bottom,
+    #0ea5e9,
+    #2563eb
+  );
+  --arcane-gradient-hint-pressed: linear-gradient(to bottom, #06b6d4, #0ea5e9);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -109,55 +107,5 @@
       #06b6d4,
       #0ea5e9
     );
-    --arcane-spacing: 24px;
-    --arcane-unit-height: 48px;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .arcane-theme-root.theme-auto {
-    --arcane-page-bg: #f0f9ff;
-    --arcane-color-green: #0f766e;
-    --arcane-color-red: #be123c;
-    --arcane-color-amber: #b45309;
-    --arcane-bg-dark-1: #cffafe;
-    --arcane-bg: #ffffff;
-    --arcane-bg-light-1: #e0f2fe;
-    --arcane-border-dark: #7dd3fc;
-    --arcane-border-light: #38bdf8;
-    --arcane-border-lighter: #bae6fd;
-    --arcane-border-lighterer: #fef3c7;
-    --arcane-hint: #0284c7;
-    --arcane-hint-rgb: 2, 132, 199;
-    --arcane-hint-dark-1: #0369a1;
-    --arcane-text-normal: #0f172a;
-    --arcane-text-active: #020617;
-    --arcane-text-muted: #334155;
-    --arcane-shadow-box-inset: inset 0px 0px 8px 0px rgba(14, 116, 144, 0.12);
-    --arcane-shadow-text: 0 1px rgba(255, 255, 255, 0.85);
-    --arcane-shadow-text-active: 0 1px rgba(255, 255, 255, 0.7);
-    --arcane-gradient-button: linear-gradient(to bottom, #38bdf8, #0ea5e9);
-    --arcane-gradient-button-hover: linear-gradient(
-      to bottom,
-      #67e8f9,
-      #38bdf8
-    );
-    --arcane-gradient-button-active: linear-gradient(
-      to bottom,
-      #0284c7,
-      #0ea5e9
-    );
-    --arcane-gradient-button-pressed-hover: linear-gradient(
-      to bottom,
-      #22d3ee,
-      #38bdf8
-    );
-    --arcane-gradient-hint-pressed: linear-gradient(
-      to bottom,
-      #0ea5e9,
-      #38bdf8
-    );
-    --arcane-spacing: 24px;
-    --arcane-unit-height: 48px;
   }
 }

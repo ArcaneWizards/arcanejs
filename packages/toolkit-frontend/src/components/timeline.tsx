@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
+import { cn } from '../util';
 
 import { Icon } from './core';
 
@@ -50,29 +51,38 @@ const Timeline: FC<Props> = (props) => {
   }, [frameState, info.state]);
 
   return (
-    <div className={`arcane-timeline ${className ?? ''}`.trim()}>
-      <div className="arcane-timeline__data">
-        <div className="arcane-timeline__metadata">
+    <div className={cn('grow', className)}>
+      <div className={cn('flex')}>
+        <div className={cn('grow')}>
           {info.title && (
-            <div className="arcane-timeline__title">{info.title}</div>
+            <div className={cn('mb-2 text-arcane-title font-bold')}>
+              {info.title}
+            </div>
           )}
           {info.subtitles?.map((subtitle, k) => (
-            <div key={k} className="arcane-timeline__subtitle">
+            <div key={k} className={cn('mb-2 text-arcane-subtitle font-bold')}>
               {subtitle}
             </div>
           ))}
         </div>
-        <div className="arcane-timeline__source">
+        <div className={cn('flex flex-col items-end justify-center')}>
           {info.source?.name}
           <Icon
-            className="arcane-timeline__indicator"
+            className={cn('text-arcane-timeline-indicator')}
             icon={info.state.state === 'playing' ? 'play_arrow' : 'pause'}
           />
         </div>
       </div>
-      <div className="arcane-timeline__bar">
+      <div
+        className={cn(
+          `
+            h-arcane-timeline-bar w-full border border-arcane-btn-border
+            bg-arcane-btn-border
+          `,
+        )}
+      >
         <div
-          className="arcane-timeline__fill"
+          className={cn('h-full bg-arcane-hint')}
           style={{
             width: `${Math.min(100, (100 * currentTimeMillis) / info.state.totalTimeMillis)}%`,
           }}

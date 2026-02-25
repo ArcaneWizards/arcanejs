@@ -4,7 +4,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { trackTouch } from '../util/touch';
 
 import { StageContext } from './context';
-import { calculateClass } from '../util';
+import { cn } from '../util';
 import { TRANSPARENCY_SVG_URI } from './core';
 
 const OPEN_SLIDER_WIDTH = 400;
@@ -193,41 +193,101 @@ const SliderButton: FC<Props> = ({ info, className }) => {
 
   return (
     <div
-      className={calculateClass(
-        'arcane-slider-button',
+      className={cn(
+        'relative min-h-arcane-btn min-w-arcane-slider-min',
+        info.grow && 'grow',
+        state.state === 'touching' && 'z-arcane-slider-touching',
         className,
-        `state-${state.state}`,
-        info.grow && 'arcane-slider-button--grow',
       )}
     >
       <div
-        className="arcane-slider-button__inner"
+        className={cn(
+          `
+            absolute inset-y-0 left-0 flex w-full cursor-pointer items-center
+            rounded-arcane-btn border border-arcane-btn-border
+            bg-arcane-grad-btn px-arcane-slider-pad text-arcane-text
+            shadow-arcane-btn transition-all duration-200 text-shadow-arcane-btn
+            hover:bg-arcane-grad-btn-hover
+          `,
+          state.state === 'mouse-down' &&
+            `
+              !bg-arcane-grad-btn-active !text-shadow-arcane-btn-active
+              !shadow-arcane-btn-active !duration-50
+            `,
+          state.state === 'touching' &&
+            '!w-arcane-slider-open !bg-arcane-bg-dark-1',
+        )}
         onMouseDown={() => setState({ state: 'mouse-down' })}
         onMouseUp={() => input.current?.focus()}
         onTouchStart={onTouchStart}
         style={state.state === 'touching' ? { left: state.innerLeft } : {}}
       >
         <input
+          className={cn(
+            `
+              pointer-events-none -mx-arcane-slider-input-hidden my-0 w-0
+              overflow-hidden rounded-arcane-btn border border-arcane-btn-border
+              bg-arcane-bg-dark-1 px-arcane-slider-input-px py-0
+              text-arcane-text opacity-0 shadow-arcane-box-inset transition-all
+              duration-200
+            `,
+            state.state === 'focused' &&
+              `
+                mx-0 w-3/5
+                opacity-100
+              `,
+          )}
           type="text"
           ref={input}
           onFocus={onFocus}
           onBlur={onBlur}
           onKeyDown={onKeyDown}
         />
-        <div className="arcane-slider-button__value">{valueDisplay}</div>
         <div
-          className={calculateClass(
-            'arcane-slider-button__display',
-            sliderGradient && 'arcane-slider-button__display--gradient',
+          className={cn(
+            `
+              -mx-arcane-slider-value-hidden w-arcane-slider-value text-center
+              leading-arcane-slider-value-hidden opacity-0
+            `,
+            state.state === 'touching' && 'mx-arcane-slider-pad opacity-100',
+          )}
+        >
+          {valueDisplay}
+        </div>
+        <div
+          className={cn(
+            `
+              mx-arcane-slider-pad h-arcane-slider-display grow border
+              border-arcane-btn-border bg-arcane-bg-dark-1
+            `,
+            sliderGradient && 'h-arcane-slider-gradient-display',
           )}
           style={sliderGradient}
         >
           <div
-            className="arcane-slider-button__display-inner"
+            className={cn(
+              `h-full bg-arcane-hint`,
+              sliderGradient &&
+                `border-arcane-btn-border relative border-r-[2px] bg-transparent`,
+              sliderGradient &&
+                `before:absolute before:w-[4px] before:-top-[5px] before:-bottom-[5px] before:-right-[3px] before:bg-arcane-btn-border`,
+              sliderGradient &&
+                `after:absolute after:w-[2px] after:-top-[4px] after:-bottom-[4px] after:-right-[2px] after:bg-arcane-btn-text`,
+            )}
             style={{ width: valueCSSPercent }}
-          />
+          ></div>
         </div>
-        <div className="arcane-slider-button__value">{valueDisplay}</div>
+        <div
+          className={cn(
+            `
+              -mx-arcane-slider-value-hidden w-arcane-slider-value text-center
+              leading-arcane-slider-value-hidden opacity-0
+            `,
+            state.state === 'touching' && 'mx-arcane-slider-pad opacity-100',
+          )}
+        >
+          {valueDisplay}
+        </div>
       </div>
     </div>
   );
