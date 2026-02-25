@@ -1,5 +1,46 @@
 # @toolkit-frontend
 
+## 1.0.0
+
+### Major Changes
+
+- d85327f: Upgrade ArcaneJS React dependencies to the current React 19 stack.
+
+  - Move package React expectations to `react@^19.2.0` and `react-dom@^19.2.0`.
+  - Update `@arcanejs/react-toolkit` to `react-reconciler@0.33.0`.
+  - Update the custom reconciler host config to support current `react-reconciler` internals, including React 19-era container/update signatures.
+
+### Minor Changes
+
+- 9995be2: [BREAKING] Move Arcane frontend styling to CSS assets + CSS variables and remove styled-components compatibility layers.
+
+  `@arcanejs/toolkit-frontend/styling` now exposes a class-based `ThemeRoot` only. JS theme-object APIs (`DARK_THEME`, `LIGHT_THEME`, `Theme`, `ThemeVariableMap`, `themeToCssVariables`) and legacy compatibility helpers (`PreferredThemeProvider`, `BaseStyle`, `GlobalStyle`) have been removed.
+
+  Core frontend styles are now generated via a Tailwind CLI build pipeline and distributed from `@arcanejs/toolkit-frontend/styles/core.css`. Toolkit serves sibling `entrypoint.css`/`entrypoint.css.map` assets when present, and JS/CSS source maps are optional.
+
+  `@arcanejs/toolkit/frontend` startup no longer accepts `themes` or `themeVariables`; theme switching is applied via root preference classes (`theme-auto`/`theme-dark`/`theme-light`) and theme customization is CSS-only.
+
+  Core and example theme CSS have been refactored to reduce duplicated light/dark variable blocks while keeping behavior for `theme-auto`, `theme-dark`, and `theme-light`.
+
+- 4483bb8: Remove the root page padding
+
+  Remove the padding at the root of the page,
+  allowing for boxy components (like tabs) to be full-width.
+
+  If additional padding is required,
+  the group component should be used instead.
+
+### Patch Changes
+
+- 2d6c238: Publish refreshed package documentation across all public ArcaneJS packages.
+
+  - Add complete, package-specific README content for toolkit, react-toolkit, toolkit-frontend, protocol, and diff.
+  - Restore clear value-proposition and suitability guidance for `@arcanejs/react-toolkit` to improve npm package discovery.
+  - Document API surface, usage patterns, extension points, and constraints so npm consumers can adopt packages without relying on monorepo internals.
+
+- Updated dependencies [2d6c238]
+  - @arcanejs/protocol@0.7.1
+
 ## 0.9.0
 
 ### Minor Changes

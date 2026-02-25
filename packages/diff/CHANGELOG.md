@@ -1,5 +1,15 @@
 # @arcanejs/diff
 
+## 0.5.2
+
+### Patch Changes
+
+- 2d6c238: Publish refreshed package documentation across all public ArcaneJS packages.
+
+  - Add complete, package-specific README content for toolkit, react-toolkit, toolkit-frontend, protocol, and diff.
+  - Restore clear value-proposition and suitability guidance for `@arcanejs/react-toolkit` to improve npm package discovery.
+  - Document API surface, usage patterns, extension points, and constraints so npm consumers can adopt packages without relying on monorepo internals.
+
 ## 0.5.1
 
 ### Patch Changes

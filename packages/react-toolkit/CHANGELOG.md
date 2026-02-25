@@ -1,5 +1,35 @@
 # @arcanejs/react-toolkit
 
+## 1.0.0
+
+### Major Changes
+
+- d85327f: Upgrade ArcaneJS React dependencies to the current React 19 stack.
+
+  - Move package React expectations to `react@^19.2.0` and `react-dom@^19.2.0`.
+  - Update `@arcanejs/react-toolkit` to `react-reconciler@0.33.0`.
+  - Update the custom reconciler host config to support current `react-reconciler` internals, including React 19-era container/update signatures.
+
+### Patch Changes
+
+- f174c21: Bump `lodash` dependency to `^4.17.23` in toolkit and react-toolkit to address the prototype pollution advisory affecting `_.unset` and `_.omit`.
+- 2d6c238: Publish refreshed package documentation across all public ArcaneJS packages.
+
+  - Add complete, package-specific README content for toolkit, react-toolkit, toolkit-frontend, protocol, and diff.
+  - Restore clear value-proposition and suitability guidance for `@arcanejs/react-toolkit` to improve npm package discovery.
+  - Document API surface, usage patterns, extension points, and constraints so npm consumers can adopt packages without relying on monorepo internals.
+
+- Updated dependencies [6adeb1d]
+- Updated dependencies [9995be2]
+- Updated dependencies [089b294]
+- Updated dependencies [f174c21]
+- Updated dependencies [2d6c238]
+- Updated dependencies [b95e63a]
+- Updated dependencies [d85327f]
+- Updated dependencies [4483bb8]
+  - @arcanejs/toolkit@7.0.0
+  - @arcanejs/protocol@0.7.1
+
 ## 0.12.5
 
 ### Patch Changes
