@@ -168,17 +168,3 @@ body.touch-mode * {
   color: var(--arcane-text-normal);
   padding: var(--arcane-spacing);
 }
-
-.arcane-slider-button {
-  position: relative;
-  min-width: 100px;
-  min-height: 30px;
-}
-
-.arcane-slider-button.arcane-slider-button--grow {
-  flex-grow: 1;
-}
-
-.arcane-slider-button.state-touching {
-  z-index: 100;
-}

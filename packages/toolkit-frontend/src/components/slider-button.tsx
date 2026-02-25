@@ -4,7 +4,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { trackTouch } from '../util/touch';
 
 import { StageContext } from './context';
-import { calculateClass, cn } from '../util';
+import { cn } from '../util';
 import { TRANSPARENCY_SVG_URI } from './core';
 
 const OPEN_SLIDER_WIDTH = 400;
@@ -193,11 +193,11 @@ const SliderButton: FC<Props> = ({ info, className }) => {
 
   return (
     <div
-      className={calculateClass(
-        'arcane-slider-button',
+      className={cn(
+        'relative min-h-arcane-btn min-w-arcane-slider-min',
+        info.grow && 'grow',
+        state.state === 'touching' && 'z-arcane-slider-touching',
         className,
-        `state-${state.state}`,
-        info.grow && 'arcane-slider-button--grow',
       )}
     >
       <div
