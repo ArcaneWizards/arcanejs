@@ -1,5 +1,11 @@
 # @arcanejs/build-utils
 
+## 0.1.2
+
+### Patch Changes
+
+- ef201d6: Bump version for first CI build with provenance
+
 ## 0.1.1
 
 ### Patch Changes
