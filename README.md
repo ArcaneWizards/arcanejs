@@ -103,6 +103,7 @@ but I intend to open-source it in the future.
 - [React examples](./examples/react/)
 - [Core toolkit example](./examples/core/)
 - [Custom components example](./examples/custom-components/)
+- [Clock sync status example](./examples/clock-sync-status/)
 - [Custom shell example (`htmlPage` + `additionalFiles`)](./examples/custom-shell/)
 
 ### [Example Philips Hue App](https://github.com/arcanejs/hue-example)

@@ -27,6 +27,12 @@ export type StageContextData = {
   renderComponent: (info: proto.AnyComponentProto) => ReactElement;
   connectionUuid: string | null;
   connection: StageConnectionState;
+  /**
+   * Estimated offset in milliseconds for how far ahead of the server clock
+   * the client clock is.
+   */
+  timeDifferenceMs: number | null;
+  lastPingMs: number | null;
   reconnect: () => void;
 };
 

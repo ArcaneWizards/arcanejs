@@ -83,6 +83,61 @@ importers:
         specifier: ^5
         version: 5.3.3
 
+  examples/clock-sync-status:
+    dependencies:
+      '@arcanejs/protocol':
+        specifier: workspace:^
+        version: link:../../packages/protocol
+      '@arcanejs/react-toolkit':
+        specifier: workspace:^
+        version: link:../../packages/react-toolkit
+      '@arcanejs/toolkit':
+        specifier: workspace:^
+        version: link:../../packages/toolkit
+      '@arcanejs/toolkit-frontend':
+        specifier: workspace:^
+        version: link:../../packages/toolkit-frontend
+      pino:
+        specifier: ^9.5.0
+        version: 9.5.0
+      pino-pretty:
+        specifier: ^11.3.0
+        version: 11.3.0
+      react:
+        specifier: ^19.2.0
+        version: 19.2.4
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
+    devDependencies:
+      '@arcanejs/build-utils':
+        specifier: workspace:^
+        version: link:../../packages/build-utils
+      '@arcanejs/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@tailwindcss/cli':
+        specifier: ^4.1.13
+        version: 4.1.18
+      '@types/eslint':
+        specifier: ^8.56.5
+        version: 8.56.5
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.11.24
+      '@types/react':
+        specifier: ^19.2.2
+        version: 19.2.14
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.1.18
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   examples/core:
     dependencies:
       '@arcanejs/toolkit':

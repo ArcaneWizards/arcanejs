@@ -4,6 +4,7 @@ import {
   DEFAULT_LIGHT_DESK_OPTIONS,
   InitializationOptions,
   ToolkitAdditionalFiles,
+  ToolkitClockSyncOptions,
   ToolkitOptions,
 } from './options';
 import { Connection, Server } from './server';
@@ -55,12 +56,37 @@ export type ToolkitServerListener = {
   close: () => void;
 };
 
+type ToolkitClockSyncConfig = {
+  pingIntervalMs: number;
+};
+
+const normalizeClockSyncOptions = (
+  clockSync: false | ToolkitClockSyncOptions | undefined,
+): ToolkitClockSyncConfig | null => {
+  if (!clockSync) {
+    return null;
+  }
+
+  const { pingIntervalMs } = clockSync;
+
+  if (!Number.isFinite(pingIntervalMs) || pingIntervalMs <= 0) {
+    throw new Error(
+      `clockSync.pingIntervalMs must be a positive number, got: ${pingIntervalMs}`,
+    );
+  }
+
+  return {
+    pingIntervalMs,
+  };
+};
+
 export class Toolkit<
     TAdditionalFiles extends ToolkitAdditionalFiles = Record<never, never>,
   >
   implements Parent, Listenable<Events>
 {
   private readonly options: ToolkitOptions<TAdditionalFiles>;
+  private readonly clockSync: ToolkitClockSyncConfig | null;
   /**
    * Mapping from components to unique IDs that identify them
    */
@@ -77,6 +103,7 @@ export class Toolkit<
       ...DEFAULT_LIGHT_DESK_OPTIONS,
       ...options,
     } as ToolkitOptions<TAdditionalFiles>;
+    this.clockSync = normalizeClockSyncOptions(this.options.clockSync);
     if (
       !this.options.path.endsWith('/') ||
       !this.options.path.startsWith('/')
@@ -220,6 +247,11 @@ export class Toolkit<
     connection.sendMessage({
       type: 'metadata',
       connectionUuid: uuid,
+      clockSync: this.clockSync
+        ? {
+            pingIntervalMs: this.clockSync.pingIntervalMs,
+          }
+        : null,
     });
     if (lastTreeSent) {
       connection.sendMessage({
@@ -297,6 +329,14 @@ export class Toolkit<
       case 'component-call':
         this.handleCall(connection, publicConnection, message);
         break;
+      case 'ping': {
+        connection.sendMessage({
+          type: 'pong',
+          pingId: message.pingId,
+          serverTimeMillis: Date.now(),
+        });
+        break;
+      }
     }
   };
 }
