@@ -126,6 +126,8 @@ Theme switching is class-based (`theme-auto`, `theme-dark`, `theme-light`) and m
 - `call(...)`: request/response component calls
 - `renderComponent(...)`: render nested protocol components
 - `connection`, `connectionUuid`, `reconnect()`
+- `timeDifferenceMs`: estimated `browserTime - serverTime` in milliseconds (only when toolkit clock sync is enabled)
+- `lastPingMs`: latest ping round-trip time in milliseconds
 
 ## When To Use This Package
 

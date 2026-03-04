@@ -1,9 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 
 import * as proto from '@arcanejs/protocol/core';
 import { cn } from '../util';
 
 import { Icon } from './core';
+import { StageContext } from './context';
 
 interface Props {
   className?: string;
@@ -12,6 +13,7 @@ interface Props {
 
 const Timeline: FC<Props> = (props) => {
   const { className, info } = props;
+  const { timeDifferenceMs } = useContext(StageContext);
 
   const frameState = React.useRef<{
     animationFrame: number;
@@ -33,7 +35,10 @@ const Timeline: FC<Props> = (props) => {
 
       if (info.state.state === 'playing') {
         setCurrentTimeMillis(
-          (Date.now() - info.state.effectiveStartTime) * info.state.speed,
+          (Date.now() -
+            (timeDifferenceMs ?? 0) -
+            info.state.effectiveStartTime) *
+            info.state.speed,
         );
         frameState.current.animationFrame = window.requestAnimationFrame(
           recalculateCurrentTimeMillis,
@@ -48,7 +53,7 @@ const Timeline: FC<Props> = (props) => {
     return () => {
       window.cancelAnimationFrame(frameState.current.animationFrame);
     };
-  }, [frameState, info.state]);
+  }, [frameState, info.state, timeDifferenceMs]);
 
   return (
     <div className={cn('grow', className)}>

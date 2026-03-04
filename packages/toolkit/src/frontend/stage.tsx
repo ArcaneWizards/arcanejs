@@ -43,6 +43,21 @@ type InFlightCalls = {
   calls: Map<number, InFlightCall>;
 };
 
+type InFlightPing = {
+  sentAtUnixMs: number;
+  sentAtPerfMs: number;
+};
+
+type InFlightPings = {
+  nextId: number;
+  pings: Map<number, InFlightPing>;
+};
+
+type BestPing = {
+  pingMs: number;
+  timeDifferenceMs: number;
+};
+
 const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
   const [root, setRoot] = useState<proto.AnyComponentProto | undefined>(
     undefined,
@@ -51,10 +66,18 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
   const [connection, setConnection] = useState<StageConnectionState>({
     state: 'connecting',
   });
+  const [clockSync, setClockSync] =
+    useState<proto.MetadataMessage['clockSync']>(null);
+  const [lastPingMs, setLastPingMs] = useState<number | null>(null);
+  const [bestPing, setBestPing] = useState<BestPing | null>(null);
 
   const calls = useRef<InFlightCalls>({
     nextId: 1,
     calls: new Map(),
+  });
+  const pings = useRef<InFlightPings>({
+    nextId: 1,
+    pings: new Map(),
   });
 
   const preparedRenderers = useMemo(() => {
@@ -83,6 +106,7 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
       case 'metadata':
         // This should always be the first message
         setConnection({ state: 'connected', uuid: msg.connectionUuid });
+        setClockSync(msg.clockSync);
         return;
       case 'tree-full':
         setRoot(msg.root);
@@ -104,6 +128,38 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
             `Received response for unknown call request ID ${msg.requestId}`,
           );
         }
+        return;
+      }
+      case 'pong': {
+        const ping = pings.current.pings.get(msg.pingId);
+        if (!ping) {
+          console.warn(
+            `Received pong response for unknown ping ID ${msg.pingId}`,
+          );
+          return;
+        }
+        pings.current.pings.delete(msg.pingId);
+
+        const roundTripMs = performance.now() - ping.sentAtPerfMs;
+        const estimatedClientMidpointMs = ping.sentAtUnixMs + roundTripMs / 2;
+        const nextTimeDifferenceMs =
+          estimatedClientMidpointMs - msg.serverTimeMillis;
+
+        setLastPingMs(roundTripMs);
+        setBestPing((current) =>
+          // No best ping yet
+          current === null ||
+          // Better ping than current best, so this will likely be more precise
+          roundTripMs < current.pingMs ||
+          // Time difference has changed significantly, so this is likely more accurate even if ping isn't better
+          Math.abs(nextTimeDifferenceMs - current.timeDifferenceMs) >
+            roundTripMs
+            ? {
+                pingMs: roundTripMs,
+                timeDifferenceMs: nextTimeDifferenceMs,
+              }
+            : current,
+        );
         return;
       }
     }
@@ -185,6 +241,41 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
     initializeWebsocket();
   }, [initializeWebsocket]);
 
+  useEffect(() => {
+    if (connection.state !== 'connected' && clockSync !== null) {
+      setClockSync(null);
+    }
+
+    setLastPingMs(null);
+    setBestPing(null);
+    pings.current.pings.clear();
+
+    if (connection.state !== 'connected' || clockSync === null) {
+      return;
+    }
+
+    const sendPing = () => {
+      const pingId = pings.current.nextId++;
+      pings.current.pings.set(pingId, {
+        sentAtUnixMs: Date.now(),
+        sentAtPerfMs: performance.now(),
+      });
+      sendMessage({
+        type: 'ping',
+        pingId,
+      }).catch((error) => {
+        pings.current.pings.delete(pingId);
+        console.error('Unable to send ping', error);
+      });
+    };
+
+    sendPing();
+    const interval = window.setInterval(sendPing, clockSync.pingIntervalMs);
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [clockSync, connection.state, sendMessage]);
+
   const stageContext: StageContextData = useMemo(
     () => ({
       sendMessage,
@@ -192,9 +283,19 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
       call,
       connectionUuid: connection.state === 'connected' ? connection.uuid : null,
       connection,
+      timeDifferenceMs: bestPing?.timeDifferenceMs ?? null,
+      lastPingMs,
       reconnect: () => void initializeWebsocket(),
     }),
-    [sendMessage, renderComponent, call, initializeWebsocket, connection],
+    [
+      sendMessage,
+      renderComponent,
+      call,
+      initializeWebsocket,
+      connection,
+      bestPing,
+      lastPingMs,
+    ],
   );
 
   return (

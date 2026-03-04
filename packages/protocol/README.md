@@ -26,9 +26,11 @@ npm install @arcanejs/protocol
   - `tree-full`
   - `tree-diff`
   - `call-response`
+  - `pong`
 - Client messages:
   - `component-message`
   - `component-call`
+  - `ping`
 - Type helpers for call/response pair typing:
   - `BaseClientComponentCallPair`
   - `CallForPair`
@@ -98,6 +100,7 @@ const _clientMessage: ClientMessage = message;
 
 - This package is primarily type contracts and guard helpers.
 - `tree-diff` payloads use `Diff<...>` from `@arcanejs/diff`.
+- `ping`/`pong` can be used for browser/server clock sync. `pong` includes `serverTimeMillis`.
 - Custom namespaces should follow the same pattern as `core`: define component proto types, message/call unions, and guard helpers.
 
 ## Example Reference

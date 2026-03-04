@@ -17,6 +17,12 @@ export type MetadataMessage = {
    * The UUID for the current connection
    */
   connectionUuid: string;
+  clockSync: {
+    /**
+     * How often the frontend should send ping requests.
+     */
+    pingIntervalMs: number;
+  } | null;
 };
 
 export type SendTreeMsg = {
@@ -44,11 +50,21 @@ export type CallResponseMsg<Namespace extends string, T> = {
     }
 );
 
+export type PongResponseMessage = {
+  type: 'pong';
+  pingId: number;
+  /**
+   * Server clock time in milliseconds.
+   */
+  serverTimeMillis: number;
+};
+
 export type ServerMessage =
   | MetadataMessage
   | SendTreeMsg
   | UpdateTreeMsg
-  | CallResponseMsg<string, unknown>;
+  | CallResponseMsg<string, unknown>
+  | PongResponseMessage;
 
 export type BaseClientComponentMessage<Namespace extends string> = {
   type: 'component-message';
@@ -97,4 +113,12 @@ export type AnyClientComponentMessage = BaseClientComponentMessage<string>;
 
 export type AnyClientComponentCall = BaseClientComponentCall<string, string>;
 
-export type ClientMessage = AnyClientComponentMessage | AnyClientComponentCall;
+export type PingRequestMessage = {
+  type: 'ping';
+  pingId: number;
+};
+
+export type ClientMessage =
+  | AnyClientComponentMessage
+  | AnyClientComponentCall
+  | PingRequestMessage;

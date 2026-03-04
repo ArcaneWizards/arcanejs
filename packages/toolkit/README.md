@@ -102,6 +102,7 @@ Theme switching is handled by Arcane via root classes (`theme-auto`, `theme-dark
   - `coreAssets`: URLs for built-in toolkit static assets (`materialSymbolsOutlined`, `entrypointJs`, `entrypointJsMap`, `entrypointCss`, `entrypointCssMap`)
   - `assetUrls`: URL mapping for all static assets by relative path (core + `additionalFiles`)
   - `title`, `path`
+- `clockSync?: false | { pingIntervalMs: number }`: optional browser/server clock synchronization. When enabled via object options, frontend stage context exposes `timeDifferenceMs` and `lastPingMs`.
 
 Important constraint:
 

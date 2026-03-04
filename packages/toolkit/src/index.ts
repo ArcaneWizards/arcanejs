@@ -7,6 +7,7 @@ export type {
 } from './backend/toolkit';
 export type {
   ToolkitAdditionalFiles,
+  ToolkitClockSyncOptions,
   ToolkitCoreAssetRelativePath,
   ToolkitHtmlPageContext,
   ToolkitOptions,

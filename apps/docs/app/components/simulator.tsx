@@ -106,6 +106,8 @@ export const ToolkitSimulatorProvider: React.FC<
         renderComponent,
         connectionUuid: 'simulator',
         connection: { state: 'connected', uuid: 'simulator' },
+        timeDifferenceMs: null,
+        lastPingMs: null,
         reconnect: () => {
           // No-op in simulator
         },

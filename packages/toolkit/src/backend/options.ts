@@ -39,6 +39,13 @@ export type ToolkitHtmlPageContext<
   >;
 };
 
+export type ToolkitClockSyncOptions = {
+  /**
+   * How often the browser should request a ping in milliseconds.
+   */
+  pingIntervalMs: number;
+};
+
 export interface ToolkitOptions<
   TAdditionalFiles extends ToolkitAdditionalFiles = Record<never, never>,
 > {
@@ -96,10 +103,18 @@ export interface ToolkitOptions<
   htmlPage?: (
     context: ToolkitHtmlPageContext<TAdditionalFiles>,
   ) => string | Promise<string>;
+  /**
+   * Enable browser/server clock synchronization support.
+   *
+   * When enabled, frontend clients will periodically ping the toolkit server
+   * and expose a calculated server clock offset in stage context.
+   */
+  clockSync?: false | ToolkitClockSyncOptions;
 }
 
 export const DEFAULT_LIGHT_DESK_OPTIONS: ToolkitOptions = {
   path: '/',
+  clockSync: false,
 };
 
 export type InitializationOptions<
