@@ -2,6 +2,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { IDMap } from '../util/id-map';
 
 import { AnyComponent, BaseParent } from './base';
+import type { ToolkitRenderContext } from '../toolkit';
 
 type TabDefinition = {
   name: string;
@@ -26,14 +27,17 @@ export class Tab extends BaseParent<
   };
 
   /** @hidden */
-  public getProtoInfo = (idMap: IDMap): proto.TabComponent => ({
+  public getProtoInfo = (
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): proto.TabComponent => ({
     namespace: 'core',
     component: 'tab',
     key: idMap.getId(this),
     name: this.props.name,
     child: this.getChildren()
       .slice(0, 1)
-      .map((c) => c.getProtoInfo(idMap))[0],
+      .map((c) => c.getProtoInfo(idMap, context))[0],
   });
 }
 
@@ -72,12 +76,17 @@ export class Tabs extends BaseParent<
   }
 
   /** @hidden */
-  public getProtoInfo(idMap: IDMap): proto.TabsComponent {
+  public getProtoInfo(
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): proto.TabsComponent {
     return {
       namespace: 'core',
       component: 'tabs',
       key: idMap.getId(this),
-      tabs: this.getChildren().map((c) => (c as Tab).getProtoInfo(idMap)),
+      tabs: this.getChildren().map((c) =>
+        (c as Tab).getProtoInfo(idMap, context),
+      ),
     };
   }
 }

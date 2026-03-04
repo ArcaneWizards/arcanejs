@@ -38,6 +38,7 @@ export const ToolkitSimulatorProvider: React.FC<
   ToolkitSimulatorProps<string>
 > = ({ children, renderers }) => {
   const [tree, setTree] = React.useState<AnyComponentProto | null>(null);
+  const simulatorRenderContext = useRef({ connection: { uuid: 'simulator' } });
 
   const componentIDMap = useRef(new IDMap());
   const rootGroup = useRef<null | Group>(null);
@@ -47,7 +48,12 @@ export const ToolkitSimulatorProvider: React.FC<
       parent.current.updateTree();
     },
     updateTree: () => {
-      setTree(rootGroup.current?.getProtoInfo(componentIDMap.current) ?? null);
+      setTree(
+        rootGroup.current?.getProtoInfo(
+          componentIDMap.current,
+          simulatorRenderContext.current,
+        ) ?? null,
+      );
     },
     log: () => console,
   });

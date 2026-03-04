@@ -109,3 +109,4 @@ Agent rules:
 
 - New example workspaces should include a local `.eslintrc.js` (same pattern as existing examples) so `pnpm lint` picks up TypeScript files correctly.
 - Avoid synchronous filesystem APIs (`fs.existsSync`, `fs.readFileSync`, `fs.statSync`, etc.) across the repo; prefer `fs.promises` and lazy async initialization with memoized promises for shared setup paths.
+- In `apps/docs` client-side code, do not import from `@arcanejs/toolkit` root (it pulls backend/server dependencies like `fs` into the Next.js client bundle). Use toolkit subpath imports (`@arcanejs/toolkit/components/*`, `@arcanejs/toolkit/util`) and local render-context objects instead.

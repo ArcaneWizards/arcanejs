@@ -1,7 +1,7 @@
 import path from 'path';
 import pino from 'pino';
 import { useState, useRef } from 'react';
-import { Toolkit } from '@arcanejs/toolkit';
+import { Toolkit, type ToolkitRenderContext } from '@arcanejs/toolkit';
 
 import {
   CoreComponents,
@@ -55,7 +55,10 @@ class Stopwatch extends BaseParent<
     timeMillis: 0,
   };
 
-  public getProtoInfo(idMap: IDMap): StopwatchComponentProto {
+  public getProtoInfo(
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): StopwatchComponentProto {
     return {
       namespace: 'custom',
       component: 'stopwatch',
@@ -75,7 +78,7 @@ class Stopwatch extends BaseParent<
       child:
         this.getChildren()
           .slice(0, 1)
-          .map((c) => c.getProtoInfo(idMap))[0] ?? null,
+          .map((c) => c.getProtoInfo(idMap, context))[0] ?? null,
     };
   }
 
