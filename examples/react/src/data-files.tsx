@@ -64,6 +64,9 @@ const File = ({ index, filename }: { index: number; filename: string }) => {
   const { data, updateData } = useDataFile(IndividualFile, {
     path: path.join(DATA_DIR, 'files', `${filename}.json`),
     onPathChange: 'transfer',
+    onError: (err) => {
+      console.error(`An Arcane File Error: ${err.operation}`, err);
+    },
   });
   const fileInputRef = useRef<TextInputType | null>(null);
 
@@ -140,9 +143,11 @@ const Files = () => {
 };
 
 const App = () => (
-  <ConfiguredFiles.Provider path={path.join(DATA_DIR, 'index.json')}>
-    <Files />
-  </ConfiguredFiles.Provider>
+  <Group border>
+    <ConfiguredFiles.Provider path={path.join(DATA_DIR, 'index.json')}>
+      <Files />
+    </ConfiguredFiles.Provider>
+  </Group>
 );
 
 ToolkitRenderer.render(<App />, toolkit);
