@@ -5,8 +5,6 @@
 
 Remove the root page padding
 
-Remove the padding at the root of the page,
-allowing for boxy components (like tabs) to be full-width.
+Remove the padding at the root of the page, allowing for boxy components (like tabs) to be full-width.
 
-If additional padding is required,
-the group component should be used instead.
+If additional padding is required, the group component should be used instead.
