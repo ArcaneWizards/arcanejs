@@ -20,6 +20,7 @@ Expectations for updates:
 - Prefer small, precise edits over broad rewrites.
 - Keep guidance implementation-anchored (point to concrete files/functions).
 - Record facts, not speculation; verify against source before adding.
+- Do not add one-off or easily discoverable workflow observations; only document recurring, non-obvious gotchas that are likely to surprise future agents.
 - If a discrepancy is uncertain, add it as a clearly-labeled “Open Question” instead of asserting it as fact.
 - Do not remove older guidance unless it is confirmed obsolete or incorrect.
 - For example package READMEs, avoid duplicating script-level command details that are already defined in `package.json`; keep README text focused on what the example demonstrates.

@@ -1,6 +1,5 @@
 import { type FC, type ReactElement } from 'react';
 import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
-import '@arcanejs/toolkit-frontend/styles/core.css';
 import {
   VALID_COLOR_SCHEME_PREFS,
   useColorSchemePreferences,
@@ -12,19 +11,17 @@ import {
   THEME_NAMESPACE,
   ThemeSwitchComponentProto,
 } from './theme-proto';
-import './theme-switch.css';
-import './theme-colors.css';
 
 const ThemeSwitch: FC<{ info: ThemeSwitchComponentProto }> = () => {
   const { colorSchemePreference, setColorSchemePreference } =
     useColorSchemePreferences();
 
   return (
-    <div className="theme-switch-card">
-      <div className="theme-switch-title">Appearance</div>
-      <div className="theme-switch-buttons">
+    <div className="mb-2 grid gap-theme-switch-card-gap rounded-theme-switch-card border border-theme-switch-card-border bg-theme-switch-card p-arcane">
+      <div className="font-bold text-theme-switch-text-active">Appearance</div>
+      <div className="flex items-center gap-theme-switch-row-gap">
         <select
-          className="theme-mode-select"
+          className="cursor-pointer rounded-theme-switch-select border border-theme-switch-select-border bg-arcane-grad-btn px-theme-switch-select-x py-theme-switch-select-y text-theme-switch-select text-theme-switch-text-active shadow-arcane-btn text-shadow-arcane-btn"
           value={colorSchemePreference}
           onChange={(e) =>
             setColorSchemePreference(
@@ -39,7 +36,7 @@ const ThemeSwitch: FC<{ info: ThemeSwitchComponentProto }> = () => {
           ))}
         </select>
       </div>
-      <div className="theme-mode-note">
+      <div className="text-theme-switch-note text-arcane-text-muted">
         Active preference is <strong>{colorSchemePreference}</strong>. The
         preference is stored in local storage per browser.
       </div>
