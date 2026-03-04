@@ -1,10 +1,15 @@
-# Example usage of `@arcanejs/react-toolkit`
+# Custom component frontend example
 
-This directory contains a functional example of using arcane with custom
-components.
+This directory contains an Arcane app with:
 
-To run the example locally:
+- custom server-side protocol/components
+- a custom browser frontend entrypoint
+- a frontend bundle built with `@arcanejs/build-utils`
 
-- Clone this repository
-- Run `pnpm install && pnpm build` in the root of the repo
-- Run `pnpm start`.
+## Run from this directory
+
+```bash
+pnpm install
+pnpm build
+pnpm start
+```

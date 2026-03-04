@@ -33,6 +33,7 @@ const toolkit = new Toolkit<typeof additionalFiles>({
             src: url(${coreAssets.materialSymbolsOutlined}) format('woff');
           }
         </style>
+        <link rel="stylesheet" href="${coreAssets.entrypointCss}">
         <link rel="stylesheet" href="${assetUrls['custom-shell.css']}">
       </head>
       <body>

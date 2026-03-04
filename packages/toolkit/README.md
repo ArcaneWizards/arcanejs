@@ -107,6 +107,21 @@ Important constraint:
 
 - `path` must start and end with `/` (for example: `/`, `/control/`)
 
+## Building Custom Frontend Entrypoints
+
+When using `entrypointJsFile`, build your browser bundle with
+[`@arcanejs/build-utils`](https://www.npmjs.com/package/@arcanejs/build-utils):
+
+```bash
+arcane-build-frontend \
+  --entry src/frontend.tsx \
+  --outfile dist/custom-entrypoint.js \
+  --sourcemap
+```
+
+Import `@arcanejs/toolkit-frontend/styles/core.css` in the entrypoint so Arcane
+core styles are included in the emitted `.css` sidecar.
+
 ## Events and Connections
 
 `Toolkit` emits:

@@ -1,0 +1,53 @@
+{
+  "name": "@arcanejs/build-utils",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Build helpers for ArcaneJS projects",
+  "license": "MIT",
+  "author": {
+    "name": "Sam Lanning",
+    "url": "https://samlanning.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArcaneWizards/arcanejs.git"
+  },
+  "bin": {
+    "arcane-build-frontend": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "@arcanejs/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "build": "rm -rf dist && tsup && check-export-map",
+    "prepare": "pnpm build"
+  },
+  "dependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
+    "esbuild": "^0.25.0"
+  },
+  "devDependencies": {
+    "@arcanejs/eslint-config": "workspace:^",
+    "@arcanejs/typescript-config": "workspace:^",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "check-export-map": "^1.3.1",
+    "eslint": "^8.57.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.3.3"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  }
+}
