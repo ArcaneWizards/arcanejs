@@ -1,5 +1,12 @@
 # @arcanejs/examples-lock-screen-example
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [a376c3a]
+  - @arcanejs/react-toolkit@0.14.0
+
 ## 0.0.1
 
 ### Patch Changes
