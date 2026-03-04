@@ -3,7 +3,6 @@ import {
   CORE_FRONTEND_COMPONENT_RENDERER,
   StageContext,
 } from '@arcanejs/toolkit-frontend';
-import '@arcanejs/toolkit-frontend/styles/core.css';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import { FrontendComponentRenderer } from '@arcanejs/toolkit-frontend/types';
 import {
@@ -12,7 +11,6 @@ import {
   ConnectionLockComponentProto,
   isAuthComponent,
 } from './proto';
-import './frontend.css';
 
 const ConnectionLock: React.FC<{ info: ConnectionLockComponentProto }> = ({
   info,
@@ -26,8 +24,8 @@ const ConnectionLock: React.FC<{ info: ConnectionLockComponentProto }> = ({
   const statusClassName = useMemo(
     () =>
       info.state === 'unlocked'
-        ? 'lock__status lock__status--ok'
-        : 'lock__status lock__status--blocked',
+        ? 'w-fit rounded-full border border-lock-ok bg-arcane-bg-dark-1 px-lock-status-x py-lock-status-y text-lock-status font-semibold text-lock-ok'
+        : 'w-fit rounded-full border border-lock-blocked bg-arcane-bg-dark-1 px-lock-status-x py-lock-status-y text-lock-status font-semibold text-lock-blocked',
     [info.state],
   );
 
@@ -60,17 +58,19 @@ const ConnectionLock: React.FC<{ info: ConnectionLockComponentProto }> = ({
   };
 
   return (
-    <div className="lock">
-      <div className="lock__title">{info.title}</div>
+    <div className="flex flex-col gap-1 rounded-lock-card border border-arcane-border-light bg-arcane-bg p-arcane shadow-arcane-box-inset">
+      <div className="text-arcane-normal font-semibold text-arcane-text">
+        {info.title}
+      </div>
       <div className={statusClassName}>
         {info.state === 'unlocked' ? 'Authorized' : 'Locked'}
       </div>
-      <div className="lock__connection">{`Connection UUID: ${connectionUuid}`}</div>
+      <div className="font-mono text-lock-status text-arcane-text-muted">{`Connection UUID: ${connectionUuid}`}</div>
       {info.state === 'locked' ? (
-        <div className="lock__panel">
-          <p className="lock__copy">{info.lockedMessage}</p>
+        <div className="flex flex-col gap-1">
+          <p className="m-0 text-arcane-text">{info.lockedMessage}</p>
           <input
-            className="lock__input"
+            className="rounded-lock-input border border-arcane-border-light bg-arcane-bg-light-1 px-1 py-1 text-arcane-text"
             type="password"
             value={password}
             placeholder="Password"
@@ -82,18 +82,22 @@ const ConnectionLock: React.FC<{ info: ConnectionLockComponentProto }> = ({
             }}
           />
           <button
-            className="lock__button"
+            className="relative box-border flex h-arcane-btn w-fit cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-arcane text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active disabled:cursor-not-allowed disabled:opacity-[0.55]"
             type="button"
             disabled={!canSubmit}
             onClick={submitPassword}
           >
             {isSubmitting ? 'Checking...' : 'Unlock'}
           </button>
-          {errorMessage && <div className="lock__error">{errorMessage}</div>}
+          {errorMessage && (
+            <div className="text-lock-blocked">{errorMessage}</div>
+          )}
         </div>
       ) : (
         info.child && (
-          <div className="lock__child">{renderComponent(info.child)}</div>
+          <div className="rounded-lock-card border border-arcane-border-light bg-arcane-bg-dark-1 p-1">
+            {renderComponent(info.child)}
+          </div>
         )
       )}
     </div>

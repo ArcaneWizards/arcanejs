@@ -2,7 +2,6 @@ import {
   CORE_FRONTEND_COMPONENT_RENDERER,
   StageContext,
 } from '@arcanejs/toolkit-frontend';
-import '@arcanejs/toolkit-frontend/styles/core.css';
 import { FrontendComponentRenderer } from '@arcanejs/toolkit-frontend/types';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import {
@@ -17,7 +16,6 @@ import {
   usePressable,
   VALID_COLOR_SCHEME_PREFS,
 } from '@arcanejs/toolkit-frontend/util';
-import './frontend.css';
 
 const display = (time: StopwatchComponentProto['state']) => {
   if (time.type === 'stopped') {
@@ -76,26 +74,36 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
   }, [info.state]);
 
   return (
-    <div className="custom-stopwatch">
-      <div className="custom-stopwatch__connection">{`Connection State: ${connection.state}`}</div>
-      <div className="custom-stopwatch__connection">{`Connection UUID: ${connectionUuid}`}</div>
-      <button className="custom-stopwatch__button" {...reconnectHandler}>
+    <div className="flex flex-col items-center border border-stopwatch-danger p-1">
+      <div className="px-1 text-stopwatch-success">{`Connection State: ${connection.state}`}</div>
+      <div className="px-1 text-stopwatch-success">{`Connection UUID: ${connectionUuid}`}</div>
+      <button
+        className="relative box-border mb-[10px] flex h-arcane-btn cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active"
+        {...reconnectHandler}
+      >
         Reconnect
       </button>
-      <div className="custom-stopwatch__time" {...handlers}>
+      <div
+        className="cursor-pointer px-1 text-stopwatch-danger transition-opacity hover:opacity-50"
+        {...handlers}
+      >
         {timeDisplay}
       </div>
-      <button className="custom-stopwatch__button" {...callHandler}>
+      <button
+        className="relative box-border mb-[10px] flex h-arcane-btn cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active"
+        {...callHandler}
+      >
         Request time from server
       </button>
       {info.state.type === 'stopped' && info.child && (
-        <div className="custom-stopwatch__children">
+        <div className="w-full border border-stopwatch-accent p-1">
           {renderComponent(info.child)}
         </div>
       )}
-      <div>
+      <div className="flex items-center gap-0.5 text-arcane-text">
         Change Theme:
         <select
+          className="rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-text shadow-arcane-btn text-shadow-arcane-btn"
           value={colorSchemePreference}
           onChange={(e) =>
             setColorSchemePreference(

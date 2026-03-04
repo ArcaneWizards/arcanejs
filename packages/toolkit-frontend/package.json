@@ -41,6 +41,12 @@
     "./styles/core.css": {
       "default": "./dist/styles/core.css"
     },
+    "./styles/theme.css": {
+      "default": "./dist/styles/theme.css"
+    },
+    "./styles/base.css": {
+      "default": "./dist/styles/base.css"
+    },
     "./types": {
       "@arcanejs/source": "./src/types.ts",
       "types": "./dist/types.d.ts",
@@ -58,7 +64,7 @@
   "scripts": {
     "lint": "pnpm build:styles && ESLINT_USE_FLAT_CONFIG=true eslint . --max-warnings 0",
     "build": "rm -rf dist && tsup && pnpm build:styles && check-export-map",
-    "build:styles": "tailwindcss -i ./src/styles/core.css -o ./dist/styles/core.css"
+    "build:styles": "tailwindcss -i ./src/styles/core.css -o ./dist/styles/core.css && cp ./src/styles/theme.css ./dist/styles/theme.css && cp ./src/styles/base.css ./dist/styles/base.css"
   },
   "devDependencies": {
     "@arcanejs/eslint-config": "workspace:^",

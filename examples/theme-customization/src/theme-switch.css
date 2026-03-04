@@ -1,35 +1,24 @@
-.theme-switch-card {
-  background: linear-gradient(145deg, var(--arcane-bg-light-1), var(--arcane-bg));
-  border: 1px solid var(--arcane-border-lighter);
-  border-radius: 14px;
-  padding: var(--arcane-spacing);
-  margin-bottom: var(--arcane-spacing);
-  display: grid;
-  gap: 12px;
-}
+@import '@arcanejs/toolkit-frontend/styles/core.css';
+@import '@arcanejs/toolkit-frontend/styles/base.css';
+@import './theme-colors.css';
 
-.theme-switch-title {
-  font-weight: 700;
-  color: var(--arcane-text-active);
-}
+@source './**/*.{ts,tsx}';
 
-.theme-switch-buttons {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.theme-mode-select {
-  border-radius: 10px;
-  border: 1px solid var(--arcane-border-dark);
-  padding: 10px 12px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--arcane-text-active);
-  background: var(--arcane-gradient-button);
-}
-
-.theme-mode-note {
-  color: var(--arcane-text-muted);
-  font-size: 12px;
+@theme inline {
+  --color-theme-switch-card-border: var(--arcane-border-lighter);
+  --color-theme-switch-select-border: var(--arcane-border-dark);
+  --color-theme-switch-text-active: var(--arcane-text-active);
+  --background-image-theme-switch-card: linear-gradient(
+    145deg,
+    var(--arcane-bg-light-1),
+    var(--arcane-bg)
+  );
+  --spacing-theme-switch-card-gap: 12px;
+  --spacing-theme-switch-row-gap: 10px;
+  --spacing-theme-switch-select-x: 12px;
+  --spacing-theme-switch-select-y: 10px;
+  --radius-theme-switch-card: 14px;
+  --radius-theme-switch-select: 10px;
+  --text-theme-switch-select: 13px;
+  --text-theme-switch-note: 12px;
 }

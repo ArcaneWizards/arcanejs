@@ -25,7 +25,9 @@ Peer ecosystem typically used with this package:
 - Stage context and connection state (`StageContext`)
 - Theme root wrapper (`ThemeRoot`)
 - Touch/mouse interaction helpers (`usePressable`, `trackTouch`, `initialiseListeners`)
-- Precompiled core stylesheet export (`@arcanejs/toolkit-frontend/styles/core.css`)
+- Precompiled core component stylesheet (`@arcanejs/toolkit-frontend/styles/core.css`)
+- Default theme variables stylesheet (`@arcanejs/toolkit-frontend/styles/theme.css`)
+- Tailwind base stylesheet for custom utility generation (`@arcanejs/toolkit-frontend/styles/base.css`)
 
 ## Public Exports
 
@@ -50,10 +52,22 @@ Peer ecosystem typically used with this package:
 ### `@arcanejs/toolkit-frontend/styles`
 
 - `CORE_STYLE_PATH`
+- `THEME_STYLE_PATH`
+- `BASE_STYLE_PATH`
 
 ### `@arcanejs/toolkit-frontend/styles/core.css`
 
-- Tailwind-generated core Arcane frontend stylesheet
+- Tailwind-generated core Arcane component classes and shared global rules
+- Excludes default theme variable values
+
+### `@arcanejs/toolkit-frontend/styles/theme.css`
+
+- Default Arcane theme variable values (`.arcane-theme-root`, dark mode, and `prefers-color-scheme` behavior)
+
+### `@arcanejs/toolkit-frontend/styles/base.css`
+
+- Tailwind source stylesheet for custom builds
+- Provides Arcane `@theme` token mappings and Tailwind utility generation entrypoint for custom component classes
 
 ### `@arcanejs/toolkit-frontend/types`
 
@@ -75,6 +89,7 @@ Use this package directly when you provide your own frontend bundle for custom n
 
 ```tsx
 import '@arcanejs/toolkit-frontend/styles/core.css';
+import '@arcanejs/toolkit-frontend/styles/theme.css';
 import { startArcaneFrontend } from '@arcanejs/toolkit/frontend';
 import { CORE_FRONTEND_COMPONENT_RENDERER } from '@arcanejs/toolkit-frontend';
 
@@ -83,7 +98,19 @@ startArcaneFrontend({
 });
 ```
 
-`@arcanejs/toolkit-frontend/styles/core.css` is required and should be imported once in your frontend entrypoint.
+For default core frontend styling, import both:
+
+- `@arcanejs/toolkit-frontend/styles/core.css`
+- `@arcanejs/toolkit-frontend/styles/theme.css`
+
+If you compile your own stylesheet with Tailwind (for example to generate utilities used by custom component `className`s), import `@arcanejs/toolkit-frontend/styles/base.css` in your Tailwind input file.
+
+Common CSS import combinations:
+
+- Core components + default theme: `core.css` + `theme.css`
+- Core components + custom theme: `core.css` (plus your own theme variable overrides)
+- Custom components (Tailwind) + default theme: `base.css` + `theme.css`
+- Core components + custom components (Tailwind) + default theme: `core.css` + `base.css` + `theme.css`
 
 `startArcaneFrontend` supports:
 

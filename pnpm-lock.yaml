@@ -147,6 +147,9 @@ importers:
       '@arcanejs/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
+      '@tailwindcss/cli':
+        specifier: ^4.1.13
+        version: 4.1.18
       '@types/eslint':
         specifier: ^8.56.5
         version: 8.56.5
@@ -159,6 +162,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.1.18
       typescript:
         specifier: ^5.3.3
         version: 5.4.5
@@ -211,9 +217,6 @@ importers:
       '@arcanejs/toolkit-frontend':
         specifier: workspace:^
         version: link:../../packages/toolkit-frontend
-      esbuild:
-        specifier: 0.25.0
-        version: 0.25.0
       pino:
         specifier: ^9.5.0
         version: 9.5.0
@@ -227,12 +230,18 @@ importers:
         specifier: ^4.19.1
         version: 4.19.1
     devDependencies:
+      '@arcanejs/build-utils':
+        specifier: workspace:^
+        version: link:../../packages/build-utils
       '@arcanejs/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
       '@arcanejs/typescript-config':
         specifier: workspace:^
         version: link:../../packages/typescript-config
+      '@tailwindcss/cli':
+        specifier: ^4.1.13
+        version: 4.1.18
       '@types/eslint':
         specifier: ^8.56.5
         version: 8.56.5
@@ -245,6 +254,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.1.18
       typescript:
         specifier: ^5.3.3
         version: 5.4.5
@@ -331,6 +343,9 @@ importers:
       '@arcanejs/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
+      '@tailwindcss/cli':
+        specifier: ^4.1.13
+        version: 4.1.18
       '@types/eslint':
         specifier: ^8.56.5
         version: 8.56.5
@@ -343,6 +358,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.1.18
       typescript:
         specifier: ^5.3.3
         version: 5.4.5
@@ -4977,10 +4995,6 @@ packages:
   tailwindcss@4.1.18:
     resolution: {integrity: sha512-4+Z+0yiYyEtUVCScyfHCxOYP06L5Ne+JiHhY2IjR2KWMIWhJOYZKLSGZaP5HkZ8+bY0cxfzwDE5uOmzFXyIwxw==}
 
-  tapable@2.2.1:
-    resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
-    engines: {node: '>=6'}
-
   tapable@2.3.0:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
     engines: {node: '>=6'}
@@ -6372,12 +6386,12 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.20':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
@@ -6532,7 +6546,7 @@ snapshots:
       fast-glob: 3.3.1
       is-glob: 4.0.3
       open: 9.1.0
-      picocolors: 1.0.1
+      picocolors: 1.1.1
       tslib: 2.6.2
 
   '@rollup/rollup-android-arm-eabi@4.18.0':
@@ -7731,7 +7745,7 @@ snapshots:
   enhanced-resolve@5.15.0:
     dependencies:
       graceful-fs: 4.2.11
-      tapable: 2.2.1
+      tapable: 2.3.0
 
   enhanced-resolve@5.19.0:
     dependencies:
@@ -10682,8 +10696,6 @@ snapshots:
   tailwind-merge@3.5.0: {}
 
   tailwindcss@4.1.18: {}
-
-  tapable@2.2.1: {}
 
   tapable@2.3.0: {}
 
