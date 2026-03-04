@@ -1,7 +1,7 @@
 ---
 '@arcanejs/toolkit': major
-'@arcanejs/react-toolkit': major
-'@arcanejs/toolkit-frontend': major
+'@arcanejs/react-toolkit': minor
+'@arcanejs/toolkit-frontend': minor
 ---
 
 Upgrade ArcaneJS React dependencies to the current React 19 stack.
