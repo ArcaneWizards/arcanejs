@@ -1,5 +1,62 @@
 # @toolkit-frontend
 
+## 0.10.0
+
+### Minor Changes
+
+- 9995be2: Migrate from styled-components to tailwind.
+
+  Breaking:
+
+  - JS theme-object APIs (`DARK_THEME`, `LIGHT_THEME`, `Theme`, `ThemeVariableMap`, `themeToCssVariables`) have been removed.
+  - `@arcanejs/toolkit/frontend` startup no longer accepts `themes` or `themeVariables`; theme switching is applied via root preference classes (`theme-auto`/`theme-dark`/`theme-light`) and theme customization is CSS-only.
+
+  For styling customization,
+  various css files are published to allow for you to use tailwind for your own apps
+  and custom components:
+
+  - `@arcanejs/toolkit-frontend/styles/base.css`
+  - `@arcanejs/toolkit-frontend/styles/theme.css`
+  - `@arcanejs/toolkit-frontend/styles/core.css`
+
+  (See the documentation of `@arcanejs/toolkit-frontend` for correct usage)
+
+  To override the theme,
+  you can compile your own css bundle, excluding theme.css above.
+
+  See the `theme-customization` example for reference.
+
+- d85327f: Upgrade ArcaneJS React dependencies to the current React 19 stack.
+
+  - Move package React expectations to `react@^19.2.0` and `react-dom@^19.2.0`.
+  - Update `@arcanejs/react-toolkit` to `react-reconciler@0.33.0`.
+  - Update the custom reconciler host config to support current `react-reconciler` internals, including React 19-era container/update signatures.
+
+- ebc8397: Add optional toolkit clock-sync support based on periodic ping messages.
+- 4483bb8: Remove the root page padding
+
+  Remove the padding at the root of the page, allowing for boxy components (like tabs) to be full-width.
+
+  If additional padding is required, the group component should be used instead.
+
+### Patch Changes
+
+- 2d6c238: Publish refreshed package documentation across all public ArcaneJS packages.
+
+  - Add complete, package-specific README content for toolkit, react-toolkit, toolkit-frontend, protocol, and diff.
+  - Restore clear value-proposition and suitability guidance for `@arcanejs/react-toolkit` to improve npm package discovery.
+  - Document API surface, usage patterns, extension points, and constraints so npm consumers can adopt packages without relying on monorepo internals.
+
+- cff3b49: Add a new publishable `@arcanejs/build-utils` package with a reusable `arcane-build-frontend` CLI/API for bundling Arcane browser entrypoints with React Compiler enabled.
+
+  Update `@arcanejs/toolkit` to build its default browser entrypoint through `@arcanejs/build-utils`, including `@arcanejs/source` condition resolution so toolkit frontend source can be compiler-optimized in the generated default bundle.
+
+  Add an `@arcanejs/source` condition for `@arcanejs/toolkit-frontend/styles/core.css` so source-based frontend bundling can resolve core Arcane styles without requiring prebuilt `dist` assets.
+
+- Updated dependencies [2d6c238]
+- Updated dependencies [ebc8397]
+  - @arcanejs/protocol@0.8.0
+
 ## 0.9.0
 
 ### Minor Changes

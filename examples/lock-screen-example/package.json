@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/examples-lock-screen-example",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Example app demonstrating a connection-scoped lock screen component",
   "scripts": {
