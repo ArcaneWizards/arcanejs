@@ -1,5 +1,84 @@
 # @arcanejs/toolkit
 
+## 7.0.0
+
+### Major Changes
+
+- f8ebf43: Render component trees per connection with a new render context.
+
+  This is a breaking change for custom components because `Base#getProtoInfo(...)` now requires a `ToolkitRenderContext` argument.
+
+- 9995be2: Migrate from styled-components to tailwind.
+
+  Breaking:
+
+  - JS theme-object APIs (`DARK_THEME`, `LIGHT_THEME`, `Theme`, `ThemeVariableMap`, `themeToCssVariables`) have been removed.
+  - `@arcanejs/toolkit/frontend` startup no longer accepts `themes` or `themeVariables`; theme switching is applied via root preference classes (`theme-auto`/`theme-dark`/`theme-light`) and theme customization is CSS-only.
+
+  For styling customization,
+  various css files are published to allow for you to use tailwind for your own apps
+  and custom components:
+
+  - `@arcanejs/toolkit-frontend/styles/base.css`
+  - `@arcanejs/toolkit-frontend/styles/theme.css`
+  - `@arcanejs/toolkit-frontend/styles/core.css`
+
+  (See the documentation of `@arcanejs/toolkit-frontend` for correct usage)
+
+  To override the theme,
+  you can compile your own css bundle, excluding theme.css above.
+
+  See the `theme-customization` example for reference.
+
+- d85327f: Upgrade ArcaneJS React dependencies to the current React 19 stack.
+
+  - Move package React expectations to `react@^19.2.0` and `react-dom@^19.2.0`.
+  - Update `@arcanejs/react-toolkit` to `react-reconciler@0.33.0`.
+  - Update the custom reconciler host config to support current `react-reconciler` internals, including React 19-era container/update signatures.
+
+### Minor Changes
+
+- 6adeb1d: Add a `loadingState` option to `startArcaneFrontend` so apps can render custom content while waiting for the initial websocket metadata/tree sync.
+- 089b294: Add support for serving user-defined static assets via `ToolkitOptions.additionalFiles` and generating custom root HTML via `ToolkitOptions.htmlPage`.
+
+  `htmlPage` now receives typed asset URL context that includes toolkit core assets and user-provided static asset paths, making it easier to mount custom HTML shells with extra CSS or preloaded resources.
+
+- ebc8397: Add optional toolkit clock-sync support based on periodic ping messages.
+- 4483bb8: Remove the root page padding
+
+  Remove the padding at the root of the page, allowing for boxy components (like tabs) to be full-width.
+
+  If additional padding is required, the group component should be used instead.
+
+### Patch Changes
+
+- f174c21: Bump `lodash` dependency to `^4.17.23` in toolkit and react-toolkit to address the prototype pollution advisory affecting `_.unset` and `_.omit`.
+- 2d6c238: Publish refreshed package documentation across all public ArcaneJS packages.
+
+  - Add complete, package-specific README content for toolkit, react-toolkit, toolkit-frontend, protocol, and diff.
+  - Restore clear value-proposition and suitability guidance for `@arcanejs/react-toolkit` to improve npm package discovery.
+  - Document API surface, usage patterns, extension points, and constraints so npm consumers can adopt packages without relying on monorepo internals.
+
+- b95e63a: Avoid sending websocket `tree-diff` messages when the computed diff is `{ type: 'match' }`.
+
+  This reduces no-op update traffic by suppressing unchanged tree broadcasts while preserving existing behavior when actual changes are present.
+
+- cff3b49: Add a new publishable `@arcanejs/build-utils` package with a reusable `arcane-build-frontend` CLI/API for bundling Arcane browser entrypoints with React Compiler enabled.
+
+  Update `@arcanejs/toolkit` to build its default browser entrypoint through `@arcanejs/build-utils`, including `@arcanejs/source` condition resolution so toolkit frontend source can be compiler-optimized in the generated default bundle.
+
+  Add an `@arcanejs/source` condition for `@arcanejs/toolkit-frontend/styles/core.css` so source-based frontend bundling can resolve core Arcane styles without requiring prebuilt `dist` assets.
+
+- Updated dependencies [9995be2]
+- Updated dependencies [2d6c238]
+- Updated dependencies [d85327f]
+- Updated dependencies [ebc8397]
+- Updated dependencies [cff3b49]
+- Updated dependencies [4483bb8]
+  - @arcanejs/toolkit-frontend@0.10.0
+  - @arcanejs/protocol@0.8.0
+  - @arcanejs/diff@0.5.2
+
 ## 6.0.1
 
 ### Patch Changes

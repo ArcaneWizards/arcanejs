@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/examples-clock-sync-status",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Example app showing browser/server ping and clock offset in a custom frontend component",
   "scripts": {
