@@ -101,7 +101,7 @@
     "lint": "eslint . --max-warnings 0",
     "build": "rm -rf dist && pnpm build:backend && pnpm type-check:frontend && pnpm build:frontend && check-export-map",
     "build:backend": "tsup",
-    "build:frontend": "esbuild src/frontend/entrypoint-core.ts --bundle --sourcemap --outfile=dist/frontend/entrypoint.js",
+    "build:frontend": "arcane-build-frontend --entry src/frontend/entrypoint-core.ts --outfile dist/frontend/entrypoint.js --sourcemap --condition @arcanejs/source",
     "dev": "pnpm dev:backend & pnpm dev:frontend",
     "dev:backend": "pnpm build:backend --watch",
     "dev:frontend": "pnpm type-check:frontend:watch & pnpm build:frontend --watch",
@@ -121,12 +121,12 @@
     "@types/react-dom": "^19.2.2",
     "@types/ws": "^8.5.12",
     "check-export-map": "^1.3.1",
-    "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@arcanejs/build-utils": "workspace:^"
   },
   "dependencies": {
     "@arcanejs/diff": "workspace:^",

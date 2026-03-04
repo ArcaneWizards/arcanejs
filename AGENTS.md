@@ -22,6 +22,7 @@ Expectations for updates:
 - Record facts, not speculation; verify against source before adding.
 - If a discrepancy is uncertain, add it as a clearly-labeled “Open Question” instead of asserting it as fact.
 - Do not remove older guidance unless it is confirmed obsolete or incorrect.
+- For example package READMEs, avoid duplicating script-level command details that are already defined in `package.json`; keep README text focused on what the example demonstrates.
 
 ## Formatting Requirement
 
@@ -36,6 +37,19 @@ Expectations:
 - Run formatting after each set of edits and again before handoff if additional edits occurred.
 - Treat formatting as mandatory, not optional.
 
+## Lint Requirement
+
+Before handoff, agents must run linting from the repository root:
+
+- `pnpm lint`
+
+If lint reports fixable ESLint issues, agents should automatically apply fixes and rerun lint:
+
+- `pnpm -r --if-present lint -- --fix`
+- `pnpm lint`
+
+Do not hand off while lint is failing unless blocked by an explicit environment/tooling issue; in that case, report the exact blocking error and attempted fix commands.
+
 ## Worktree Dependency Setup
 
 Agent sessions commonly run in fresh git worktrees where dependencies are not installed yet, and within a sandbox that does not have network access.
@@ -43,6 +57,8 @@ Agent sessions commonly run in fresh git worktrees where dependencies are not in
 Required near the start of each workflow (before any other `pnpm` command):
 
 - `pnpm install --offline`
+
+Also rerun `pnpm install --offline` after changing any workspace `package.json`, adding/removing packages, or changing package `bin`/exports wiring, so workspace links and `.bin` shims are refreshed before validation.
 
 ## Sandbox Environment
 
@@ -54,6 +70,7 @@ A pnpm & turbo monorepo is used in this repository.
 
 Keep the following list up to date when introducing any new packages:
 
+- `/packages/build-utils`: reusable ArcaneJS build helpers, including CLI/API utilities for project build workflows.
 - `/packages/toolkit`: core server runtime, component classes, HTTP/WS server, frontend bootstrap entrypoint.
 - `/packages/react-toolkit`: custom React reconciler that renders JSX into `@arcanejs/toolkit` component instances.
 - `/packages/toolkit-frontend`: browser React components that render protocol nodes and send user events back.

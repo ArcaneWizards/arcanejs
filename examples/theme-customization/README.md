@@ -15,5 +15,6 @@ Included controls:
 
 Run locally:
 
-- `pnpm install && pnpm build` from repository root
-- `pnpm --filter @arcanejs/examples-theme-customization start`
+- `pnpm install`
+- `pnpm build`
+- `pnpm start`
