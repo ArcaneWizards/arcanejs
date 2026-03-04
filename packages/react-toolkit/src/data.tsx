@@ -32,6 +32,8 @@ type DataFileUsage = WithPathChange & {
    * this will be relative to the current working directory.
    */
   path: string;
+  /** Callback that will be called if any error occurs during loading or saving the file */
+  onError?: (error: ArcaneDataFileError) => void;
 };
 
 export type ProviderProps = DataFileUsage & {
@@ -142,10 +144,27 @@ type InternalDataFileState<T> = {
   state: { state: 'error'; error: unknown } | { state: 'saved' | 'dirty' };
 };
 
+export type DataFileOperation = 'load' | 'save' | 'usage';
+
+export class ArcaneDataFileError extends Error {
+  constructor(
+    message: string,
+    public readonly operation: DataFileOperation,
+    public readonly path: string | null,
+    cause?: unknown,
+  ) {
+    super(message, { cause });
+    this.name = `ArcaneDataFileError(${operation})`;
+  }
+}
+
+export type ErrorListener = (error: ArcaneDataFileError) => void;
+
 export type UseDataFileCoreProps<T> = WithPathChange & {
   schema: ZodType<T>;
   defaultValue: T;
   path: string;
+  onError?: (error: ArcaneDataFileError) => void;
 };
 
 export type DataFileCore<T> = {
@@ -162,6 +181,7 @@ export function useDataFileCore<T>({
   defaultValue,
   path,
   onPathChange = 'defaultValue',
+  onError,
 }: UseDataFileCoreProps<T>): DataFileCore<T> {
   const log = useLogger();
 
@@ -185,9 +205,13 @@ export function useDataFileCore<T>({
     if (!state.current.initialized) {
       state.current.initialized = true;
     } else {
-      throw new Error(
+      const error = new ArcaneDataFileError(
         'Cannot change schema or defaultValue after initialization',
+        'usage',
+        null,
       );
+      onError?.(error);
+      throw error;
     }
   }, [schema, defaultValue]);
 
@@ -259,7 +283,14 @@ export function useDataFileCore<T>({
             ) {
               state.current.state = { state: 'saved' };
             }
-          } catch (error) {
+          } catch (cause) {
+            const error = new ArcaneDataFileError(
+              `Error saving data file to path: ${currentPath}`,
+              'save',
+              currentPath,
+              cause,
+            );
+            onError?.(error);
             if (
               state.current.path === currentPath &&
               state.current.data === currentData
@@ -302,13 +333,13 @@ export function useDataFileCore<T>({
           updateDataFromState();
         }
       })
-      .catch((error) => {
+      .catch((err) => {
         // If file doesn't exist, then create it using the default value
         if (state.current.path !== path) {
           // Ignore error if path has changed
           return;
         }
-        if (error.code === 'ENOENT') {
+        if (err.code === 'ENOENT') {
           // Initialise the state, and then write it to disk
           const initialData =
             onPathChange === 'transfer' &&
@@ -328,6 +359,14 @@ export function useDataFileCore<T>({
           return;
         }
 
+        const error = new ArcaneDataFileError(
+          `Error loading data file at path: ${path}`,
+          'load',
+          path,
+          err,
+        );
+        onError?.(error);
+        log?.error(error);
         state.current.state = { state: 'error', error };
         updateDataFromState();
       });
@@ -383,12 +422,14 @@ export function createDataFileDefinition<T extends ZodType>({
   const useDataFile = ({
     path,
     onPathChange,
+    onError,
   }: DataFileUsage): DataFileCore<T> =>
     useDataFileCore({
       schema,
       defaultValue,
       path,
       onPathChange,
+      onError,
     });
 
   /**
@@ -396,10 +437,16 @@ export function createDataFileDefinition<T extends ZodType>({
    * that will set up the context,
    * and create a boundary that only displays children once the data has loaded.
    */
-  const Provider: FC<ProviderProps> = ({ path, onPathChange, children }) => {
+  const Provider: FC<ProviderProps> = ({
+    path,
+    onPathChange,
+    onError,
+    children,
+  }) => {
     const { data, updateData, saveData } = useDataFile({
       path,
       onPathChange,
+      onError,
     });
 
     const providedContext: DataFileContext<T> = useMemo(
