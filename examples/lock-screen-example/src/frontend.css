@@ -1,0 +1,92 @@
+.lock {
+  border: 1px solid var(--arcane-border-light);
+  border-radius: calc(var(--arcane-spacing) * 0.4);
+  background: var(--arcane-bg);
+  box-shadow: var(--arcane-shadow-box-inset);
+  padding: var(--arcane-spacing);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--arcane-spacing) / 2);
+}
+
+.lock__title {
+  color: var(--arcane-text-active);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.lock__status {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.lock__status--ok {
+  background: var(--arcane-bg-dark-1);
+  border-color: var(--arcane-color-green);
+  color: var(--arcane-color-green);
+}
+
+.lock__status--blocked {
+  background: var(--arcane-bg-dark-1);
+  border-color: var(--arcane-color-red);
+  color: var(--arcane-color-red);
+}
+
+.lock__connection {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--arcane-text-muted);
+}
+
+.lock__panel {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--arcane-spacing) / 2);
+}
+
+.lock__copy {
+  margin: 0;
+  color: var(--arcane-text-normal);
+}
+
+.lock__input {
+  border: 1px solid var(--arcane-border-light);
+  border-radius: 6px;
+  padding: calc(var(--arcane-spacing) / 2);
+  background: var(--arcane-bg-light-1);
+  color: var(--arcane-text-normal);
+}
+
+.lock__button {
+  width: fit-content;
+  border: 1px solid var(--arcane-border-dark);
+  background-image: var(--arcane-gradient-button);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 1px 0 0 rgba(0, 0, 0, 0.25);
+  color: var(--arcane-text-normal);
+  text-shadow: var(--arcane-shadow-text);
+  border-radius: 3px;
+  padding: 0 var(--arcane-spacing);
+  min-height: var(--arcane-unit-height);
+  cursor: pointer;
+}
+
+.lock__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.lock__error {
+  color: var(--arcane-color-red);
+}
+
+.lock__child {
+  border: 1px solid var(--arcane-border-light);
+  border-radius: calc(var(--arcane-spacing) * 0.4);
+  padding: calc(var(--arcane-spacing) / 2);
+  background: var(--arcane-bg-dark-1);
+}

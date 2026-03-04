@@ -3,7 +3,7 @@ import { IDMap } from '../util/id-map';
 
 import { Base, EventEmitter, Listenable } from './base';
 import { AnyClientComponentCall } from '@arcanejs/protocol';
-import { ToolkitConnection } from '../toolkit';
+import type { ToolkitConnection, ToolkitRenderContext } from '../toolkit';
 
 export type Events = {
   click: (connection: ToolkitConnection) => void | Promise<void>;
@@ -78,7 +78,10 @@ export class Button
   };
 
   /** @hidden */
-  public getProtoInfo = (idMap: IDMap): proto.ButtonComponent => {
+  public getProtoInfo = (
+    idMap: IDMap,
+    _context: ToolkitRenderContext,
+  ): proto.ButtonComponent => {
     return {
       namespace: 'core',
       component: 'button',

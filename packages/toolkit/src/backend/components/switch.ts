@@ -3,7 +3,7 @@ import { IDMap } from '../util/id-map';
 
 import { Base, EventEmitter, Listenable } from './base';
 import { AnyClientComponentMessage } from '@arcanejs/protocol';
-import { ToolkitConnection } from '../toolkit';
+import type { ToolkitConnection, ToolkitRenderContext } from '../toolkit';
 
 export type Events = {
   change: (
@@ -55,7 +55,10 @@ export class Switch
   removeListener = this.events.removeListener;
 
   /** @hidden */
-  public getProtoInfo(idMap: IDMap): proto.CoreComponent {
+  public getProtoInfo(
+    idMap: IDMap,
+    _context: ToolkitRenderContext,
+  ): proto.CoreComponent {
     return {
       namespace: 'core',
       component: 'switch',

@@ -2,6 +2,7 @@ import * as proto from '@arcanejs/protocol/core';
 import { IDMap } from '../util/id-map';
 
 import { Base } from './base';
+import type { ToolkitRenderContext } from '../toolkit';
 
 type InternalProps = {
   state: proto.TimelineState;
@@ -33,7 +34,10 @@ export class Timeline extends Base<
   }
 
   /** @hidden */
-  public getProtoInfo = (idMap: IDMap): proto.CoreComponent => ({
+  public getProtoInfo = (
+    idMap: IDMap,
+    _context: ToolkitRenderContext,
+  ): proto.CoreComponent => ({
     namespace: 'core',
     component: 'timeline',
     key: idMap.getId(this),

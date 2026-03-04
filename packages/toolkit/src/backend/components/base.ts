@@ -6,7 +6,7 @@ import {
 } from '@arcanejs/protocol';
 import { IDMap } from '../util/id-map';
 import { Logger } from '@arcanejs/protocol/logging';
-import { ToolkitConnection } from '../toolkit';
+import type { ToolkitConnection, ToolkitRenderContext } from '../toolkit';
 
 export abstract class Base<
   Namespace extends string,
@@ -114,7 +114,10 @@ export abstract class Base<
   }
 
   /** @hidden */
-  public abstract getProtoInfo(idMap: IDMap): Proto;
+  public abstract getProtoInfo(
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): Proto;
 
   /** @hidden */
   public handleMessage(

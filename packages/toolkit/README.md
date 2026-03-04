@@ -8,7 +8,7 @@ Core server/runtime package for ArcaneJS control panels.
 
 - A server-side component tree (`Group`, `Button`, `Switch`, etc.)
 - HTTP + WebSocket transport for syncing state to browsers
-- Tree diff broadcasting (`tree-full` + `tree-diff`)
+- Per-connection tree sync (`tree-full` + `tree-diff`)
 - Routing for fire-and-forget messages and request/response calls
 
 Most users should pair this with [`@arcanejs/react-toolkit`](https://www.npmjs.com/package/@arcanejs/react-toolkit), but this package can also be used directly.
@@ -61,7 +61,7 @@ toolkit.setRoot(root);
 
 - `Toolkit`
 - Components: `Button`, `Group`, `GroupHeader`, `Label`, `Rect`, `SliderButton`, `Switch`, `Tab`, `Tabs`, `TextInput`, `Timeline`
-- Types: `ToolkitOptions`, `ToolkitConnection`, `ToolkitServerListenerOptions`, `ToolkitServerListener`, `AnyComponent`
+- Types: `ToolkitOptions`, `ToolkitConnection`, `ToolkitRenderContext`, `ToolkitServerListenerOptions`, `ToolkitServerListener`, `AnyComponent`
 
 ### Subpath exports
 
@@ -131,7 +131,7 @@ Core components are stateful server objects. Notable interaction behavior:
 - Single-process architecture by design
 - No built-in authentication/authorization
 - `Toolkit.setRoot(...)` can only be called once
-- Tree updates are throttled internally
+- Tree updates are throttled internally and rendered per active connection
 
 ## Related Packages
 

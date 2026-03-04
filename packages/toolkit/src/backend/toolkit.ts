@@ -28,6 +28,10 @@ export type ToolkitConnection = {
   uuid: string;
 };
 
+export type ToolkitRenderContext = {
+  connection: ToolkitConnection;
+};
+
 type ConnectionMetadata = {
   /**
    * The publicly-exposed connection object that can be shared throughout
@@ -171,8 +175,10 @@ export class Toolkit<
     () => {
       setImmediate(() => {
         if (!this.rootGroup) return;
-        const root = this.rootGroup.getProtoInfo(this.componentIDMap);
         for (const [connection, meta] of this.connections.entries()) {
+          const root = this.rootGroup.getProtoInfo(this.componentIDMap, {
+            connection: meta.publicConnection,
+          });
           const diff = diffJson(meta.lastTreeSent, root);
           if (diff.type === 'match') continue;
           connection.sendMessage({
@@ -196,15 +202,20 @@ export class Toolkit<
   };
 
   private onNewConnection = (connection: Connection) => {
-    const lastTreeSent =
-      this.rootGroup?.getProtoInfo(this.componentIDMap) ?? undefined;
     const uuid = uuidv4();
     const publicConnection: ToolkitConnection = {
       get uuid() {
         return uuid;
       },
     };
-    this.connections.set(connection, { publicConnection, lastTreeSent });
+    const lastTreeSent =
+      this.rootGroup?.getProtoInfo(this.componentIDMap, {
+        connection: publicConnection,
+      }) ?? undefined;
+    this.connections.set(connection, {
+      publicConnection,
+      lastTreeSent,
+    });
     this.events.emit('new-connection', publicConnection);
     connection.sendMessage({
       type: 'metadata',

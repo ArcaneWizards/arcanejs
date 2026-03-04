@@ -1,6 +1,7 @@
 export { Toolkit } from './backend/toolkit';
 export type {
   ToolkitConnection,
+  ToolkitRenderContext,
   ToolkitServerListenerOptions,
   ToolkitServerListener,
 } from './backend/toolkit';

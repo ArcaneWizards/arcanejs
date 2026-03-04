@@ -8,7 +8,7 @@ import {
   AnyClientComponentMessage,
   AnyComponentProto,
 } from '@arcanejs/protocol';
-import { ToolkitConnection } from '../toolkit';
+import type { ToolkitConnection, ToolkitRenderContext } from '../toolkit';
 
 const GROUP_DEFAULT_STYLE: GroupComponentStyle = {
   direction: 'horizontal',
@@ -50,11 +50,14 @@ export class GroupHeader extends BaseParent<
   };
 
   /** @hidden */
-  public getProtoInfo = (idMap: IDMap): proto.GroupHeaderComponent => ({
+  public getProtoInfo = (
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): proto.GroupHeaderComponent => ({
     namespace: 'core',
     component: 'group-header',
     key: idMap.getId(this),
-    children: this.getChildren().map((c) => c.getProtoInfo(idMap)),
+    children: this.getChildren().map((c) => c.getProtoInfo(idMap, context)),
   });
 }
 
@@ -133,11 +136,14 @@ export class Group
   };
 
   /** @hidden */
-  public getProtoInfo = (idMap: IDMap): proto.GroupComponent => {
+  public getProtoInfo = (
+    idMap: IDMap,
+    context: ToolkitRenderContext,
+  ): proto.GroupComponent => {
     const children: AnyComponentProto[] = [];
     const headers: proto.GroupHeaderComponent[] = [];
     for (const c of this.getChildren()) {
-      const childProto = c.getProtoInfo(idMap);
+      const childProto = c.getProtoInfo(idMap, context);
       if (
         proto.isCoreComponent(childProto) &&
         childProto.component === 'group-header'

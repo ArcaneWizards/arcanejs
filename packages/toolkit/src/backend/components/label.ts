@@ -3,6 +3,7 @@ import { LabelComponentStyle } from '@arcanejs/protocol/styles';
 import { IDMap } from '../util/id-map';
 
 import { Base } from './base';
+import type { ToolkitRenderContext } from '../toolkit';
 
 type InternalProps = LabelComponentStyle & {
   text: string | null;
@@ -26,7 +27,10 @@ export class Label extends Base<
   }
 
   /** @hidden */
-  public getProtoInfo(idMap: IDMap): proto.LabelComponent {
+  public getProtoInfo(
+    idMap: IDMap,
+    _context: ToolkitRenderContext,
+  ): proto.LabelComponent {
     return {
       namespace: 'core',
       component: 'label',
