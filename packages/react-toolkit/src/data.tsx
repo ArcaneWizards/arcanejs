@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import { randomUUID } from 'crypto';
 import React, {
   useMemo,
   useContext,
@@ -137,6 +138,7 @@ type InternalDataFileState<T> = {
    * Set to true after
    */
   initialized: boolean;
+  saveChain: Promise<void>;
   path: string | null;
   data: T | undefined;
   previousData: T | undefined;
@@ -173,6 +175,22 @@ export type DataFileCore<T> = {
   saveData: () => void;
 };
 
+function stripUtf8Bom(data: string): string {
+  return data.charCodeAt(0) === 0xfeff ? data.slice(1) : data;
+}
+
+async function writeFileAtomically(path: string, data: string): Promise<void> {
+  const tempPath = `${path}.${process.pid}.${randomUUID()}.tmp`;
+
+  try {
+    await fs.writeFile(tempPath, data, 'utf8');
+    await fs.rename(tempPath, path);
+  } catch (error) {
+    await fs.rm(tempPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
+}
+
 /**
  * Primary hook for & logic for using data files.
  */
@@ -191,6 +209,7 @@ export function useDataFileCore<T>({
    */
   const state = useRef<InternalDataFileState<T>>({
     initialized: false,
+    saveChain: Promise.resolve(),
     path: null,
     data: undefined,
     previousData: undefined,
@@ -273,13 +292,20 @@ export function useDataFileCore<T>({
             return;
           }
 
+          const json = JSON.stringify(currentData, null, 2);
+          const queuedSave = state.current.saveChain
+            .catch(() => undefined)
+            .then(async () => {
+              await fs.mkdir(dirname(currentPath), { recursive: true });
+              await writeFileAtomically(currentPath, json);
+            });
+
           try {
-            const json = JSON.stringify(currentData, null, 2);
-            await fs.mkdir(dirname(currentPath), { recursive: true });
-            await fs.writeFile(currentPath, json, 'utf8');
+            state.current.saveChain = queuedSave;
+            await queuedSave;
             if (
               state.current.path === currentPath &&
-              state.current.data === currentData
+              state.current.saveChain === queuedSave
             ) {
               state.current.state = { state: 'saved' };
             }
@@ -293,7 +319,7 @@ export function useDataFileCore<T>({
             onError?.(error);
             if (
               state.current.path === currentPath &&
-              state.current.data === currentData
+              state.current.saveChain === queuedSave
             ) {
               state.current.state = { state: 'error', error };
               updateDataFromState();
@@ -325,7 +351,7 @@ export function useDataFileCore<T>({
     };
     fs.readFile(path, 'utf8')
       .then((data) => {
-        const parsedData = schema.parse(JSON.parse(data));
+        const parsedData = schema.parse(JSON.parse(stripUtf8Bom(data)));
         if (state.current.path === path) {
           state.current.data = parsedData;
           state.current.lastUpdatedMillis = Date.now();
