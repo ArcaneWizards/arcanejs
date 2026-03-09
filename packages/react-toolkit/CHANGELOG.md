@@ -1,5 +1,20 @@
 # @arcanejs/react-toolkit
 
+## 0.15.0
+
+### Minor Changes
+
+- 020a27d: Allow a data file to be reset to default value
+
+  In cases where for example the file has become corrupt,
+  allow a library user to reset the file to its original state,
+  ignoring whatever is already stored.
+
+### Patch Changes
+
+- b14bad0: Prevent `@arcanejs/react-toolkit/data` from corrupting JSON files when multiple saves happen close together. Data file writes are now serialized and written via a temporary file swap so interrupted or overlapping saves do not leave invalid JSON behind.
+- 70f5dbf: Include file contents in ArcaneDataFileError
+
 ## 0.14.0
 
 ### Minor Changes
