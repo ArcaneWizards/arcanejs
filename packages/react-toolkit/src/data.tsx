@@ -153,6 +153,7 @@ export class ArcaneDataFileError extends Error {
     message: string,
     public readonly operation: DataFileOperation,
     public readonly path: string | null,
+    public readonly contents: string | null,
     cause?: unknown,
   ) {
     super(message, { cause });
@@ -227,6 +228,7 @@ export function useDataFileCore<T>({
       const error = new ArcaneDataFileError(
         'Cannot change schema or defaultValue after initialization',
         'usage',
+        null,
         null,
       );
       onError?.(error);
@@ -314,6 +316,7 @@ export function useDataFileCore<T>({
               `Error saving data file to path: ${currentPath}`,
               'save',
               currentPath,
+              null,
               cause,
             );
             onError?.(error);
@@ -349,8 +352,10 @@ export function useDataFileCore<T>({
         state: 'saved',
       },
     };
+    let contents: string | null = null;
     fs.readFile(path, 'utf8')
       .then((data) => {
+        contents = data;
         const parsedData = schema.parse(JSON.parse(stripUtf8Bom(data)));
         if (state.current.path === path) {
           state.current.data = parsedData;
@@ -389,6 +394,7 @@ export function useDataFileCore<T>({
           `Error loading data file at path: ${path}`,
           'load',
           path,
+          contents,
           err,
         );
         onError?.(error);
