@@ -61,7 +61,7 @@ const validateName = (name: string) => {
 
 const File = ({ index, filename }: { index: number; filename: string }) => {
   const updateFiles = useDataFileUpdater(ConfiguredFiles);
-  const { data, updateData } = useDataFile(IndividualFile, {
+  const { data, updateData, resetData } = useDataFile(IndividualFile, {
     path: path.join(DATA_DIR, 'files', `${filename}.json`),
     onPathChange: 'transfer',
     onError: (err) => {
@@ -90,7 +90,12 @@ const File = ({ index, filename }: { index: number; filename: string }) => {
           />
         </Group>
         <Group direction="vertical">
-          {data.status === 'error' ? <>{`${data.error}`}</> : null}
+          {data.status === 'error' ? (
+            <>
+              {`Error: ${data.error}`}
+              <Button text="Reset file" onClick={resetData} />
+            </>
+          ) : null}
           {data.data && (
             <Group>
               Data:

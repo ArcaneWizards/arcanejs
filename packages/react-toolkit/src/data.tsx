@@ -65,6 +65,10 @@ export type DataFileContext<T> = {
   lastUpdatedMillis: number;
   updateData: DataFileUpdater<T>;
   /**
+   * Can be called to reset the data to the default value, and save that to disk.
+   */
+  resetData: () => void;
+  /**
    * Can be called to force an attempt to re-save the data to disk
    */
   saveData: () => void;
@@ -173,6 +177,7 @@ export type UseDataFileCoreProps<T> = WithPathChange & {
 export type DataFileCore<T> = {
   data: DataState<T>;
   updateData: DataFileUpdater<T>;
+  resetData: () => void;
   saveData: () => void;
 };
 
@@ -404,27 +409,40 @@ export function useDataFileCore<T>({
       });
   }, [path, onPathChange]);
 
-  const updateData: DataFileUpdater<T> = useMemo(
-    () => (update) => {
+  const setDataTo = useMemo(
+    () => (data: T) => {
       if (state.current.path !== path) {
         // Ignore any requests to update a file if the path has been changed
         return;
       }
-      if (state.current.data === undefined) {
-        throw new Error('Attempt to update data before it has been loaded');
-      }
-      state.current.data = update(state.current.data);
+      state.current.data = data;
       state.current.lastUpdatedMillis = Date.now();
       state.current.state = { state: 'dirty' };
       saveData();
       updateDataFromState();
     },
-    [path],
+    [saveData, path],
+  );
+
+  const updateData: DataFileUpdater<T> = useMemo(
+    () => (update) => {
+      if (state.current.data === undefined) {
+        throw new Error('Attempt to update data before it has been loaded');
+      }
+      setDataTo(update(state.current.data));
+    },
+    [setDataTo],
+  );
+
+  const resetData = useMemo(
+    () => () => setDataTo(defaultValue),
+    [setDataTo, defaultValue],
   );
 
   return {
     data,
     updateData,
+    resetData,
     saveData,
   };
 }
@@ -443,6 +461,9 @@ export function createDataFileDefinition<T extends ZodType>({
     status: 'loading',
     lastUpdatedMillis: Date.now(),
     updateData: () => {
+      throw new Error('Data file provider not used');
+    },
+    resetData: () => {
       throw new Error('Data file provider not used');
     },
     saveData: () => {
@@ -475,7 +496,7 @@ export function createDataFileDefinition<T extends ZodType>({
     onError,
     children,
   }) => {
-    const { data, updateData, saveData } = useDataFile({
+    const { data, updateData, resetData, saveData } = useDataFile({
       path,
       onPathChange,
       onError,
@@ -490,6 +511,7 @@ export function createDataFileDefinition<T extends ZodType>({
         status: data.status,
         lastUpdatedMillis: data.lastUpdatedMillis,
         updateData,
+        resetData,
         saveData,
         error: data.status === 'error' ? data.error : undefined,
       }),
