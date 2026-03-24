@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export function switchToMouseMode(ev: MouseEvent) {
   if (ev.movementX === 0 && ev.movementY === 0) return;
@@ -19,8 +19,12 @@ export function initialiseListeners() {
   });
 }
 
+export type PressableOnClickListener = (
+  event: React.MouseEvent<unknown> | React.TouchEvent<unknown>,
+) => unknown;
+
 export const usePressable = (
-  click: () => unknown,
+  click: PressableOnClickListener,
 ): {
   touching: boolean;
   handlers: {
@@ -44,14 +48,66 @@ export const usePressable = (
       },
       onTouchEnd: (event) => {
         if (touching) {
-          // Prevent 'click' event (and double press)
+          // Prevent the follow-up click event from firing a second action.
           event.preventDefault();
           setTouching(false);
-          click();
+          click(event);
         }
       },
     },
   };
+};
+
+export const useLongPressable = ({
+  onPress,
+  onRelease,
+}: {
+  onPress: PressableOnClickListener;
+  onRelease: PressableOnClickListener;
+}): {
+  touching: boolean;
+  handlers: {
+    onMouseDown: React.MouseEventHandler<unknown>;
+    onMouseUp: React.MouseEventHandler<unknown>;
+    onTouchStart: React.TouchEventHandler<unknown>;
+    onTouchMove: React.TouchEventHandler<unknown>;
+    onTouchEnd: React.TouchEventHandler<unknown>;
+  };
+} => {
+  const [touching, setTouching] = useState(false);
+
+  return useMemo(
+    () => ({
+      touching,
+      handlers: {
+        onTouchStart: (e) => {
+          setTouching(true);
+          onPress(e);
+        },
+        onMouseDown: (e) => {
+          setTouching(true);
+          onPress(e);
+        },
+        onMouseUp: (e) => {
+          setTouching(false);
+          onRelease(e);
+        },
+        onTouchMove: (e) => {
+          setTouching(false);
+          onRelease(e);
+        },
+        onTouchEnd: (event) => {
+          if (touching) {
+            // Prevent 'click' event (and double press)
+            event.preventDefault();
+            setTouching(false);
+            onRelease(event);
+          }
+        },
+      },
+    }),
+    [touching, onRelease, onPress],
+  );
 };
 
 export function trackTouch(

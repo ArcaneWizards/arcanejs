@@ -1,5 +1,15 @@
 # @toolkit-frontend
 
+## 0.11.0
+
+### Minor Changes
+
+- 8c2c47a: Extend input utility functions
+
+  - Allow original react event to be passed in `usePressable`
+  - Introduce `useLongPressable` that allows you to respond to both a touch being
+    initiated along with being released.
+
 ## 0.10.0
 
 ### Minor Changes

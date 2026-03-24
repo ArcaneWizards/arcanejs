@@ -1,5 +1,11 @@
 # @arcanejs/examples-custom-shell
 
+## 0.0.2
+
+### Patch Changes
+
+- @arcanejs/toolkit@8.0.0
+
 ## 0.0.1
 
 ### Patch Changes
