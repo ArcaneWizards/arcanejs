@@ -1,5 +1,12 @@
 # @arcanejs/examples-react
 
+## 0.1.5
+
+### Patch Changes
+
+- @arcanejs/toolkit@8.0.0
+- @arcanejs/react-toolkit@0.15.1
+
 ## 0.1.4
 
 ### Patch Changes

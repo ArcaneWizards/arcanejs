@@ -1,5 +1,12 @@
 # @arcanejs/toolkit
 
+## 8.0.0
+
+### Patch Changes
+
+- Updated dependencies [8c2c47a]
+  - @arcanejs/toolkit-frontend@0.11.0
+
 ## 7.0.0
 
 ### Major Changes
