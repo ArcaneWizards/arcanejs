@@ -294,13 +294,15 @@ export class Toolkit<
       } else {
         throw new Error('No root group set');
       }
-    } catch (err) {
+    } catch (cause) {
+      const error = new Error(`Error handling call`, { cause });
+      this.log()?.error(error);
       connection.sendMessage({
         type: 'call-response',
         namespace: call.namespace,
         requestId: call.requestId,
         success: false,
-        errorMessage: `${err}`,
+        errorMessage: `${cause}`,
       });
     }
   };
@@ -317,26 +319,34 @@ export class Toolkit<
       message,
       publicConnection.uuid,
     );
-    switch (message.type) {
-      case 'component-message':
-        if (this.rootGroup)
-          this.rootGroup.routeMessage(
-            this.componentIDMap,
-            message,
-            publicConnection,
-          );
-        break;
-      case 'component-call':
-        this.handleCall(connection, publicConnection, message);
-        break;
-      case 'ping': {
-        connection.sendMessage({
-          type: 'pong',
-          pingId: message.pingId,
-          serverTimeMillis: Date.now(),
-        });
-        break;
+    try {
+      switch (message.type) {
+        case 'component-message':
+          if (this.rootGroup)
+            this.rootGroup.routeMessage(
+              this.componentIDMap,
+              message,
+              publicConnection,
+            );
+          break;
+        case 'component-call':
+          this.handleCall(connection, publicConnection, message);
+          break;
+        case 'ping': {
+          connection.sendMessage({
+            type: 'pong',
+            pingId: message.pingId,
+            serverTimeMillis: Date.now(),
+          });
+          break;
+        }
       }
+    } catch (cause) {
+      const error = new Error(
+        `Error handling message: ${JSON.stringify(message)}`,
+        { cause },
+      );
+      this.log()?.error(error);
     }
   };
 }
