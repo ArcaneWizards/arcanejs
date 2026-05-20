@@ -27,7 +27,7 @@
     "@types/react": "^19.2.2",
     "eslint": "^8.57.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.7"
   },
   "dependencies": {
     "@arcanejs/react-toolkit": "workspace:^",

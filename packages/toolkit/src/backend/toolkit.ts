@@ -15,6 +15,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Group } from './components/group';
 import {
   AnyComponent,
+  CallDownloadResponse,
+  CallUploadResponse,
   EventEmitter,
   Listenable,
   Parent,
@@ -23,7 +25,11 @@ import {
   ClientMessage,
   AnyComponentProto,
   AnyClientComponentCall,
+  AnyClientComponentCallUpload,
+  AnyClientComponentCallDownload,
 } from '@arcanejs/protocol';
+import { Readable } from 'node:stream';
+import { randomBytes } from 'node:crypto';
 
 export type ToolkitConnection = {
   uuid: string;
@@ -80,6 +86,11 @@ const normalizeClockSyncOptions = (
   };
 };
 
+type ActiveFileTransfer<T> = {
+  connection: Connection;
+  handler: T;
+};
+
 export class Toolkit<
     TAdditionalFiles extends ToolkitAdditionalFiles = Record<never, never>,
   >
@@ -97,6 +108,15 @@ export class Toolkit<
   /** @hidden */
   private readonly events = new EventEmitter<Events>();
   private readonly server: Server<TAdditionalFiles>;
+
+  private readonly uploads = new Map<
+    string,
+    ActiveFileTransfer<CallUploadResponse>
+  >();
+  private readonly downloads = new Map<
+    string,
+    ActiveFileTransfer<CallDownloadResponse>
+  >();
 
   constructor(options: Partial<ToolkitOptions<TAdditionalFiles>> = {}) {
     this.options = {
@@ -117,6 +137,8 @@ export class Toolkit<
       this.onNewConnection,
       this.onClosedConnection,
       this.onMessage,
+      this.onUpload,
+      this.onDownload,
       this.options.log,
     );
   }
@@ -266,6 +288,26 @@ export class Toolkit<
     const con = this.connections.get(connection);
     this.connections.delete(connection);
     if (con) {
+      // Clean up any active uploads/downloads for this connection
+      let inProgressUploads = 0;
+      let inProgressDownloads = 0;
+      for (const [id, upload] of this.uploads.entries()) {
+        if (upload.connection === connection) {
+          this.uploads.delete(id);
+          inProgressUploads++;
+        }
+      }
+      for (const [id, download] of this.downloads.entries()) {
+        if (download.connection === connection) {
+          this.downloads.delete(id);
+          inProgressDownloads++;
+        }
+      }
+      if (inProgressUploads > 0 || inProgressDownloads > 0) {
+        this.log()?.info(
+          `Connection closed with ${inProgressUploads} in-progress uploads and ${inProgressDownloads} in-progress downloads`,
+        );
+      }
       this.events.emit('closed-connection', con.publicConnection);
     }
   };
@@ -273,17 +315,40 @@ export class Toolkit<
   private handleCall = async (
     connection: Connection,
     publicConnection: ToolkitConnection,
-    call: AnyClientComponentCall,
+    call:
+      | AnyClientComponentCall
+      | AnyClientComponentCallUpload
+      | AnyClientComponentCallDownload,
   ) => {
     try {
       const rg = this.rootGroup;
       if (rg) {
-        const returnValue = await new Promise((resolve, reject) =>
+        const handlerValue = await new Promise((resolve, reject) =>
           rg.routeCall(this.componentIDMap, call, publicConnection, {
             resolve,
             reject,
           }),
         );
+        let returnValue: unknown;
+        if (call.type === 'component-call') {
+          returnValue = handlerValue;
+        } else if (call.type === 'component-call-upload') {
+          const uploadHandler = handlerValue as CallUploadResponse;
+          const secureId = randomBytes(32).toString('hex');
+          this.uploads.set(secureId, {
+            connection,
+            handler: uploadHandler,
+          });
+          returnValue = secureId;
+        } else if (call.type === 'component-call-download') {
+          const downloadHandler = handlerValue as CallDownloadResponse;
+          const secureId = randomBytes(32).toString('hex');
+          this.downloads.set(secureId, {
+            connection,
+            handler: downloadHandler,
+          });
+          returnValue = secureId;
+        }
         connection.sendMessage({
           type: 'call-response',
           namespace: call.namespace,
@@ -294,13 +359,15 @@ export class Toolkit<
       } else {
         throw new Error('No root group set');
       }
-    } catch (err) {
+    } catch (cause) {
+      const error = new Error(`Error handling call`, { cause });
+      this.log()?.error(error);
       connection.sendMessage({
         type: 'call-response',
         namespace: call.namespace,
         requestId: call.requestId,
         success: false,
-        errorMessage: `${err}`,
+        errorMessage: `${cause}`,
       });
     }
   };
@@ -317,26 +384,53 @@ export class Toolkit<
       message,
       publicConnection.uuid,
     );
-    switch (message.type) {
-      case 'component-message':
-        if (this.rootGroup)
-          this.rootGroup.routeMessage(
-            this.componentIDMap,
-            message,
-            publicConnection,
-          );
-        break;
-      case 'component-call':
-        this.handleCall(connection, publicConnection, message);
-        break;
-      case 'ping': {
-        connection.sendMessage({
-          type: 'pong',
-          pingId: message.pingId,
-          serverTimeMillis: Date.now(),
-        });
-        break;
+    try {
+      switch (message.type) {
+        case 'component-message':
+          if (this.rootGroup)
+            this.rootGroup.routeMessage(
+              this.componentIDMap,
+              message,
+              publicConnection,
+            );
+          break;
+        case 'component-call':
+        case 'component-call-upload':
+        case 'component-call-download':
+          this.handleCall(connection, publicConnection, message);
+          break;
+        case 'ping': {
+          connection.sendMessage({
+            type: 'pong',
+            pingId: message.pingId,
+            serverTimeMillis: Date.now(),
+          });
+          break;
+        }
       }
+    } catch (cause) {
+      const error = new Error(
+        `Error handling message: ${JSON.stringify(message)}`,
+        { cause },
+      );
+      this.log()?.error(error);
     }
+  };
+
+  private onUpload = async (id: string, data: Readable) => {
+    const upload = this.uploads.get(id);
+    if (!upload) {
+      throw new Error(`No upload handler found for id: ${id}`);
+    }
+    await upload.handler(data);
+    this.uploads.delete(id);
+  };
+
+  private onDownload = async (id: string): Promise<CallDownloadResponse> => {
+    const download = this.downloads.get(id);
+    if (!download) {
+      throw new Error(`No download handler found for id: ${id}`);
+    }
+    return download.handler;
   };
 }

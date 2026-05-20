@@ -103,6 +103,12 @@ export const ToolkitSimulatorProvider: React.FC<
         call: () => {
           throw new Error('Not implemented in simulator');
         },
+        upload: () => {
+          throw new Error('Not implemented in simulator');
+        },
+        download: () => {
+          throw new Error('Not implemented in simulator');
+        },
         renderComponent,
         connectionUuid: 'simulator',
         connection: { state: 'connected', uuid: 'simulator' },

@@ -3,10 +3,20 @@ import {
   AnyClientComponentMessage,
   AnyClientComponentCall,
   ReturnForPair,
+  AnyClientComponentCallDownload,
+  AnyClientComponentCallUpload,
 } from '@arcanejs/protocol';
 import { IDMap } from '../util/id-map';
 import { Logger } from '@arcanejs/protocol/logging';
 import type { ToolkitConnection, ToolkitRenderContext } from '../toolkit';
+import { Readable } from 'node:stream';
+
+export type CallUploadResponse = (data: Readable) => Promise<void>;
+
+export type CallDownloadResponse = () => Promise<{
+  stream: Readable;
+  headers: Record<string, string>;
+}>;
 
 export abstract class Base<
   Namespace extends string,
@@ -126,11 +136,51 @@ export abstract class Base<
   ): void {}
 
   /** @hidden */
+  public handleAnyCall(
+    message:
+      | AnyClientComponentCall
+      | AnyClientComponentCallUpload
+      | AnyClientComponentCallDownload,
+    _connection: ToolkitConnection,
+  ): Promise<
+    | ReturnForPair<CallPairs, CallActions>
+    | CallUploadResponse
+    | CallDownloadResponse
+  > {
+    switch (message.type) {
+      case 'component-call-upload':
+        return this.handleCallUpload(message, _connection);
+      case 'component-call-download':
+        return this.handleCallDownload(message, _connection);
+      case 'component-call':
+        return this.handleCall(message, _connection);
+    }
+  }
+
+  /** @hidden */
   public handleCall(
     _call: AnyClientComponentCall,
     _connection: ToolkitConnection,
   ): Promise<ReturnForPair<CallPairs, CallActions>> {
     return Promise.reject(new Error(`Component does not handle calls`));
+  }
+
+  /** @hidden */
+  public handleCallUpload(
+    _call: AnyClientComponentCallUpload,
+    _connection: ToolkitConnection,
+  ): Promise<CallUploadResponse> {
+    return Promise.reject(new Error(`Component does not handle call uploads`));
+  }
+
+  /** @hidden */
+  public handleCallDownload(
+    _call: AnyClientComponentCallDownload,
+    _connection: ToolkitConnection,
+  ): Promise<CallDownloadResponse> {
+    return Promise.reject(
+      new Error(`Component does not handle call downloads`),
+    );
   }
 
   public routeMessage(
@@ -143,7 +193,10 @@ export abstract class Base<
 
   public routeCall(
     _idMap: IDMap,
-    _call: AnyClientComponentCall,
+    _call:
+      | AnyClientComponentCall
+      | AnyClientComponentCallUpload
+      | AnyClientComponentCallDownload,
     _connection: ToolkitConnection,
     _callbacks: {
       resolve: (result: unknown) => void;
@@ -253,7 +306,10 @@ export abstract class BaseParent<
 
   public async routeCall(
     idMap: IDMap,
-    call: AnyClientComponentCall,
+    call:
+      | AnyClientComponentCall
+      | AnyClientComponentCallUpload
+      | AnyClientComponentCallDownload,
     connection: ToolkitConnection,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callbacks: {
@@ -262,13 +318,13 @@ export abstract class BaseParent<
     },
   ) {
     if (idMap.getId(this) === call.componentKey) {
-      this.handleCall(call, connection)
+      this.handleAnyCall(call, connection)
         .then(callbacks.resolve)
         .catch(callbacks.reject);
     } else {
       for (const c of this.children) {
         if (idMap.getId(c) === call.componentKey) {
-          c.handleCall(call, connection)
+          c.handleAnyCall(call, connection)
             .then(callbacks.resolve)
             .catch(callbacks.reject);
         } else {
@@ -359,10 +415,10 @@ export class EventEmitter<Map extends Record<string, (...args: any[]) => void>>
     const result = await this.emit(type, ...args);
     if (result.length > 1) {
       throw new Error(`Multiple listeners for call: ${String(type)}`);
-    } else if (result[0]) {
-      return result[0];
-    } else {
+    } else if (result.length === 0) {
       throw new Error(`No listeners for call: ${String(type)}`);
+    } else {
+      return result[0] as ReturnType<Map[T]>;
     }
   };
 
