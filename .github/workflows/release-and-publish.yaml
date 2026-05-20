@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: main
     steps:
-
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -35,10 +34,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: cp .npmrc.ci .npmrc
+      - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        id: app-token
+        with:
+          client-id: ${{ vars.FAMILIAR_CLIENT_ID }}
+          private-key: ${{ secrets.FAMILIAR_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            open-source
       - name: Run Changeset Workflow
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           publish: pnpm changeset publish
           createGithubReleases: true
