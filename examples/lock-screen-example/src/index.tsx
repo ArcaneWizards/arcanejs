@@ -87,12 +87,12 @@ class ConnectionLock extends BaseParent<
     this.authorizedConnections.has(connection);
 
   private isPasswordValid = (inputPassword: string): boolean => {
-    const expectedDigest = createHash('sha256')
-      .update(this.props.password, 'utf8')
-      .digest();
-    const providedDigest = createHash('sha256')
-      .update(inputPassword, 'utf8')
-      .digest();
+    const expectedDigest = Uint8Array.from(
+      createHash('sha256').update(this.props.password, 'utf8').digest(),
+    );
+    const providedDigest = Uint8Array.from(
+      createHash('sha256').update(inputPassword, 'utf8').digest(),
+    );
     return timingSafeEqual(expectedDigest, providedDigest);
   };
 

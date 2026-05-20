@@ -1,13 +1,13 @@
 {
-  "name": "@arcanejs/examples-theme-customization",
+  "name": "@arcanejs/examples-file-transfer",
   "version": "0.0.4",
   "private": true,
-  "description": "Example app with custom Arcane frontend themes and a custom theme switch component",
+  "description": "Example app showing browser/server ping and clock offset in a custom frontend component",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "build": "tsc --noEmit && pnpm build:frontend",
-    "build:frontend": "rm -rf dist && pnpm build:styles && arcane-build-frontend --entry src/frontend.tsx --outfile dist/theme-entrypoint.js --sourcemap",
-    "build:styles": "tailwindcss -i ./src/theme-switch.css -o ./dist/theme-entrypoint.css",
+    "build:frontend": "rm -rf dist && pnpm build:styles && arcane-build-frontend --entry src/frontend.tsx --outfile dist/file-transfer-entrypoint.js --sourcemap",
+    "build:styles": "tailwindcss -i ./src/frontend.css -o ./dist/file-transfer-entrypoint.css",
     "start": "pnpm build:frontend && node --import=tsx src"
   },
   "devDependencies": {
@@ -29,7 +29,6 @@
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "react": "^19.2.0",
-    "tsx": "^4.19.1",
-    "zod": "^3.23.8"
+    "tsx": "^4.19.1"
   }
 }

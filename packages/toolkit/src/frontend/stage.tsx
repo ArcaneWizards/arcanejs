@@ -212,27 +212,84 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
     (await (socket.current || initializeWebsocket())).send(JSON.stringify(msg));
   }, []);
 
-  const call = useCallback(
-    async <Namespace extends string, P, Action extends string & keyof P>(
-      msg: proto.CallForPair<Namespace, P, Action>,
-    ): Promise<proto.ReturnForPair<P, Action>> => {
+  const callHandler = useCallback(
+    async (
+      msg: Omit<
+        | proto.AnyClientComponentCall
+        | proto.AnyClientComponentCallUpload
+        | proto.AnyClientComponentCallDownload,
+        'requestId'
+      >,
+    ): Promise<unknown> => {
       const requestId = calls.current.nextId++;
       const sendMsg = {
         ...msg,
         requestId,
       };
-      const promise: Promise<proto.ReturnForPair<P, Action>> = new Promise(
-        (resolve, reject) => {
-          calls.current.calls.set(requestId, {
-            resolve: resolve as (v: unknown) => void,
-            reject,
-          });
-          (socket.current || initializeWebsocket()).then((s) =>
-            s.send(JSON.stringify(sendMsg)),
-          );
-        },
-      );
+      const promise: Promise<void> = new Promise((resolve, reject) => {
+        calls.current.calls.set(requestId, {
+          resolve: resolve as (v: unknown) => void,
+          reject,
+        });
+        (socket.current || initializeWebsocket()).then((s) =>
+          s.send(JSON.stringify(sendMsg)),
+        );
+      });
       return promise;
+    },
+    [],
+  );
+
+  const call = useCallback(
+    async <Namespace extends string, P, Action extends string & keyof P>(
+      msg: proto.CallForPair<Namespace, P, Action>,
+    ) => callHandler(msg) as Promise<proto.ReturnForPair<P, Action>>,
+    [],
+  );
+
+  const upload = useCallback(
+    async <M extends proto.AnyClientComponentCallUpload>(
+      msg: Omit<M, 'requestId'>,
+      data: BodyInit,
+    ) => {
+      const uploadId = await callHandler(msg);
+
+      const uploadUrl = new URL(`upload/${uploadId}`, window.location.href);
+
+      const result = await fetch(uploadUrl.href, {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!result.ok) {
+        throw new Error(`Upload failed with status ${result.status}`);
+      }
+    },
+    [],
+  );
+
+  const download = useCallback(
+    async <M extends proto.AnyClientComponentCallDownload>(
+      msg: Omit<M, 'requestId'>,
+    ): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> => {
+      const downloadId = await callHandler(msg);
+
+      const downloadUrl = new URL(
+        `download/${downloadId}`,
+        window.location.href,
+      );
+
+      const result = await fetch(downloadUrl.href);
+
+      if (!result.ok) {
+        throw new Error(`Download failed with status ${result.status}`);
+      }
+
+      if (!result.body) {
+        throw new Error('Download response has no body');
+      }
+
+      return result.body;
     },
     [],
   );
@@ -281,6 +338,8 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
       sendMessage,
       renderComponent,
       call,
+      upload,
+      download,
       connectionUuid: connection.state === 'connected' ? connection.uuid : null,
       connection,
       timeDifferenceMs: bestPing?.timeDifferenceMs ?? null,

@@ -13,6 +13,8 @@ import {
   ToolkitStaticFile,
 } from './options.js';
 import { FONTS } from '../shared/static.js';
+import { Readable } from 'node:stream';
+import { CallDownloadResponse } from './components/base.js';
 
 // Get the module resolution custom conditions
 const parentDir = path.basename(__dirname);
@@ -27,6 +29,9 @@ const distDir = () => {
       throw new Error(`Server running from unknown location: ${__dirname}`);
   }
 };
+
+const UPLOAD_URL = /^\/upload\/([0-9a-f]+)$/;
+const DOWNLOAD_URL = /^\/download\/([0-9a-f]+)$/;
 
 /**
  * Prepare all available static files lazily,
@@ -56,6 +61,8 @@ export class Server<
       connection: Connection,
       message: ClientMessage,
     ) => void,
+    private readonly onUpload: (id: string, data: Readable) => Promise<void>,
+    private readonly onDownload: (id: string) => Promise<CallDownloadResponse>,
     private readonly log?: Logger,
   ) {
     this.title = options.title ?? '@arcanejs';
@@ -295,8 +302,50 @@ export class Server<
       }
     }
 
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('not found', 'utf-8');
+    const [uploadMatch, downloadMatch] = [
+      UPLOAD_URL.exec(pathname),
+      DOWNLOAD_URL.exec(pathname),
+    ];
+    if (uploadMatch?.[1]) {
+      const id = uploadMatch[1];
+      this.log?.debug('Upload request for id: %s', id);
+      this.onUpload(id, req)
+        .then(() => {
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end('Upload successful', 'utf-8');
+        })
+        .catch((cause) => {
+          const error = new Error(`Error handling upload for id ${id}`, {
+            cause,
+          });
+          this.log?.error(error);
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Error handling upload', 'utf-8');
+        });
+    } else if (downloadMatch?.[1]) {
+      const id = downloadMatch[1];
+      this.log?.debug('Download request for id: %s', id);
+      this.onDownload(id)
+        .then((handler) => handler())
+        .then(({ stream, headers }) => {
+          res.writeHead(200, {
+            'Content-Type': 'application/octet-stream',
+            ...headers,
+          });
+          stream.pipe(res);
+        })
+        .catch((cause) => {
+          const error = new Error(`Error handling download for id ${id}`, {
+            cause,
+          });
+          this.log?.error(error);
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Error handling download', 'utf-8');
+        });
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('not found', 'utf-8');
+    }
   };
 
   private parsePathname = (url?: string): string => {

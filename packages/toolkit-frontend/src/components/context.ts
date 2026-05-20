@@ -24,6 +24,17 @@ export type StageContextData = {
         msg: proto.CallForPair<Namespace, P, Action>,
       ) => Promise<proto.ReturnForPair<P, Action>>)
     | null;
+  upload:
+    | (<M extends proto.AnyClientComponentCallUpload>(
+        msg: Omit<M, 'requestId'>,
+        data: Blob | ReadableStream<Uint8Array>,
+      ) => Promise<void>)
+    | null;
+  download:
+    | (<M extends proto.AnyClientComponentCallDownload>(
+        msg: Omit<M, 'requestId'>,
+      ) => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>)
+    | null;
   renderComponent: (info: proto.AnyComponentProto) => ReactElement;
   connectionUuid: string | null;
   connection: StageConnectionState;

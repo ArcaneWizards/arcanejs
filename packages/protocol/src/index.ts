@@ -109,9 +109,41 @@ export type CallForPair<
 export type ReturnForPair<Pairs, Action extends string & keyof Pairs> =
   Pairs extends Record<Action, { return: infer R }> ? R : never;
 
+export type BaseClientComponentCallUpload<
+  Namespace extends string,
+  Action extends string,
+> = {
+  type: 'component-call-upload';
+  namespace: Namespace;
+  componentKey: number;
+  requestId: number;
+  action: Action;
+};
+
+export type BaseClientComponentCallDownload<
+  Namespace extends string,
+  Action extends string,
+> = {
+  type: 'component-call-download';
+  namespace: Namespace;
+  componentKey: number;
+  requestId: number;
+  action: Action;
+};
+
 export type AnyClientComponentMessage = BaseClientComponentMessage<string>;
 
 export type AnyClientComponentCall = BaseClientComponentCall<string, string>;
+
+export type AnyClientComponentCallUpload = BaseClientComponentCallUpload<
+  string,
+  string
+>;
+
+export type AnyClientComponentCallDownload = BaseClientComponentCallDownload<
+  string,
+  string
+>;
 
 export type PingRequestMessage = {
   type: 'ping';
@@ -121,4 +153,6 @@ export type PingRequestMessage = {
 export type ClientMessage =
   | AnyClientComponentMessage
   | AnyClientComponentCall
+  | AnyClientComponentCallUpload
+  | AnyClientComponentCallDownload
   | PingRequestMessage;
