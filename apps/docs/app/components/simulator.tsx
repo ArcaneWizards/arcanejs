@@ -12,6 +12,7 @@ import {
   FrontendComponentRenderer,
   FrontendComponentRenderers,
 } from '@arcanejs/toolkit-frontend/types';
+import { ToolkitConnection } from '@arcanejs/toolkit';
 
 type ToolkitSimulatorProps<Namespaces extends string> = {
   children?: React.ReactNode;
@@ -38,7 +39,13 @@ export const ToolkitSimulatorProvider: React.FC<
   ToolkitSimulatorProps<string>
 > = ({ children, renderers }) => {
   const [tree, setTree] = React.useState<AnyComponentProto | null>(null);
-  const simulatorRenderContext = useRef({ connection: { uuid: 'simulator' } });
+  const simulatorRenderContext = useRef({
+    connection: {
+      uuid: 'simulator',
+      host: '',
+      isLoopback: true,
+    } satisfies ToolkitConnection,
+  });
 
   const componentIDMap = useRef(new IDMap());
   const rootGroup = useRef<null | Group>(null);
@@ -98,9 +105,11 @@ export const ToolkitSimulatorProvider: React.FC<
       value={{
         log: console,
         sendMessage: (msg) =>
-          rootGroup?.current?.routeMessage(componentIDMap.current, msg, {
-            uuid: '',
-          }),
+          rootGroup?.current?.routeMessage(
+            componentIDMap.current,
+            msg,
+            simulatorRenderContext.current.connection,
+          ),
         call: () => {
           throw new Error('Not implemented in simulator');
         },

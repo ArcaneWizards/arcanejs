@@ -37,9 +37,11 @@ const ColorPicker = () => {
         }
         text={'Increment'}
       />
-      {connections.map(({ uuid }) => (
+      {connections.map(({ uuid, host, isLoopback, connectionFamily }) => (
         <Group key={uuid} title={uuid}>
           {`Button Presses: ${counts[uuid] || 0}`}
+          {`Host: ${host} ${isLoopback ? '(loopback)' : ''}`}
+          {`Connection Family: ${connectionFamily || 'unknown'}`}
         </Group>
       ))}
     </Group>

@@ -37,6 +37,16 @@ import { reconstructErrorFromFrame } from '@arcanejs/protocol/logging';
 
 export type ToolkitConnection = {
   uuid: string;
+  host: string;
+  connectionFamily: string | undefined;
+  /**
+   * True if the connection is coming from the same machine as the server,
+   * false otherwise.
+   *
+   * Note that this is only for the immediate connections,
+   * and does not account for e.g. reverse proxies etc...
+   */
+  isLoopback: boolean;
 };
 
 export type ToolkitRenderContext = {
@@ -283,6 +293,15 @@ Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
     const publicConnection: ToolkitConnection = {
       get uuid() {
         return uuid;
+      },
+      get host() {
+        return connection.host;
+      },
+      get connectionFamily() {
+        return connection.connectionFamily;
+      },
+      get isLoopback() {
+        return connection.isLoopback;
       },
     };
     const lastTreeSent =
