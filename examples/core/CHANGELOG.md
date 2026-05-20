@@ -1,5 +1,15 @@
 # @arcanejs/examples-core
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [6726574]
+- Updated dependencies [b7717d1]
+- Updated dependencies [6726574]
+- Updated dependencies [6726574]
+  - @arcanejs/toolkit@9.0.0
+
 ## 0.0.2
 
 ### Patch Changes
