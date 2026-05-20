@@ -41,7 +41,7 @@ jobs:
           private-key: ${{ secrets.FAMILIAR_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: |
-            open-source
+            arcanejs
       - name: Run Changeset Workflow
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         env:
