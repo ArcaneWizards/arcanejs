@@ -1,4 +1,10 @@
 packages:
-  - "apps/*"
-  - "examples/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'examples/*'
+  - 'packages/*'
+minimumReleaseAge: 10080 # 7 days
+minimumReleaseAgeStrict: true
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  sharp: true
