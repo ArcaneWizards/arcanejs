@@ -1,4 +1,10 @@
-import { createContext, type ReactElement } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  type ReactElement,
+} from 'react';
 
 import * as proto from '@arcanejs/protocol';
 
@@ -35,6 +41,16 @@ export type StageContextData = {
         msg: Omit<M, 'requestId'>,
       ) => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>)
     | null;
+  addNotificationListener:
+    | ((
+        listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+      ) => void)
+    | null;
+  removeNotificationListener:
+    | ((
+        listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+      ) => void)
+    | null;
   renderComponent: (info: proto.AnyComponentProto) => ReactElement;
   connectionUuid: string | null;
   connection: StageConnectionState;
@@ -54,3 +70,40 @@ export const StageContext = createContext<StageContextData>(
     },
   }),
 );
+
+export const useNotificationHandler = <
+  T extends proto.BaseNotificationMessage<string, string>,
+>(
+  typeGuard: (msg: proto.BaseNotificationMessage<string, string>) => msg is T,
+  handler: (msg: T) => void,
+  dependencyList: unknown[],
+) => {
+  const { addNotificationListener, removeNotificationListener } =
+    useContext(StageContext);
+
+  if (!addNotificationListener || !removeNotificationListener) {
+    throw new Error(
+      'useNotificationHandler must be used within a StageContext',
+    );
+  }
+
+  const callback = useCallback(handler, dependencyList);
+
+  useEffect(() => {
+    const listener = (msg: proto.BaseNotificationMessage<string, string>) => {
+      if (typeGuard(msg)) {
+        callback(msg);
+      }
+    };
+
+    addNotificationListener(listener);
+    return () => {
+      removeNotificationListener(listener);
+    };
+  }, [
+    addNotificationListener,
+    removeNotificationListener,
+    typeGuard,
+    callback,
+  ]);
+};
