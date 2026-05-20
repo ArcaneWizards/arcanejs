@@ -30,10 +30,10 @@
     "prepare": "pnpm build"
   },
   "dependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-react": "^7.27.1",
-    "@babel/preset-typescript": "^7.27.1",
-    "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
+    "@babel/core": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "babel-plugin-react-compiler": "19.0.0-beta-ebf51a3-20250411",
     "esbuild": "^0.25.0"
   },
   "devDependencies": {
@@ -43,8 +43,8 @@
     "@types/node": "^20.11.24",
     "check-export-map": "^1.3.1",
     "eslint": "^8.57.0",
-    "tsup": "^8.1.0",
-    "typescript": "^5.7"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "files": [
     "dist"
