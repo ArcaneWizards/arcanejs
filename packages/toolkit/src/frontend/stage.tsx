@@ -80,6 +80,28 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
     pings: new Map(),
   });
 
+  const notificationListeners = useRef<
+    Set<(msg: proto.BaseNotificationMessage<string, string>) => void>
+  >(new Set());
+
+  const addNotificationListener = useCallback(
+    (
+      listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+    ) => {
+      notificationListeners.current.add(listener);
+    },
+    [],
+  );
+
+  const removeNotificationListener = useCallback(
+    (
+      listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+    ) => {
+      notificationListeners.current.delete(listener);
+    },
+    [],
+  );
+
   const preparedRenderers = useMemo(() => {
     const prepared: Record<string, FrontendComponentRenderer> = {};
 
@@ -127,6 +149,12 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
           console.warn(
             `Received response for unknown call request ID ${msg.requestId}`,
           );
+        }
+        return;
+      }
+      case 'notification': {
+        for (const listener of notificationListeners.current) {
+          listener(msg);
         }
         return;
       }
@@ -340,6 +368,8 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
       call,
       upload,
       download,
+      addNotificationListener,
+      removeNotificationListener,
       connectionUuid: connection.state === 'connected' ? connection.uuid : null,
       connection,
       timeDifferenceMs: bestPing?.timeDifferenceMs ?? null,

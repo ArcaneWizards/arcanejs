@@ -27,6 +27,7 @@ import {
   AnyClientComponentCall,
   AnyClientComponentCallUpload,
   AnyClientComponentCallDownload,
+  BaseNotificationMessage,
 } from '@arcanejs/protocol';
 import { Readable } from 'node:stream';
 import { randomBytes } from 'node:crypto';
@@ -432,5 +433,16 @@ export class Toolkit<
       throw new Error(`No download handler found for id: ${id}`);
     }
     return download.handler;
+  };
+
+  public sendNotification = (
+    notification: BaseNotificationMessage<string, string>,
+    filter?: (connection: ToolkitConnection) => boolean,
+  ) => {
+    for (const [connection, meta] of this.connections.entries()) {
+      if (!filter || filter(meta.publicConnection)) {
+        connection.sendMessage(notification);
+      }
+    }
   };
 }

@@ -109,6 +109,12 @@ export const ToolkitSimulatorProvider: React.FC<
         download: () => {
           throw new Error('Not implemented in simulator');
         },
+        addNotificationListener: () => {
+          throw new Error('Not implemented in simulator');
+        },
+        removeNotificationListener: () => {
+          throw new Error('Not implemented in simulator');
+        },
         renderComponent,
         connectionUuid: 'simulator',
         connection: { state: 'connected', uuid: 'simulator' },

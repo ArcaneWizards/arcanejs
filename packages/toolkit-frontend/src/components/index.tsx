@@ -8,6 +8,7 @@ import {
   StageContext,
   StageContextData,
   StageConnectionState,
+  useNotificationHandler,
 } from './context';
 import { Group, GroupStateWrapper } from './group';
 import { Label } from './label';
@@ -36,6 +37,8 @@ export {
 };
 
 export type { StageContextData, StageConnectionState };
+
+export { useNotificationHandler };
 
 export const CORE_FRONTEND_COMPONENT_RENDERER: FrontendComponentRenderer = {
   namespace: 'core',

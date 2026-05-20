@@ -50,6 +50,15 @@ export type CallResponseMsg<Namespace extends string, T> = {
     }
 );
 
+export type BaseNotificationMessage<
+  Namespace extends string,
+  Notification extends string,
+> = {
+  type: 'notification';
+  namespace: Namespace;
+  notification: Notification;
+};
+
 export type PongResponseMessage = {
   type: 'pong';
   pingId: number;
@@ -64,6 +73,7 @@ export type ServerMessage =
   | SendTreeMsg
   | UpdateTreeMsg
   | CallResponseMsg<string, unknown>
+  | BaseNotificationMessage<string, string>
   | PongResponseMessage;
 
 export type BaseClientComponentMessage<Namespace extends string> = {
