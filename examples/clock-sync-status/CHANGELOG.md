@@ -1,5 +1,15 @@
 # @arcanejs/examples-clock-sync-status
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [0fd878e]
+- Updated dependencies [0fd878e]
+  - @arcanejs/toolkit-frontend@0.12.1
+  - @arcanejs/react-toolkit@0.16.1
+  - @arcanejs/toolkit@9.0.1
+
 ## 0.0.5
 
 ### Patch Changes

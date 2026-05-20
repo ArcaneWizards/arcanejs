@@ -1,5 +1,13 @@
 # @arcanejs/toolkit
 
+## 9.0.1
+
+### Patch Changes
+
+- 0fd878e: Upgrade ws, uuid & lodash packages
+- Updated dependencies [0fd878e]
+  - @arcanejs/toolkit-frontend@0.12.1
+
 ## 9.0.0
 
 ### Major Changes

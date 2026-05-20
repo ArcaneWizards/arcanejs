@@ -1,5 +1,11 @@
 # @toolkit-frontend
 
+## 0.12.1
+
+### Patch Changes
+
+- 0fd878e: Upgrade react packages
+
 ## 0.12.0
 
 ### Minor Changes

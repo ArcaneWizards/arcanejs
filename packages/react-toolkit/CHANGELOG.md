@@ -1,5 +1,13 @@
 # @arcanejs/react-toolkit
 
+## 0.16.1
+
+### Patch Changes
+
+- 0fd878e: Upgrade react packages
+- Updated dependencies [0fd878e]
+  - @arcanejs/toolkit@9.0.1
+
 ## 0.16.0
 
 ### Minor Changes
