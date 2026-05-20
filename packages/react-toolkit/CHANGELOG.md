@@ -1,5 +1,19 @@
 # @arcanejs/react-toolkit
 
+## 0.16.0
+
+### Minor Changes
+
+- 6726574: Updated typescript to v5.7 for better Uint8Array types
+
+### Patch Changes
+
+- Updated dependencies [6726574]
+- Updated dependencies [6726574]
+- Updated dependencies [6726574]
+  - @arcanejs/protocol@0.9.0
+  - @arcanejs/toolkit@9.0.0
+
 ## 0.15.1
 
 ### Patch Changes

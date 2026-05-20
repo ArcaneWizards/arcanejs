@@ -1,5 +1,11 @@
 # @arcanejs/diff
 
+## 0.6.0
+
+### Minor Changes
+
+- 6726574: Updated typescript to v5.7 for better Uint8Array types
+
 ## 0.5.2
 
 ### Patch Changes

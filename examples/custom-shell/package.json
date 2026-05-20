@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/examples-custom-shell",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Example app demonstrating custom Toolkit HTML shell and static assets",
   "scripts": {

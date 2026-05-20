@@ -1,5 +1,25 @@
 # @arcanejs/protocol
 
+## 0.9.0
+
+### Minor Changes
+
+- 6726574: Updated typescript to v5.7 for better Uint8Array types
+- 6726574: Implement file uploads / downloads
+
+  Allow for custom components to handle streamed file uploads & downloads,
+  responding to custom messages like calls (with customizable parameters),
+  handling the file transfers as separate HTTP calls that can transfer binary data
+  directly.
+
+  For most custom components, the existing API will probably work fine without any
+  issues, but there may be some minor type errors to address.
+
+### Patch Changes
+
+- Updated dependencies [6726574]
+  - @arcanejs/diff@0.6.0
+
 ## 0.8.0
 
 ### Minor Changes
