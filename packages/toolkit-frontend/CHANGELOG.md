@@ -1,5 +1,36 @@
 # @toolkit-frontend
 
+## 0.12.0
+
+### Minor Changes
+
+- 6726574: Updated typescript to v5.7 for better Uint8Array types
+- b7717d1: Introduce notification messages
+
+  Allow the ability for the server to send frontend connections / components
+  messages outside of the general flow of state updates or responding to user
+  actions.
+
+  For example to manage playback control of a media control that's playing from a
+  browser.
+
+- 6726574: Implement file uploads / downloads
+
+  Allow for custom components to handle streamed file uploads & downloads,
+  responding to custom messages like calls (with customizable parameters),
+  handling the file transfers as separate HTTP calls that can transfer binary data
+  directly.
+
+  For most custom components, the existing API will probably work fine without any
+  issues, but there may be some minor type errors to address.
+
+### Patch Changes
+
+- Updated dependencies [6726574]
+- Updated dependencies [b7717d1]
+- Updated dependencies [6726574]
+  - @arcanejs/protocol@0.9.0
+
 ## 0.11.0
 
 ### Minor Changes

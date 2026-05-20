@@ -1,5 +1,47 @@
 # @arcanejs/toolkit
 
+## 9.0.0
+
+### Major Changes
+
+- 6726574: Implement file uploads / downloads
+
+  Allow for custom components to handle streamed file uploads & downloads,
+  responding to custom messages like calls (with customizable parameters),
+  handling the file transfers as separate HTTP calls that can transfer binary data
+  directly.
+
+  For most custom components, the existing API will probably work fine without any
+  issues, but there may be some minor type errors to address.
+
+### Minor Changes
+
+- 6726574: Updated typescript to v5.7 for better Uint8Array types
+- b7717d1: Introduce notification messages
+
+  Allow the ability for the server to send frontend connections / components
+  messages outside of the general flow of state updates or responding to user
+  actions.
+
+  For example to manage playback control of a media control that's playing from a
+  browser.
+
+- 6726574: Log errors when backend components throw errors
+
+  Previously, errors that occur in `handleMessage` were not correctly caught,
+  and errors that occur in `handleCall` would only be visible to client-side code.
+  Now, both types of errors will print an error in the log,
+  and handleMessage errors won't cause the app to crash.
+
+### Patch Changes
+
+- Updated dependencies [6726574]
+- Updated dependencies [b7717d1]
+- Updated dependencies [6726574]
+  - @arcanejs/toolkit-frontend@0.12.0
+  - @arcanejs/protocol@0.9.0
+  - @arcanejs/diff@0.6.0
+
 ## 8.0.0
 
 ### Patch Changes
