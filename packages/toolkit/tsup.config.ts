@@ -19,6 +19,7 @@ export default defineConfig([
     format: ['cjs', 'esm'],
     splitting: true,
     dts: true,
+    sourcemap: true,
   },
   {
     tsconfig: 'tsconfig.frontend.json',
@@ -27,6 +28,7 @@ export default defineConfig([
     format: ['cjs', 'esm'],
     splitting: true,
     dts: true,
+    sourcemap: true,
     external: [
       '@arcanejs/diff',
       '@arcanejs/protocol',

@@ -1,5 +1,18 @@
 # @arcanejs/react-toolkit
 
+## 0.16.2
+
+### Patch Changes
+
+- 53652d5: Include sourcemaps in published packages
+
+  Make debugging of applications easier by including sourcemaps so that stack
+  traces can include the original source code lines
+
+- Updated dependencies [53652d5]
+  - @arcanejs/protocol@0.9.1
+  - @arcanejs/toolkit@9.0.2
+
 ## 0.16.1
 
 ### Patch Changes

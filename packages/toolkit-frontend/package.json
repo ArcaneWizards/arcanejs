@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/toolkit-frontend",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "private": false,
   "description": "Library of the frontend react components used to render the @arcanejs Toolkit",
   "keywords": [],

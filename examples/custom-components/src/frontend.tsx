@@ -45,6 +45,15 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
       button: 'start-stop',
     }),
   );
+  const { handlers: messageErrorHandler } = usePressable(() =>
+    sendMessage<StopwatchPressMessage>?.({
+      type: 'component-message',
+      namespace: 'custom',
+      componentKey: info.key,
+      component: 'stopwatch',
+      button: 'error',
+    }),
+  );
   const { handlers: callHandler } = usePressable(() =>
     call<'custom', CustomComponentCalls, 'request-time'>?.({
       type: 'component-call',
@@ -53,6 +62,28 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
       action: 'request-time',
     }).then((time) => {
       alert(`Response: ${time}`);
+    }),
+  );
+  const { handlers: callErrorHandler } = usePressable(() =>
+    call<'custom', CustomComponentCalls, 'error'>?.({
+      type: 'component-call',
+      namespace: 'custom',
+      componentKey: info.key,
+      action: 'error',
+    }).catch((error) => {
+      alert(error);
+    }),
+  );
+  const { handlers: callUnknownCallHandler } = usePressable(() =>
+    call<'custom', CustomComponentCalls, 'error'>?.({
+      type: 'component-call',
+      namespace: 'custom',
+      componentKey: info.key,
+      // Deliberate invalid message
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      action: 'unknown-call' as any,
+    }).catch((error) => {
+      alert(error);
     }),
   );
 
@@ -117,6 +148,27 @@ const Stopwatch: React.FC<{ info: StopwatchComponentProto }> = ({ info }) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex flex-col items-center">
+        <span>Error tests</span>
+        <button
+          className="relative box-border mb-[10px] flex h-arcane-btn cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active"
+          {...messageErrorHandler}
+        >
+          Throw error in message handler
+        </button>
+        <button
+          className="relative box-border mb-[10px] flex h-arcane-btn cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active"
+          {...callErrorHandler}
+        >
+          Throw error in call handler
+        </button>
+        <button
+          className="relative box-border mb-[10px] flex h-arcane-btn cursor-pointer items-center justify-center overflow-visible rounded-arcane-btn border border-arcane-btn-border bg-arcane-grad-btn px-1 py-0.5 text-arcane-btn-text shadow-arcane-btn text-shadow-arcane-btn transition-all duration-200 outline-none hover:bg-arcane-grad-btn-hover active:bg-arcane-grad-btn-active active:duration-50 active:shadow-arcane-btn-active active:text-shadow-arcane-btn-active"
+          {...callUnknownCallHandler}
+        >
+          Unknown Call
+        </button>
       </div>
     </div>
   );

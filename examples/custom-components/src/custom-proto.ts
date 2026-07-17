@@ -30,7 +30,7 @@ export type StopwatchPressMessage = BaseClientComponentMessage<
   typeof CUSTOM_NAMESPACE
 > & {
   component: 'stopwatch';
-  button: 'start-stop';
+  button: 'start-stop' | 'error';
 };
 
 export type StopwatchGetTime = BaseClientComponentCall<
@@ -38,10 +38,19 @@ export type StopwatchGetTime = BaseClientComponentCall<
   'request-time'
 >;
 
+export type StopwatchErrorCall = BaseClientComponentCall<
+  typeof CUSTOM_NAMESPACE,
+  'error'
+>;
+
 export interface CustomComponentCalls {
   'request-time': {
     call: StopwatchGetTime;
     return: string;
+  };
+  error: {
+    call: StopwatchErrorCall;
+    return: void;
   };
 }
 
