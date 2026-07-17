@@ -1,5 +1,14 @@
 # @arcanejs/build-utils
 
+## 0.1.3
+
+### Patch Changes
+
+- 53652d5: Include sourcemaps in published packages
+
+  Make debugging of applications easier by including sourcemaps so that stack
+  traces can include the original source code lines
+
 ## 0.1.2
 
 ### Patch Changes

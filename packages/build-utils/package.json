@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/build-utils",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": false,
   "description": "Build helpers for ArcaneJS projects",
   "license": "MIT",

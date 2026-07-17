@@ -1,5 +1,17 @@
 # @toolkit-frontend
 
+## 0.12.2
+
+### Patch Changes
+
+- 53652d5: Include sourcemaps in published packages
+
+  Make debugging of applications easier by including sourcemaps so that stack
+  traces can include the original source code lines
+
+- Updated dependencies [53652d5]
+  - @arcanejs/protocol@0.9.1
+
 ## 0.12.1
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @arcanejs/diff
 
+## 0.6.1
+
+### Patch Changes
+
+- 53652d5: Include sourcemaps in published packages
+
+  Make debugging of applications easier by including sourcemaps so that stack
+  traces can include the original source code lines
+
 ## 0.6.0
 
 ### Minor Changes
