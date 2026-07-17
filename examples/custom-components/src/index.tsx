@@ -98,6 +98,8 @@ class Stopwatch extends BaseParent<
           };
         }
         this.updateTree();
+      } else if (message.button === 'error') {
+        throw new Error('This is an error from the component message handler');
       }
     }
   };
@@ -110,6 +112,8 @@ class Stopwatch extends BaseParent<
           ? `${this.state.timeMillis / 1000}`
           : `${(Date.now() - this.state.startedAt) / 1000}`;
       return `The time is now: ${timeString}`;
+    } else if (isCustomComponentCall(call, 'error')) {
+      throw new Error('This is an error from the component call handler');
     }
     throw new Error(`Unhandled call action: ${call.action}`);
   };
