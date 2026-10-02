@@ -55,6 +55,32 @@ root.appendChildren(status, trigger);
 toolkit.setRoot(root);
 ```
 
+## Note on performance measurement with react-reconciler
+
+You may see a warning when running `@arcanejs` apps that looks like:
+
+```
+============================= PERF CHECKS ENABLED ==============================
+Performance entries are being created (6),
+this probably means you are running react-reconciler in development mode.
+
+Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
+================================================================================
+```
+
+This is because `react-reconciler` will track performance measurements over time
+(namely with each component render) when not run with
+`NODE_ENV=production`.
+This uniquely affects `@arcanejs` apps as we use a custom
+react renderer for long-running node.js processes,
+and these apps designed to have regular re-renders over the course of an app's
+runtime. Over time, the number of measurements increases,
+and can eventually throw an `MaxPerformanceEntryBufferExceededWarning` error,
+killing the process.
+
+The issue can be avoided if react-reconciler is run in production mode,
+so ensure you run your processes with `NODE_ENV=production`.
+
 ## Public API
 
 ### Top-level exports
