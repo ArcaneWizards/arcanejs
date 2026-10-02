@@ -41,6 +41,7 @@ const parseArgs = (argv: string[]): CliArgs => {
     minify: false,
     reactCompiler: true,
     watch: false,
+    production: true,
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -48,6 +49,9 @@ const parseArgs = (argv: string[]): CliArgs => {
     switch (arg) {
       case '--entry':
         parsed.entry = requireValue('--entry', argv[++i]);
+        break;
+      case '--dev':
+        parsed.production = false;
         break;
       case '--outfile':
         parsed.outfile = requireValue('--outfile', argv[++i]);
