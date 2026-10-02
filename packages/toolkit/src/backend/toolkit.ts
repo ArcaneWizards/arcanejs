@@ -186,10 +186,16 @@ export class Toolkit<
    * which may indicate that react-reconciler is running in development mode,
    * or some other source of performance overhead.
    */
-  public checkForPerfIssues = (timeout = 1_000) => {
+  public checkForPerfIssues = (
+    { enabled = true, timeoutMs = 1_000, minEntryThreshold = 1 } = this.options
+      .performanceCheck ?? {},
+  ) => {
+    if (!enabled) {
+      return;
+    }
     setTimeout(() => {
       const entries = performance.getEntries().length;
-      if (entries > 0) {
+      if (entries >= minEntryThreshold) {
         this.log()?.warn(
           `PERF ISSUES:
 ============================= PERF CHECKS ENABLED ==============================
@@ -201,7 +207,7 @@ Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
 `,
         );
       }
-    }, timeout);
+    }, timeoutMs);
   };
 
   public listen = ({

@@ -110,6 +110,24 @@ export interface ToolkitOptions<
    * and expose a calculated server clock offset in stage context.
    */
   clockSync?: false | ToolkitClockSyncOptions;
+  performanceCheck?: {
+    /**
+     * Whether to enable the performance check.
+     */
+    enabled?: boolean;
+    /**
+     * The timeout in milliseconds before performing the performance check.
+     *
+     * @default 1_000
+     */
+    timeoutMs?: number;
+    /**
+     * How many entries are required to trigger a performance warning.
+     *
+     * @default 1
+     */
+    minEntryThreshold?: number;
+  };
 }
 
 export const DEFAULT_LIGHT_DESK_OPTIONS: ToolkitOptions = {
