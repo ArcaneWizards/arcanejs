@@ -1,5 +1,17 @@
 # @arcanejs/examples-react
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+- Updated dependencies [d62f16a]
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+  - @arcanejs/toolkit@9.1.0
+  - @arcanejs/react-toolkit@0.16.3
+
 ## 0.1.8
 
 ### Patch Changes

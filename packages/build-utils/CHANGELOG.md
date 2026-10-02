@@ -1,5 +1,14 @@
 # @arcanejs/build-utils
 
+## 0.2.0
+
+### Minor Changes
+
+- 4af95c1: Run frontend build with NODE_ENV=production by default
+
+  Introduce a new `--dev` parameter in the command that will build with
+  development versions of react etc... but build with production by default.
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # docs
 
+## 0.2.14
+
+### Patch Changes
+
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+- Updated dependencies [d62f16a]
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+  - @arcanejs/toolkit@9.1.0
+  - @arcanejs/toolkit-frontend@0.12.3
+  - @arcanejs/protocol@0.9.2
+
 ## 0.2.13
 
 ### Patch Changes

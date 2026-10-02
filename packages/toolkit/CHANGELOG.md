@@ -1,5 +1,55 @@
 # @arcanejs/toolkit
 
+## 9.1.0
+
+### Minor Changes
+
+- 4af95c1: Add check for performance measures
+
+  This is because `react-reconciler` will track performance measurements over time
+  (namely with each component render) when not run with
+  `NODE_ENV=production`.
+  This uniquely affects `@arcanejs` apps as we use a custom
+  react renderer for long-running node.js processes,
+  and these apps designed to have regular re-renders over the course of an app's
+  runtime. Over time, the number of measurements increases,
+  and can eventually throw an `MaxPerformanceEntryBufferExceededWarning` error,
+  killing the process.
+
+  The issue can be avoided if react-reconciler is run in production mode,
+  so this change adds a logging check that will warn when performance measurement
+  is detected.
+
+- d62f16a: Expose connection info in ToolkitConnection
+
+  Make IP Address, Connection Type & Loopback status
+  available in the toolkit connection object
+
+- 4af95c1: Introduce client logging
+
+  Introduce protocol messages and an API in StageContextData to allow client code
+  to log messages and errors (including stack traces),
+  and send these messages to the backend,
+  then padding along to whatever logging handler the toolkit
+  has been initialized with.
+
+- 4af95c1: Run frontend build with NODE_ENV=production by default
+
+  Introduce a new `--dev` parameter in the command that will build with
+  development versions of react etc... but build with production by default.
+
+### Patch Changes
+
+- 4af95c1: Catch & Log invalid messages
+
+  Ensure that invalid messages received over WebSocket,
+  or exceptions thrown while attempting to handle the message,
+  are caught and logged appropriately in the provided logger.
+
+- Updated dependencies [4af95c1]
+  - @arcanejs/toolkit-frontend@0.12.3
+  - @arcanejs/protocol@0.9.2
+
 ## 9.0.2
 
 ### Patch Changes
