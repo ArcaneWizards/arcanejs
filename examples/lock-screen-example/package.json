@@ -8,7 +8,10 @@
     "build": "tsc --noEmit && pnpm build:frontend",
     "build:frontend": "rm -rf dist && pnpm build:styles && arcane-build-frontend --entry src/frontend.tsx --outfile dist/lock-screen-entrypoint.js --sourcemap",
     "build:styles": "tailwindcss -i ./src/frontend.css -o ./dist/lock-screen-entrypoint.css",
-    "start": "pnpm build:frontend && NODE_ENV=production node --import=tsx src"
+    "dev": "pnpm watch:frontend & pnpm watch:styles & tsx watch src",
+    "start": "pnpm build:frontend && NODE_ENV=production node --import=tsx src",
+    "watch:frontend": "arcane-build-frontend --watch --dev --entry src/frontend.tsx --outfile dist/lock-screen-entrypoint.js --sourcemap",
+    "watch:styles": "tailwindcss --watch -i ./src/frontend.css -o ./dist/lock-screen-entrypoint.css"
   },
   "devDependencies": {
     "@arcanejs/build-utils": "workspace:^",
