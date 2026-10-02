@@ -15,6 +15,8 @@ import {
 import { FONTS } from '../shared/static.js';
 import { Readable } from 'node:stream';
 import { CallDownloadResponse } from './components/base.js';
+import type { IncomingMessage } from 'node:http';
+import os from 'node:os';
 
 // Get the module resolution custom conditions
 const parentDir = path.basename(__dirname);
@@ -43,6 +45,9 @@ type PreparedStaticFiles = {
 
 export interface Connection {
   sendMessage(msg: ServerMessage): void;
+  host: string;
+  connectionFamily: string | undefined;
+  isLoopback: boolean;
 }
 
 export class Server<
@@ -387,9 +392,29 @@ export class Server<
     return urls;
   };
 
-  public handleWsConnection = <S extends WebSocket>(ws: S) => {
+  public handleWsConnection = <S extends WebSocket>(
+    ws: S,
+    request: IncomingMessage,
+  ) => {
+    const connectionFamily = request.socket.remoteFamily;
+    const host = request.socket.remoteAddress ?? '';
+    // Dual-stack servers report IPv4 peers as IPv4-mapped IPv6 addresses
+    // (e.g. ::ffff:127.0.0.1), so normalize before comparing to interfaces.
+    const normalizedHost = host.replace(/^::ffff:(?=\d+\.\d+\.\d+\.\d+$)/i, '');
+    let isLoopback = false;
+    if (normalizedHost !== '') {
+      const interfaces = os.networkInterfaces();
+      isLoopback = Object.values(interfaces).some((ifaceList) =>
+        (ifaceList ?? []).some(
+          (iface) => iface.internal && iface.address === normalizedHost,
+        ),
+      );
+    }
     const connection: Connection = {
       sendMessage: (msg) => ws.send(JSON.stringify(msg)),
+      host,
+      isLoopback,
+      connectionFamily,
     };
     this.onNewConnection(connection);
     this.log?.debug('new connection');
