@@ -1,5 +1,19 @@
 # @arcanejs/examples-file-transfer
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+- Updated dependencies [d62f16a]
+- Updated dependencies [4af95c1]
+- Updated dependencies [4af95c1]
+  - @arcanejs/toolkit@9.1.0
+  - @arcanejs/toolkit-frontend@0.12.3
+  - @arcanejs/protocol@0.9.2
+  - @arcanejs/react-toolkit@0.16.3
+
 ## 0.0.7
 
 ### Patch Changes

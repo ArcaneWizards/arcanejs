@@ -1,5 +1,17 @@
 # @arcanejs/protocol
 
+## 0.9.2
+
+### Patch Changes
+
+- 4af95c1: Introduce client logging
+
+  Introduce protocol messages and an API in StageContextData to allow client code
+  to log messages and errors (including stack traces),
+  and send these messages to the backend,
+  then padding along to whatever logging handler the toolkit
+  has been initialized with.
+
 ## 0.9.1
 
 ### Patch Changes
