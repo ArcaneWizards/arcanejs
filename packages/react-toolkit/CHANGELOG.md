@@ -1,5 +1,12 @@
 # @arcanejs/react-toolkit
 
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies [1913399]
+  - @arcanejs/toolkit@9.2.0
+
 ## 0.16.3
 
 ### Patch Changes

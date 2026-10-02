@@ -1,5 +1,15 @@
 # @arcanejs/toolkit
 
+## 9.2.0
+
+### Minor Changes
+
+- 1913399: Allow performance check to be customized
+
+  Introduce the `performanceCheck` toolkit option to modify how the default
+  `perf_hooks` checks should run, and what the threshold should be for warning
+  about issues.
+
 ## 9.1.0
 
 ### Minor Changes
