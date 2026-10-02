@@ -24,6 +24,10 @@ import {
   FrontendComponentRenderers,
 } from '@arcanejs/toolkit-frontend/types';
 import { calculateClass } from '@arcanejs/toolkit-frontend/util';
+import {
+  getStackFramesFromError,
+  StrictLogger,
+} from '@arcanejs/protocol/logging';
 
 export type Props = {
   className?: string;
@@ -240,6 +244,44 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
     (await (socket.current || initializeWebsocket())).send(JSON.stringify(msg));
   }, []);
 
+  const log: StrictLogger = useMemo(() => {
+    const logMessage = (
+      level: 'error' | 'warn' | 'info' | 'debug',
+      rootMsg: string | Error,
+    ) => {
+      console[level](rootMsg);
+      if (typeof rootMsg === 'string') {
+        sendMessage({ type: 'log', entry: { level, message: rootMsg } });
+        return;
+      }
+
+      let message = rootMsg.message;
+      let error: Error | null = rootMsg;
+      while (error) {
+        if (error !== rootMsg) {
+          message += `: ${error.message}`;
+        }
+        error = error.cause instanceof Error ? error.cause : null;
+      }
+
+      sendMessage({
+        type: 'log',
+        entry: {
+          level,
+          message,
+          stack: getStackFramesFromError(rootMsg),
+        },
+      });
+    };
+
+    return {
+      debug: (message: string) => logMessage('debug', message),
+      info: (message: string) => logMessage('info', message),
+      warn: (message: string | Error) => logMessage('warn', message),
+      error: (message: string | Error) => logMessage('error', message),
+    };
+  }, [sendMessage]);
+
   const callHandler = useCallback(
     async (
       msg: Omit<
@@ -363,6 +405,7 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
 
   const stageContext: StageContextData = useMemo(
     () => ({
+      log,
       sendMessage,
       renderComponent,
       call,
@@ -377,6 +420,7 @@ const Stage: React.FC<Props> = ({ className, renderers, loadingState }) => {
       reconnect: () => void initializeWebsocket(),
     }),
     [
+      log,
       sendMessage,
       renderComponent,
       call,

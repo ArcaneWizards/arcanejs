@@ -96,6 +96,7 @@ export const ToolkitSimulatorProvider: React.FC<
   return (
     <StageContext.Provider
       value={{
+        log: console,
         sendMessage: (msg) =>
           rootGroup?.current?.routeMessage(componentIDMap.current, msg, {
             uuid: '',

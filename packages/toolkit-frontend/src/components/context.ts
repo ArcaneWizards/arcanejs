@@ -7,6 +7,7 @@ import {
 } from 'react';
 
 import * as proto from '@arcanejs/protocol';
+import { Logger } from '@arcanejs/protocol/logging';
 
 export type StageConnectionState =
   | {
@@ -22,35 +23,24 @@ export type StageConnectionState =
     };
 
 export type StageContextData = {
-  sendMessage:
-    | (<M extends proto.AnyClientComponentMessage>(msg: M) => void)
-    | null;
-  call:
-    | (<Namespace extends string, P, Action extends string & keyof P>(
-        msg: proto.CallForPair<Namespace, P, Action>,
-      ) => Promise<proto.ReturnForPair<P, Action>>)
-    | null;
-  upload:
-    | (<M extends proto.AnyClientComponentCallUpload>(
-        msg: Omit<M, 'requestId'>,
-        data: Blob | ReadableStream<Uint8Array>,
-      ) => Promise<void>)
-    | null;
-  download:
-    | (<M extends proto.AnyClientComponentCallDownload>(
-        msg: Omit<M, 'requestId'>,
-      ) => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>)
-    | null;
-  addNotificationListener:
-    | ((
-        listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
-      ) => void)
-    | null;
-  removeNotificationListener:
-    | ((
-        listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
-      ) => void)
-    | null;
+  log: Logger;
+  sendMessage: <M extends proto.AnyClientComponentMessage>(msg: M) => void;
+  call: <Namespace extends string, P, Action extends string & keyof P>(
+    msg: proto.CallForPair<Namespace, P, Action>,
+  ) => Promise<proto.ReturnForPair<P, Action>>;
+  upload: <M extends proto.AnyClientComponentCallUpload>(
+    msg: Omit<M, 'requestId'>,
+    data: Blob | ReadableStream<Uint8Array>,
+  ) => Promise<void>;
+  download: <M extends proto.AnyClientComponentCallDownload>(
+    msg: Omit<M, 'requestId'>,
+  ) => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>;
+  addNotificationListener: (
+    listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+  ) => void;
+  removeNotificationListener: (
+    listener: (msg: proto.BaseNotificationMessage<string, string>) => void,
+  ) => void;
   renderComponent: (info: proto.AnyComponentProto) => ReactElement;
   connectionUuid: string | null;
   connection: StageConnectionState;

@@ -28,10 +28,12 @@ import {
   AnyClientComponentCallUpload,
   AnyClientComponentCallDownload,
   BaseNotificationMessage,
+  ArcaneJSLogEntry,
 } from '@arcanejs/protocol';
 import { Readable } from 'node:stream';
 import { randomBytes } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
+import { reconstructErrorFromFrame } from '@arcanejs/protocol/logging';
 
 export type ToolkitConnection = {
   uuid: string;
@@ -398,6 +400,23 @@ Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
     }
   };
 
+  private handleClientLogMessage = (
+    { uuid }: ToolkitConnection,
+    entry: ArcaneJSLogEntry,
+  ) => {
+    const log = this.log();
+    if (!log) return;
+    if (!entry.stack || entry.level === 'info' || entry.level === 'debug') {
+      log[entry.level](`[client: ${uuid}] ${entry.message}`);
+    } else {
+      const cause = reconstructErrorFromFrame(entry.stack);
+      const error = new Error(`Received error from client [${uuid}]`, {
+        cause,
+      });
+      log[entry.level](error);
+    }
+  };
+
   private onMessage = (connection: Connection, message: ClientMessage) => {
     const con = this.connections.get(connection);
     if (!con) {
@@ -433,6 +452,9 @@ Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
           });
           break;
         }
+        case 'log':
+          this.handleClientLogMessage(publicConnection, message.entry);
+          break;
       }
     } catch (cause) {
       const error = new Error(
