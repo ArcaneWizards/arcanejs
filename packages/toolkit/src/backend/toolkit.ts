@@ -28,9 +28,12 @@ import {
   AnyClientComponentCallUpload,
   AnyClientComponentCallDownload,
   BaseNotificationMessage,
+  ArcaneJSLogEntry,
 } from '@arcanejs/protocol';
 import { Readable } from 'node:stream';
 import { randomBytes } from 'node:crypto';
+import { performance } from 'node:perf_hooks';
+import { reconstructErrorFromFrame } from '@arcanejs/protocol/logging';
 
 export type ToolkitConnection = {
   uuid: string;
@@ -148,6 +151,7 @@ export class Toolkit<
   public removeListener = this.events.removeListener;
 
   public start = (opts: InitializationOptions<TAdditionalFiles>) => {
+    this.checkForPerfIssues();
     if (opts.mode === 'automatic') {
       this.listen({ port: opts.port }).then(() => {
         const url = `http://localhost:${opts.port}${this.options.path}`;
@@ -165,6 +169,29 @@ export class Toolkit<
     } else {
       throw new Error(`Unsupported mode`);
     }
+  };
+
+  /**
+   * Perform a delayed check to see if performance entries are being created,
+   * which may indicate that react-reconciler is running in development mode,
+   * or some other source of performance overhead.
+   */
+  public checkForPerfIssues = (timeout = 1_000) => {
+    setTimeout(() => {
+      const entries = performance.getEntries().length;
+      if (entries > 0) {
+        this.log()?.warn(
+          `PERF ISSUES:
+============================= PERF CHECKS ENABLED ==============================
+Performance entries are being created (${entries}),
+this probably means you are running react-reconciler in development mode.
+
+Make sure you set NODE_ENV=production to avoid performance issues & memory leaks
+================================================================================
+`,
+        );
+      }
+    }, timeout);
   };
 
   public listen = ({
@@ -373,6 +400,23 @@ export class Toolkit<
     }
   };
 
+  private handleClientLogMessage = (
+    { uuid }: ToolkitConnection,
+    entry: ArcaneJSLogEntry,
+  ) => {
+    const log = this.log();
+    if (!log) return;
+    if (!entry.stack || entry.level === 'info' || entry.level === 'debug') {
+      log[entry.level](`[client: ${uuid}] ${entry.message}`);
+    } else {
+      const cause = reconstructErrorFromFrame(entry.stack);
+      const error = new Error(`Received error from client [${uuid}]`, {
+        cause,
+      });
+      log[entry.level](error);
+    }
+  };
+
   private onMessage = (connection: Connection, message: ClientMessage) => {
     const con = this.connections.get(connection);
     if (!con) {
@@ -408,6 +452,9 @@ export class Toolkit<
           });
           break;
         }
+        case 'log':
+          this.handleClientLogMessage(publicConnection, message.entry);
+          break;
       }
     } catch (cause) {
       const error = new Error(

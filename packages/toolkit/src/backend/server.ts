@@ -393,9 +393,14 @@ export class Server<
     };
     this.onNewConnection(connection);
     this.log?.debug('new connection');
-    ws.on('message', (msg) =>
-      this.onMessage(connection, JSON.parse(msg.toString())),
-    );
+    ws.on('message', (msg) => {
+      try {
+        this.onMessage(connection, JSON.parse(msg.toString()));
+      } catch (cause) {
+        const err = new Error('Error handling WebSocket message', { cause });
+        this.log?.error(err);
+      }
+    });
     ws.on('close', () => this.onClosedConnection(connection));
   };
 }

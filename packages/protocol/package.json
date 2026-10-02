@@ -25,7 +25,9 @@
     },
     "./logging": {
       "@arcanejs/source": "./src/logging.ts",
-      "types": "./dist/logging.d.ts"
+      "types": "./dist/logging.d.ts",
+      "import": "./dist/logging.mjs",
+      "require": "./dist/logging.js"
     },
     "./styles": {
       "@arcanejs/source": "./src/styles.ts",

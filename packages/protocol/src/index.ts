@@ -1,4 +1,4 @@
-import { Diff } from '@arcanejs/diff';
+import { Diff, JSONValue } from '@arcanejs/diff';
 
 export type BaseComponentProto<
   Namespace extends string,
@@ -160,9 +160,27 @@ export type PingRequestMessage = {
   pingId: number;
 };
 
+export type ArcaneJSLogEntryStackFrame = {
+  message: string;
+  stack: string | null;
+  cause: ArcaneJSLogEntryStackFrame | null;
+} & Partial<Record<string, JSONValue>>;
+
+export type ArcaneJSLogEntry = {
+  level: 'debug' | 'info' | 'warn' | 'error';
+  message: string;
+  stack?: ArcaneJSLogEntryStackFrame;
+};
+
+export type ClientLogMessage = {
+  type: 'log';
+  entry: ArcaneJSLogEntry;
+};
+
 export type ClientMessage =
   | AnyClientComponentMessage
   | AnyClientComponentCall
   | AnyClientComponentCallUpload
   | AnyClientComponentCallDownload
-  | PingRequestMessage;
+  | PingRequestMessage
+  | ClientLogMessage;

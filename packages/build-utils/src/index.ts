@@ -18,6 +18,7 @@ export type ArcaneFrontendBuildOptions = {
   reactCompiler?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reactCompilerOptions?: Record<string, any>;
+  production: boolean;
 };
 
 const FRONTEND_SOURCE_FILTER = /\.[cm]?[jt]sx?$/;
@@ -103,7 +104,12 @@ const createBuildOptions = (
     minify: options.minify ?? false,
     logLevel: options.logLevel ?? 'info',
     conditions: options.conditions,
-    define: options.define,
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(
+        options.production ? 'production' : 'development',
+      ),
+      ...options.define,
+    },
     plugins: reactCompiler
       ? [createReactCompilerPlugin(options.reactCompilerOptions)]
       : [],

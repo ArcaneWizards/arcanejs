@@ -8,7 +8,10 @@
     "build": "tsc --noEmit && pnpm build:frontend",
     "build:frontend": "rm -rf dist && pnpm build:styles && arcane-build-frontend --entry src/frontend.tsx --outfile dist/theme-entrypoint.js --sourcemap",
     "build:styles": "tailwindcss -i ./src/theme-switch.css -o ./dist/theme-entrypoint.css",
-    "start": "pnpm build:frontend && node --import=tsx src"
+    "dev": "pnpm watch:frontend & pnpm watch:styles & tsx watch src",
+    "start": "pnpm build:frontend && NODE_ENV=production node --import=tsx src",
+    "watch:frontend": "arcane-build-frontend --watch --dev --entry src/frontend.tsx --outfile dist/theme-entrypoint.js --sourcemap",
+    "watch:styles": "tailwindcss --watch -i ./src/theme-switch.css -o ./dist/theme-entrypoint.css"
   },
   "devDependencies": {
     "@arcanejs/build-utils": "workspace:^",
