@@ -12,7 +12,7 @@ import {
   FrontendComponentRenderer,
   FrontendComponentRenderers,
 } from '@arcanejs/toolkit-frontend/types';
-import { ToolkitConnection } from '@arcanejs/toolkit';
+import type { ToolkitConnection } from '@arcanejs/toolkit';
 
 type ToolkitSimulatorProps<Namespaces extends string> = {
   children?: React.ReactNode;
@@ -43,6 +43,7 @@ export const ToolkitSimulatorProvider: React.FC<
     connection: {
       uuid: 'simulator',
       host: '',
+      connectionFamily: 'IPv4',
       isLoopback: true,
     } satisfies ToolkitConnection,
   });

@@ -398,18 +398,17 @@ export class Server<
   ) => {
     const connectionFamily = request.socket.remoteFamily;
     const host = request.socket.remoteAddress ?? '';
+    // Dual-stack servers report IPv4 peers as IPv4-mapped IPv6 addresses
+    // (e.g. ::ffff:127.0.0.1), so normalize before comparing to interfaces.
+    const normalizedHost = host.replace(/^::ffff:(?=\d+\.\d+\.\d+\.\d+$)/i, '');
     let isLoopback = false;
-    if (host !== '') {
+    if (normalizedHost !== '') {
       const interfaces = os.networkInterfaces();
-      for (const ifaceList of Object.values(interfaces)) {
-        for (const iface of ifaceList ?? []) {
-          if (iface.address === host) {
-            isLoopback = iface.internal;
-            break;
-          }
-        }
-        if (isLoopback) break;
-      }
+      isLoopback = Object.values(interfaces).some((ifaceList) =>
+        (ifaceList ?? []).some(
+          (iface) => iface.internal && iface.address === normalizedHost,
+        ),
+      );
     }
     const connection: Connection = {
       sendMessage: (msg) => ws.send(JSON.stringify(msg)),
