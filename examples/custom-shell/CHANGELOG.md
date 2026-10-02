@@ -1,5 +1,12 @@
 # @arcanejs/examples-custom-shell
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [1913399]
+  - @arcanejs/toolkit@9.2.0
+
 ## 0.0.6
 
 ### Patch Changes
