@@ -1,6 +1,6 @@
 {
   "name": "@arcanejs/examples-file-transfer",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": true,
   "description": "Example app showing browser/server ping and clock offset in a custom frontend component",
   "scripts": {

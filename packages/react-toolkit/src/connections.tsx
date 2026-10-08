@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -58,7 +59,10 @@ export const ConnectionsContextProvider: FC<
     };
   }, [toolkit]);
 
-  const sendNotification = toolkit.sendNotification.bind(toolkit);
+  const sendNotification = useMemo(
+    () => toolkit.sendNotification.bind(toolkit),
+    [toolkit],
+  );
 
   return (
     <ConnectionsContext.Provider value={{ connections, sendNotification }}>

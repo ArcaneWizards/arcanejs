@@ -1,5 +1,12 @@
 # @arcanejs/examples-theme-customization
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies [fc2aced]
+  - @arcanejs/react-toolkit@0.16.5
+
 ## 0.0.9
 
 ### Patch Changes

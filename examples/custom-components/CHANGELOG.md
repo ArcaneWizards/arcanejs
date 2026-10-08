@@ -1,5 +1,12 @@
 # @arcanejs/examples-custom-components
 
+## 0.2.11
+
+### Patch Changes
+
+- Updated dependencies [fc2aced]
+  - @arcanejs/react-toolkit@0.16.5
+
 ## 0.2.10
 
 ### Patch Changes
