@@ -1,5 +1,18 @@
 # @arcanejs/react-toolkit
 
+## 0.16.5
+
+### Patch Changes
+
+- fc2aced: Fix: Memoize `sendNotification` in `ConnectionsContext`.
+
+  The `sendNotification` function in the `ConnectionsContext` was not correctly
+  memoized, meaning that unnecessary re-renders could occur when
+  used in a dependency array.
+
+  This also affected `useNotificationSender`,
+  which used used `sendNotification` internally in a dependency array.
+
 ## 0.16.4
 
 ### Patch Changes
