@@ -1,5 +1,12 @@
 # @arcanejs/examples-theme-customization
 
+## 0.0.11
+
+### Patch Changes
+
+- Updated dependencies [d9a6ffa]
+  - @arcanejs/react-toolkit@0.16.6
+
 ## 0.0.10
 
 ### Patch Changes

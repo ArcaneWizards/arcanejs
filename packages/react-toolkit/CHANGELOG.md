@@ -1,5 +1,11 @@
 # @arcanejs/react-toolkit
 
+## 0.16.6
+
+### Patch Changes
+
+- d9a6ffa: Export the PreparedComponents type in react-toolkit
+
 ## 0.16.5
 
 ### Patch Changes
