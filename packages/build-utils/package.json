@@ -30,11 +30,11 @@
     "prepare": "pnpm build"
   },
   "dependencies": {
-    "@babel/core": "^7.29.0",
+    "@babel/core": "^7.29.6",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "babel-plugin-react-compiler": "19.0.0-beta-ebf51a3-20250411",
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.28.1"
   },
   "devDependencies": {
     "@arcanejs/eslint-config": "workspace:^",
