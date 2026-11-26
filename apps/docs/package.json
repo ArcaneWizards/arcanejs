@@ -13,7 +13,7 @@
     "@arcanejs/protocol": "workspace:^",
     "@arcanejs/toolkit": "workspace:^",
     "@arcanejs/toolkit-frontend": "workspace:^",
-    "next": "^15.5.18",
+    "next": "^15.5.29",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
