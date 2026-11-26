@@ -452,11 +452,11 @@ export type CreateDataFileDefinitionProps<T extends ZodType> = {
   defaultValue: z.infer<T>;
 };
 
-export function createDataFileDefinition<T extends ZodType>({
+export function createDataFileDefinition<T extends ZodType<z.core.output<T>>>({
   schema,
   defaultValue,
 }: CreateDataFileDefinitionProps<T>): DataFileDefinition<z.infer<T>> {
-  const context = createContext<DataFileContext<T>>({
+  const context = createContext<DataFileContext<z.infer<T>>>({
     data: defaultValue,
     status: 'loading',
     lastUpdatedMillis: Date.now(),
@@ -476,8 +476,8 @@ export function createDataFileDefinition<T extends ZodType>({
     path,
     onPathChange,
     onError,
-  }: DataFileUsage): DataFileCore<T> =>
-    useDataFileCore({
+  }: DataFileUsage): DataFileCore<z.infer<T>> =>
+    useDataFileCore<z.infer<T>>({
       schema,
       defaultValue,
       path,
@@ -502,7 +502,7 @@ export function createDataFileDefinition<T extends ZodType>({
       onError,
     });
 
-    const providedContext: DataFileContext<T> = useMemo(
+    const providedContext: DataFileContext<z.infer<T>> = useMemo(
       () => ({
         data:
           data.status !== 'loading' && data.data !== undefined
@@ -515,7 +515,7 @@ export function createDataFileDefinition<T extends ZodType>({
         saveData,
         error: data.status === 'error' ? data.error : undefined,
       }),
-      [data, updateData],
+      [data, updateData, resetData, saveData],
     );
 
     if (data.status === 'loading') {
