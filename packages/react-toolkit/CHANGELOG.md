@@ -1,5 +1,14 @@
 # @arcanejs/react-toolkit
 
+## 0.17.0
+
+### Minor Changes
+
+- ac3bdea: Migrate to Zod v4
+
+  Usage of the `@arcanejs/react-toolkit/data` module now requires zod v4 for
+  type-checking in TypeScript files to pass.
+
 ## 0.16.6
 
 ### Patch Changes
